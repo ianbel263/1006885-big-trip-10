@@ -24,8 +24,6 @@ const createNewElement = (node, nodeClassName, parentNode) => {
   return element;
 };
 
-const tripInfoSection = document.querySelector(`.trip-info`);
-render(tripInfoSection, createTripInfoTemplate(cards), `afterbegin`);
 
 const tripControl = document.querySelector(`.trip-controls`);
 render(tripControl, createSiteMenuTemplate(menu), `afterbegin`);
@@ -43,12 +41,22 @@ render(tripEventsSection, createEventEditFormTemplate(cards[0], eventPointCities
 
 createNewElement(`ul`, `trip-days`, tripEventsSection);
 const tripDaysList = tripEventsSection.querySelector(`.trip-days`);
-render(tripDaysList, createTripDaysItemTemplate(), `beforeend`);
+
+
+render(tripDaysList, createTripDaysItemTemplate(cards[0]), `beforeend`);
 
 const tripDaysItem = tripDaysList.querySelector(`.trip-days__item`);
 createNewElement(`ul`, `trip-events__list`, tripDaysItem);
 
 const tripEventsList = tripEventsSection.querySelector(`.trip-events__list`);
 
-let showingTasksCount = SHOWING_EVENTS_COUNT_ON_START;
-cards.slice(1, showingTasksCount).forEach((card) => render(tripEventsList, createEventItemTemplate(card), `beforeend`));
+cards.slice(1, SHOWING_EVENTS_COUNT_ON_START).forEach((card) => render(tripEventsList, createEventItemTemplate(card), `beforeend`));
+
+const tripInfoSection = document.querySelector(`.trip-info`);
+render(tripInfoSection, createTripInfoTemplate(cards), `afterbegin`);
+
+const tripTotalPrice = document.querySelector(`.trip-info__cost-value`);
+
+tripTotalPrice.textContent = cards.reduce((sum, it) => {
+  return sum + parseFloat(it.price);
+}, 0);
