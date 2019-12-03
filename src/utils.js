@@ -1,13 +1,27 @@
-const castTimeFormat = (value) => {
+const castZeroFirstFormat = (value) => {
   return value < 10 ? `0${value}` : String(value);
 };
 
+export const castTimeFormat = (date) => {
+  const hours = castZeroFirstFormat(date.getHours());
+  const minutes = castZeroFirstFormat(date.getMinutes());
+  return `${hours}: ${minutes}`;
+};
+
+
+export const castDateFormat = (date) => {
+  let yyyy = date.getFullYear();
+  let mm = castZeroFirstFormat(date.getMonth() + 1);
+  let dd = castZeroFirstFormat(date.getDate());
+  return `${yyyy}-${mm}-${dd}`;
+};
+
 export const formatDate = (currentDate) => {
-  const date = castTimeFormat(currentDate.getDate());
-  const month = castTimeFormat(currentDate.getMonth() + 1);
-  const year = castTimeFormat(currentDate.getFullYear() % 100);
-  const hours = castTimeFormat(currentDate.getHours());
-  const minutes = castTimeFormat(currentDate.getMinutes());
+  const date = castZeroFirstFormat(currentDate.getDate());
+  const month = castZeroFirstFormat(currentDate.getMonth() + 1);
+  const year = castZeroFirstFormat(currentDate.getFullYear() % 100);
+  const hours = castZeroFirstFormat(currentDate.getHours());
+  const minutes = castZeroFirstFormat(currentDate.getMinutes());
 
   return `${date}/${month}/${year} ${hours}:${minutes}`;
 };
