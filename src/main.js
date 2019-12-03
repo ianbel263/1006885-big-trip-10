@@ -63,13 +63,15 @@ const renderCards = (data) => {
     })
     .forEach((eventPoint) => {
 
+      // if (!document.querySelector(`.trip-events__list`)) {
+      //   createNewElement(`ul`, `trip-events__list`, tripDaysItem);
+      // }
+      // const tripEventsList = tripEventsSection.querySelector(`.trip-events__list`);
       render(tripDaysItem, createEventItemTemplate(eventPoint), `beforeend`);
     });
   });
 };
 
-// createNewElement(`ul`, `trip-events__list`, tripDaysItem);
-// const tripEventsList = tripEventsSection.querySelector(`.trip-events__list`);
 
 renderCards(cards);
 
