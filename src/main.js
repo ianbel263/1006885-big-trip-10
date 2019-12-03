@@ -11,7 +11,7 @@ import {siteFilters} from './mock/site-filter.js';
 import {eventFilters} from './mock/event-filter.js';
 import {eventPointCities} from './mock/card.js';
 
-// const SHOWING_EVENTS_COUNT_ON_START = 4;
+const SHOWING_EVENTS_COUNT_ON_START = 4;
 
 const render = (container, template, place) => {
   container.insertAdjacentHTML(place, template);
@@ -30,7 +30,8 @@ const eventFilter = tripEventsSection.querySelector(`.trip-sort`);
 tripEventsSection.querySelector(`h2`).after(eventFilter);
 
 render(tripEventsSection, createEventEditFormTemplate(cards[0], eventPointCities), `beforeend`);
-render(tripEventsSection, createDaysListTemplate(cards), `beforeend`);
+let showingTasksCount = SHOWING_EVENTS_COUNT_ON_START;
+render(tripEventsSection, createDaysListTemplate(cards.slice(1, showingTasksCount)), `beforeend`);
 //
 
 const tripInfoSection = document.querySelector(`.trip-info`);
