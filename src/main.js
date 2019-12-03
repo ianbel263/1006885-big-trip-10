@@ -17,12 +17,12 @@ const render = (container, template, place) => {
   container.insertAdjacentHTML(place, template);
 };
 
-const createNewElement = (node, nodeClassName, parentNode) => {
-  const element = document.createElement(node);
-  element.className = nodeClassName;
-  parentNode.append(element);
-  return element;
-};
+// const createNewElement = (node, nodeClassName, parentNode) => {
+//   const element = document.createElement(node);
+//   element.className = nodeClassName;
+//   parentNode.append(element);
+//   return element;
+// };
 
 
 const tripControl = document.querySelector(`.trip-controls`);
@@ -39,18 +39,38 @@ tripEventsSection.querySelector(`h2`).after(eventFilter);
 
 render(tripEventsSection, createEventEditFormTemplate(cards[0], eventPointCities), `beforeend`);
 
-createNewElement(`ul`, `trip-days`, tripEventsSection);
-const tripDaysList = tripEventsSection.querySelector(`.trip-days`);
+// createNewElement(`ul`, `trip-days`, tripEventsSection);
+// const tripDaysList = tripEventsSection.querySelector(`.trip-days`);
 
+const renderCards = (cards) => {
 
-render(tripDaysList, createTripDaysItemTemplate(cards[0]), `beforeend`);
+  const dates = new Set();
+  const sortedCards = cards.slice()
+    .sort((a, b) => {
+      return a.startDate - b.startDate;
+    })
+    .forEach((card) => {
+      dates.add(card.startDate);
+    });
 
-const tripDaysItem = tripDaysList.querySelector(`.trip-days__item`);
-createNewElement(`ul`, `trip-events__list`, tripDaysItem);
+  dates.forEach((date) => {
+    render(tripEventsSection, createTripDaysItemTemplate(date), `beforeend`);
+    const tripDaysItem = tripEventsSection.querySelector(`.trip-days__item`);
 
-const tripEventsList = tripEventsSection.querySelector(`.trip-events__list`);
+    sortedCards.filter((card) => {
+      return card.startDate === date;
+    })
+    .forEach((point) => {
 
-cards.slice(1, SHOWING_EVENTS_COUNT_ON_START).forEach((card) => render(tripEventsList, createEventItemTemplate(card), `beforeend`));
+      render(tripDaysItem, createEventItemTemplate(point), `beforeend`);
+    });
+  });
+};
+
+// createNewElement(`ul`, `trip-events__list`, tripDaysItem);
+// const tripEventsList = tripEventsSection.querySelector(`.trip-events__list`);
+
+renderCards(cards);
 
 const tripInfoSection = document.querySelector(`.trip-info`);
 render(tripInfoSection, createTripInfoTemplate(cards), `afterbegin`);
