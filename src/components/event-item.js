@@ -1,5 +1,4 @@
 export const createEventItemTemplate = (card) => {
-  console.log("card", card);
   return (
     `<li class="trip-events__item">
       <div class="event">
