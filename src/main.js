@@ -5,8 +5,13 @@ import {createSiteFilterTemplate} from './components/site-filter.js';
 import {createSiteMenuTemplate} from './components/site-menu.js';
 import {createTripDaysItemTemplate} from './components/trip-days-item.js';
 import {createTripInfoTemplate} from './components/trip-info.js';
+import {cards} from './mock/card.js';
+import {menu} from './mock/menu.js';
+import {siteFilters} from './mock/site-filter.js';
+import {eventFilters} from './mock/event-filter.js';
+import {eventPointCities} from './mock/card.js';
 
-const EVENT_NUMBER = 3;
+const SHOWING_EVENTS_COUNT_ON_START = 4;
 
 const render = (container, template, place) => {
   container.insertAdjacentHTML(place, template);
@@ -20,21 +25,21 @@ const createNewElement = (node, nodeClassName, parentNode) => {
 };
 
 const tripInfoSection = document.querySelector(`.trip-info`);
-render(tripInfoSection, createTripInfoTemplate(), `afterbegin`);
+render(tripInfoSection, createTripInfoTemplate(cards), `afterbegin`);
 
 const tripControl = document.querySelector(`.trip-controls`);
-render(tripControl, createSiteMenuTemplate(), `afterbegin`);
+render(tripControl, createSiteMenuTemplate(menu), `afterbegin`);
 const siteMenu = tripControl.querySelector(`nav`);
 tripControl.querySelector(`h2`).after(siteMenu);
 
-render(tripControl, createSiteFilterTemplate(), `beforeend`);
+render(tripControl, createSiteFilterTemplate(siteFilters), `beforeend`);
 
 const tripEventsSection = document.querySelector(`.trip-events`);
-render(tripEventsSection, createEventFilterTemplate(), `afterbegin`);
+render(tripEventsSection, createEventFilterTemplate(eventFilters), `afterbegin`);
 const eventFilter = tripEventsSection.querySelector(`.trip-sort`);
 tripEventsSection.querySelector(`h2`).after(eventFilter);
 
-render(tripEventsSection, createEventEditFormTemplate(), `beforeend`);
+render(tripEventsSection, createEventEditFormTemplate(cards[0], eventPointCities), `beforeend`);
 
 createNewElement(`ul`, `trip-days`, tripEventsSection);
 const tripDaysList = tripEventsSection.querySelector(`.trip-days`);
@@ -45,6 +50,5 @@ createNewElement(`ul`, `trip-events__list`, tripDaysItem);
 
 const tripEventsList = tripEventsSection.querySelector(`.trip-events__list`);
 
-for (let i = 1; i <= EVENT_NUMBER; i++) {
-  render(tripEventsList, createEventItemTemplate(), `beforeend`);
-}
+let showingTasksCount = SHOWING_EVENTS_COUNT_ON_START;
+cards.slice(1, showingTasksCount).forEach((card) => render(tripEventsList, createEventItemTemplate(card), `beforeend`));
