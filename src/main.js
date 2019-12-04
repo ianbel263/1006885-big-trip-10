@@ -5,6 +5,7 @@ import {createSiteMenuTemplate} from './components/site-menu.js';
 import {createTripInfoTemplate} from './components/trip-info.js';
 import {tripDaysContainerTemplate} from './components/trip-days-container.js';
 import {createDayItemTemplate} from './components/trip-days-item.js';
+import {createEventItemTemplate} from './components/trip-event-item.js';
 import {cards} from './mock/card.js';
 import {sortedCardsByDate} from './mock/card.js';
 import {eventPointCities} from './mock/card.js';
@@ -13,7 +14,7 @@ import {menu} from './mock/menu.js';
 import {siteFilters} from './mock/site-filter.js';
 import {eventSort} from './mock/event-sort.js';
 
-const SHOWING_EVENTS_COUNT_ON_START = 4;
+// const SHOWING_EVENTS_COUNT_ON_START = 4;
 
 const render = (container, template, place = `beforeend`) => {
   container.insertAdjacentHTML(place, template);
@@ -41,8 +42,23 @@ render(tripEventsSection, createEventEditFormTemplate(sortedCardsByDate[0], even
 render(tripEventsSection, tripDaysContainerTemplate());
 const tridDaysList = tripEventsSection.querySelector(`.trip-days`);
 
+const getUniqueDates = () => {
+  return Array.from(new Set(sortedCardsByDate.map((card) => new Date(card.startDate).toDateString())));
+};
+
+const uniqueDates = getUniqueDates(sortedCardsByDate);
+const getDaysListElement = (index) => {
+  return tridDaysList.querySelector(`.trip-days__item:nth-child(${index})`).querySelector(`.trip-events__list`);
+};
+
 //  render days and events
-render(tridDaysList, createDayItemTemplate(sortedCardsByDate.slice(1, SHOWING_EVENTS_COUNT_ON_START)));
+uniqueDates
+  .forEach((date, i) => {
+    render(tridDaysList, createDayItemTemplate(date, i));
+    const daysList = getDaysListElement(i + 1);
+    sortedCardsByDate.filter(({startDate}) => new Date(startDate).toDateString() === date)
+    .forEach((day) => render(daysList, createEventItemTemplate(day)));
+  });
 
 //  render trip info
 const tripInfoSection = document.querySelector(`.trip-info`);

@@ -1,4 +1,4 @@
-const CARDS_COUNT = 15;
+const CARDS_COUNT = 20;
 
 const MAX_PHOTOS = 10;
 const MIN_OFFERS = 0;
