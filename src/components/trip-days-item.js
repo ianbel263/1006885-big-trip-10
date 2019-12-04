@@ -1,42 +1,62 @@
-import {valueToMonth} from '../utils.js';
+import {Months} from '../utils.js';
 import {castDateFormat} from '../utils.js';
-import {createEventItemTemplate} from '../components/event-item.js';
+import {castTimeFormat} from '../utils.js';
+import {calculateTimeInterval} from '../utils.js';
 
-const createDayItemTemplate = (date, events) => {
-  const dateObj = new Date(date);
-  const day = dateObj.getDate();
-  const month = valueToMonth[dateObj.getMonth()];
+export const createDayItemTemplate = (cards) => {
 
-  const eventsMarkup = events.map((event) => createEventItemTemplate(event)).join(`\n`);
+  return Array.from(new Set(cards.map((card) => new Date(card.startDate).toDateString()))).map((day) => {
+    return (
+      `<li class="trip-days__item  day">
+        <div class="day__info">
+          <span class="day__counter">1</span>
+          <time class="day__date" datetime="${castDateFormat(day)}">${Months[new Date(day).getMonth()]}&nbsp;${new Date(day).getDate()}</time>
+        </div>
+        <ul class="trip-events__list">
 
-  return (
-    `<li class="trip-days__item  day">
-      <div class="day__info">
-        <span class="day__counter">1</span>
-        <time class="day__date" datetime="2019-03-18">${month}&nbsp;${day}</time>
-      </div>
-      <ul class="trip-events__list">
-        ${eventsMarkup}
+    ${cards.filter(({startDate}) => {
+        return new Date(startDate).toDateString() === day;
+      }).
+      map(({type: {type}, destination, startDate, endDate, price, offers}) => {
+        return (
+          `<li class="trip-events__item">
+            <div class="event">
+              <div class="event__type">
+                <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
+              </div>
+              <h3 class="event__title">${type} to ${destination}</h3>
+              <div class="event__schedule">
+                <p class="event__time">
+                  <time class="event__start-time" datetime="${castDateFormat(startDate)}T${castTimeFormat(startDate)}">${castTimeFormat(startDate)}</time>
+                  &mdash;
+                  <time class="event__end-time" datetime="${castDateFormat(endDate)}T${castTimeFormat(endDate)}">${castTimeFormat(endDate)}</time>
+                </p>
+                <p class="event__duration">${calculateTimeInterval(startDate, endDate)}</p>
+              </div>
+              <p class="event__price">
+                &euro;&nbsp;<span class="event__price-value">${price}</span>
+              </p>
+              <h4 class="visually-hidden">Offers:</h4>
+              <ul class="event__selected-offers">
+          ${offers.map(({title, price: offerPrice}) => {
+            return (
+              `<li class="event__offer">
+                <span class="event__offer-title">${title}</span>
+                &plus;
+                &euro;&nbsp;<span class="event__offer-price">${offerPrice}</span>
+              </li>`
+            );
+          }).join(`\n`)}
+              </ul>
+              <button class="event__rollup-btn" type="button">
+                <span class="visually-hidden">Open event</span>
+              </button>
+            </div>
+          </li>`
+        );
+      }).join(`\n`)}
       </ul>
-     </li>`
-  );
-};
-
-const generateDaysMarkup = (days, events) => {
-  return Array.from(days).map((day) => {
-    const dayEvents = events.filter((event) => castDateFormat(event.startDate) === day);
-    return createDayItemTemplate(day, dayEvents);
+    </li>`
+    );
   }).join(`\n`);
-};
-
-export const createDaysListTemplate = (events) => {
-  events.sort((a, b) => a.startDate.getTime() - b.startDate.getTime());
-  const days = new Set(events.map((event) => castDateFormat(event.startDate)));
-  const daysMarkup = generateDaysMarkup(days, events);
-
-  return (
-    `<ul class="trip-days">
-      ${daysMarkup}
-    </ul>`
-  );
 };

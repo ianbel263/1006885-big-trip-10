@@ -1,44 +1,55 @@
 import {createEventEditFormTemplate} from './components/event-edit.js';
-import {createEventFilterTemplate} from './components/event-filter.js';
-// import {createEventItemTemplate} from './components/event-item.js';
+import {createEventSortTemplate} from './components/event-sort.js';
 import {createSiteFilterTemplate} from './components/site-filter.js';
 import {createSiteMenuTemplate} from './components/site-menu.js';
-import {createDaysListTemplate} from './components/trip-days-item.js';
 import {createTripInfoTemplate} from './components/trip-info.js';
+import {tripDaysContainerTemplate} from './components/trip-days-container.js';
+import {createDayItemTemplate} from './components/trip-days-item.js';
 import {cards} from './mock/card.js';
+import {sortedCardsByDate} from './mock/card.js';
+import {eventPointCities} from './mock/card.js';
+import {eventPointTypes} from './mock/card.js';
 import {menu} from './mock/menu.js';
 import {siteFilters} from './mock/site-filter.js';
-import {eventFilters} from './mock/event-filter.js';
-import {eventPointCities} from './mock/card.js';
+import {eventSort} from './mock/event-sort.js';
 
 const SHOWING_EVENTS_COUNT_ON_START = 4;
 
-const render = (container, template, place) => {
+const render = (container, template, place = `beforeend`) => {
   container.insertAdjacentHTML(place, template);
 };
 
-const tripControl = document.querySelector(`.trip-controls`);
-render(tripControl, createSiteMenuTemplate(menu), `afterbegin`);
-const siteMenu = tripControl.querySelector(`nav`);
-tripControl.querySelector(`h2`).after(siteMenu);
+//  render site menu
+const tripControlDiv = document.querySelector(`.trip-controls`);
+render(tripControlDiv, createSiteMenuTemplate(menu), `afterbegin`);
+const siteMenu = tripControlDiv.querySelector(`.trip-tabs`);
+tripControlDiv.querySelector(`h2`).after(siteMenu);
 
-render(tripControl, createSiteFilterTemplate(siteFilters), `beforeend`);
+//  render site filters
+render(tripControlDiv, createSiteFilterTemplate(siteFilters));
 
+//  render sort filters
 const tripEventsSection = document.querySelector(`.trip-events`);
-render(tripEventsSection, createEventFilterTemplate(eventFilters), `afterbegin`);
-const eventFilter = tripEventsSection.querySelector(`.trip-sort`);
-tripEventsSection.querySelector(`h2`).after(eventFilter);
+render(tripEventsSection, createEventSortTemplate(eventSort), `afterbegin`);
+const eventSortFilter = tripEventsSection.querySelector(`.trip-sort`);
+tripEventsSection.querySelector(`h2`).after(eventSortFilter);
 
-render(tripEventsSection, createEventEditFormTemplate(cards[0], eventPointCities), `beforeend`);
-let showingTasksCount = SHOWING_EVENTS_COUNT_ON_START;
-render(tripEventsSection, createDaysListTemplate(cards.slice(1, showingTasksCount)), `beforeend`);
-//
+//  render add new event
+render(tripEventsSection, createEventEditFormTemplate(sortedCardsByDate[0], eventPointTypes, eventPointCities));
 
+//  render days container (ul)
+render(tripEventsSection, tripDaysContainerTemplate());
+const tridDaysList = tripEventsSection.querySelector(`.trip-days`);
+
+//  render days and events
+render(tridDaysList, createDayItemTemplate(sortedCardsByDate.slice(1, SHOWING_EVENTS_COUNT_ON_START)));
+
+//  render trip info
 const tripInfoSection = document.querySelector(`.trip-info`);
-render(tripInfoSection, createTripInfoTemplate(cards), `afterbegin`);
+render(tripInfoSection, createTripInfoTemplate(sortedCardsByDate), `afterbegin`);
 
+//  calculate total price
 const tripTotalPrice = document.querySelector(`.trip-info__cost-value`);
-
 tripTotalPrice.textContent = cards.reduce((totalPrice, it) => {
   return totalPrice + it.price + it.offers.reduce((totalOfferPrice, offer) => {
     return totalOfferPrice + offer.price;

@@ -1,40 +1,8 @@
 import {formatDate} from '../utils.js';
 
-const renderOffersList = (offers) => {
-  return offers
-    .map((offer) => {
-      const {type, price, title, isChecked} = offer;
-      return (
-        `<div class="event__offer-selector">
-         <input class="event__offer-checkbox  visually-hidden" id="event-offer-${type}-1" type="checkbox" name="event-offer-${type}" ${isChecked ? `checked` : ``}>
-         <label class="event__offer-label" for="event-offer-${type}-1">
-           <span class="event__offer-title">${title}</span>
-           &plus;
-           &euro;&nbsp;<span class="event__offer-price">${price}</span>
-         </label>
-       </div>`
-      );
-    })
-    .join(`\n`);
-};
+export const createEventEditFormTemplate = (event, eventPointTypes, eventPointCities) => {
 
-const renderPhotos = (photosUrls) => {
-  return photosUrls
-    .map((photoUrl) => {
-      return `<img class="event__photo" src="${photoUrl}" alt="Event photo">`;
-    })
-    .join(`\n`);
-};
-
-export const createEventEditFormTemplate = (card, eventPointCities) => {
-  const createCitiesList = () => {
-    return eventPointCities.map((it) => {
-      return `<option value="${it}"></option>`;
-    })
-    .join(`\n`);
-  };
-
-  const {type: {type, group, isChecked}, destination, startDate, endDate, price, offers, description, photosUrls} = card;
+  const {destination, startDate, endDate, price, offers, description, photosUrls} = event;
 
   return (
     `<form class="trip-events__item  event  event--edit" action="#" method="post">
@@ -47,21 +15,40 @@ export const createEventEditFormTemplate = (card, eventPointCities) => {
           <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
 
           <div class="event__type-list">
-            <fieldset class="event__type-group">
-              <legend class="visually-hidden">${group}</legend>
-              <input id="event-type-${type}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type} ${isChecked ? `checked` : ``}">
-              <label class="event__type-label  event__type-label--${type}" for="event-type-${type}-1">Taxi</label>
-            </fieldset>
+
+    ${Array.from(new Set(eventPointTypes.map((pointTypes) => pointTypes.group)))
+      .map((el) => {
+        return (
+          `<fieldset class="event__type-group">
+            <legend class="visually-hidden">${el}</legend>
+
+            ${eventPointTypes.filter((eventType) => eventType.group === el)
+              .map(({type}) => {
+                // console.log("it", it);
+                return (
+                  `<div class="event__type-item">
+                    <input id="event-type-${type}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}">
+                    <label class="event__type-label  event__type-label--${type}" for="event-type-${type}-1">${type}</label>
+                  </div>`
+                );
+              }).join(`\n`)}
+            </fieldset>`
+        );
+      }).join(`\n`)}
           </div>
         </div>
 
         <div class="event__field-group  event__field-group--destination">
           <label class="event__label  event__type-output" for="event-destination-1">
-            ${type} at
+      ${event.type.type} at
           </label>
           <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination}" list="destination-list-1">
           <datalist id="destination-list-1">
-            ${createCitiesList(eventPointCities)}
+      ${eventPointCities.map((city) => {
+      return (
+        `<option value="${city}"></option>`
+      );
+    }).join(`\n`)}
           </datalist>
         </div>
 
@@ -94,7 +81,18 @@ export const createEventEditFormTemplate = (card, eventPointCities) => {
           <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
           <div class="event__available-offers">
-            ${renderOffersList(offers)}
+    ${offers.map(({type, price: offerPrice, title, isChecked}) => {
+      return (
+        `<div class="event__offer-selector">
+          <input class="event__offer-checkbox  visually-hidden" id="event-offer-${type}-1" type="checkbox" name="event-offer-${type}" ${isChecked ? `checked` : ``}>
+          <label class="event__offer-label" for="event-offer-${type}-1">
+            <span class="event__offer-title">${title}</span>
+            &plus;
+            &euro;&nbsp;<span class="event__offer-price">${offerPrice}</span>
+          </label>
+        </div>`
+      );
+    }).join(`\n`)}
           </div>
         </section>
 
@@ -104,7 +102,9 @@ export const createEventEditFormTemplate = (card, eventPointCities) => {
 
           <div class="event__photos-container">
             <div class="event__photos-tape">
-              ${renderPhotos(photosUrls)}
+    ${photosUrls.map((photoUrl) => {
+      return `<img class="event__photo" src="${photoUrl}" alt="Event photo">`;
+    }).join(`\n`)}
             </div>
           </div>
         </section>

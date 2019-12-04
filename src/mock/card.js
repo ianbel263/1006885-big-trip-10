@@ -1,4 +1,4 @@
-const CARDS_COUNT = 10;
+const CARDS_COUNT = 15;
 
 const MAX_PHOTOS = 10;
 const MIN_OFFERS = 0;
@@ -19,16 +19,16 @@ const eventPointTypes = [
   {type: `trip`, isChecked: false, group: `Transfer`}
 ];
 
-export const eventPointCities = [`Amsterdam`, `Berlin`, `Vienna`, `Paris`, `London`, `Barcelona`, `Madrid`, `Prague`];
+const eventPointCities = [`Amsterdam`, `Berlin`, `Vienna`, `Paris`, `London`, `Barcelona`, `Madrid`, `Prague`];
 
 const eventPointDescriptions = [`Dolore ut ut culpa ex dolor commodo elit quis dolor cillum exercitation magna ut.`, `Lorem ipsum duis sed laborum consectetur qui dolore adipisicing nisi quis.`, `Esse in ad ea consequat commodo dolore sunt magna esse labore commodo fugiat anim voluptate est sit ad velit.`, `Aliqua aute ullamco tempor nulla id excepteur adipisicing est consectetur ullamco commodo sit dolor proident occaecat.`, `Do ut esse occaecat laborum sed est velit laborum ut aute sed eu voluptate adipisicing dolore.`];
 
 const eventPointOffers = [
-  {type: `luggage`, title: `Add luggage`, price: 10, isChecked: true},
-  {type: `comfort`, title: `Switch to comfort class`, price: 150, isChecked: true},
-  {type: `meal`, title: `Add meal`, price: 2, isChecked: false},
-  {type: `seats`, title: `Choose seats`, price: 9, isChecked: false},
-  {type: `train`, title: `Travel by train`, price: 40, isChecked: false}
+  {type: `luggage`, title: `Add luggage`, price: 10, isChecked: Math.random() > 0.5},
+  {type: `comfort`, title: `Switch to comfort class`, price: 150, isChecked: Math.random() > 0.5},
+  {type: `meal`, title: `Add meal`, price: 2, isChecked: Math.random() > 0.5},
+  {type: `seats`, title: `Choose seats`, price: 9, isChecked: Math.random() > 0.5},
+  {type: `train`, title: `Travel by train`, price: 40, isChecked: Math.random() > 0.5}
 ];
 
 const getRandomNumber = (min, max) => {
@@ -41,12 +41,8 @@ const getRandomArrayItem = (array) => {
   return array[randomIndex];
 };
 
-const getRandomEventTime = () => {
-  const date = new Date();
-  date.setFullYear(getRandomNumber(2019, 2021), getRandomNumber(0, 11), getRandomNumber(1, 31));
-  date.setHours(getRandomNumber(0, 23), getRandomNumber(0, 59));
-
-  return date;
+const getRandomDate = () => {
+  return Date.now() + 1 + Math.floor(Math.random() * 7) * 24 * getRandomNumber(0, 60) * 60 * 1000;
 };
 
 const getEventPhotosUrls = () => {
@@ -56,20 +52,26 @@ const getEventPhotosUrls = () => {
 };
 
 const generateOffers = (offers) => {
+  offers.forEach((offer) => {
+    offer.isChecked = Math.random() > 0.5;
+  });
+
   return offers
-    .filter(() => Math.random() > 0.5)
+    .filter(({isChecked}) => isChecked)
     .slice(MIN_OFFERS, MAX_OFFERS);
 };
 
 const generateCard = () => {
+  const startDate = getRandomDate();
+  const endDate = getRandomDate();
   return {
     type: getRandomArrayItem(eventPointTypes),
     destination: getRandomArrayItem(eventPointCities),
     description: getRandomArrayItem(eventPointDescriptions),
     photosUrls: getEventPhotosUrls(),
     offers: generateOffers(eventPointOffers),
-    startDate: getRandomEventTime(),
-    endDate: getRandomEventTime(),
+    startDate: Math.min(startDate, endDate),
+    endDate: Math.max(startDate, endDate),
     price: getRandomNumber(0, MAX_PRICE)
   };
 };
@@ -82,4 +84,10 @@ const generateCards = (count) => {
 
 const cards = generateCards(CARDS_COUNT);
 
-export {cards};
+const sortCardsByStartDate = (events) => {
+  return events.slice().sort((a, b) => a.startDate - b.startDate);
+};
+
+const sortedCardsByDate = sortCardsByStartDate(cards);
+
+export {cards, eventPointTypes, eventPointCities, sortedCardsByDate};
