@@ -13,7 +13,7 @@ import {menu} from './mock/menu.js';
 import {siteFilters} from './mock/site-filter.js';
 import {eventSort} from './mock/event-sort.js';
 
-const SHOWING_EVENTS_COUNT_ON_START = 4;
+// const SHOWING_EVENTS_COUNT_ON_START = 4;
 
 const render = (container, template, place = `beforeend`) => {
   container.insertAdjacentHTML(place, template);
@@ -52,13 +52,18 @@ const getUniqueDates = () => {
 };
 
 const uniqueDates = getUniqueDates(sortedCardsByDate);
+const getDaysListElement = (index) => {
+  return tridDaysList.querySelector(`.trip-days__item:nth-child(${index})`).querySelector(`.trip-events__list`);
+};
 
 //  render days and events
 uniqueDates
   .forEach((date, i) => {
     render(tridDaysList, createDayItemTemplate(date, i));
-    const currentDay = tridDaysList.querySelector(`.trip-days__item:nth-child(${i + 1})`);
-    const daysList = currentDay.querySelector(`.trip-events__list`);
+    const daysList = getDaysListElement(i + 1);
+    sortedCardsByDate.filter(({startDate}) => new Date(startDate).toDateString() === date)
+    .forEach((day) => render(daysList, createEventItemTemplate(day)));
+  });
 
     sortedCardsByDate
       .filter(({startDate}) => new Date(startDate).toDateString() === date)
