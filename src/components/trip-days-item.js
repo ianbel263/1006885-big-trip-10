@@ -4,12 +4,13 @@ import {castTimeFormat} from '../utils.js';
 import {calculateTimeInterval} from '../utils.js';
 
 export const createDayItemTemplate = (cards) => {
-
+  let daysCount = 0;
   return Array.from(new Set(cards.map((card) => new Date(card.startDate).toDateString()))).map((day) => {
+    daysCount++;
     return (
       `<li class="trip-days__item  day">
         <div class="day__info">
-          <span class="day__counter">1</span>
+          <span class="day__counter">${daysCount}</span>
           <time class="day__date" datetime="${castDateFormat(day)}">${Months[new Date(day).getMonth()]}&nbsp;${new Date(day).getDate()}</time>
         </div>
         <ul class="trip-events__list">
