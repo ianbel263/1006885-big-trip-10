@@ -79,9 +79,12 @@ const generateCard = () => {
 const generateCards = (count) => {
   return new Array(count)
     .fill(``)
-    .map(generateCard);
+    .map(generateCard)
+    .sort((a, b) => a.startDate - b.startDate);
 };
 
 const cards = generateCards(CARDS_COUNT);
 
-export {cards, eventPointTypes, eventPointCities};
+const uniqueDates = new Set(cards.map((card) => new Date(card.startDate).toDateString()));
+
+export {cards, eventPointTypes, eventPointCities, uniqueDates};
