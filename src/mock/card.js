@@ -84,10 +84,4 @@ const generateCards = (count) => {
 
 const cards = generateCards(CARDS_COUNT);
 
-const sortCardsByStartDate = (events) => {
-  return events.slice().sort((a, b) => a.startDate - b.startDate);
-};
-
-const sortedCardsByDate = sortCardsByStartDate(cards);
-
-export {cards, eventPointTypes, eventPointCities, sortedCardsByDate};
+export {cards, eventPointTypes, eventPointCities};

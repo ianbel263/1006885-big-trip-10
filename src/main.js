@@ -7,14 +7,13 @@ import {tripDaysContainerTemplate} from './components/trip-days-container.js';
 import {createDayItemTemplate} from './components/trip-days-item.js';
 import {createEventItemTemplate} from './components/trip-event-item.js';
 import {cards} from './mock/card.js';
-import {sortedCardsByDate} from './mock/card.js';
 import {eventPointCities} from './mock/card.js';
 import {eventPointTypes} from './mock/card.js';
 import {menu} from './mock/menu.js';
 import {siteFilters} from './mock/site-filter.js';
 import {eventSort} from './mock/event-sort.js';
 
-// const SHOWING_EVENTS_COUNT_ON_START = 4;
+const SHOWING_EVENTS_COUNT_ON_START = 4;
 
 const render = (container, template, place = `beforeend`) => {
   container.insertAdjacentHTML(place, template);
@@ -35,7 +34,16 @@ render(tripEventsSection, createEventSortTemplate(eventSort), `afterbegin`);
 const eventSortFilter = tripEventsSection.querySelector(`.trip-sort`);
 tripEventsSection.querySelector(`h2`).after(eventSortFilter);
 
-//  render add new event
+// sort events by start date
+const sortCardsByStartDate = (events) => {
+  return events
+    .sort((a, b) => a.startDate - b.startDate)
+    .slice(0, SHOWING_EVENTS_COUNT_ON_START);
+};
+
+const sortedCardsByDate = sortCardsByStartDate(cards);
+
+// render edit event form
 render(tripEventsSection, createEventEditFormTemplate(sortedCardsByDate[0], eventPointTypes, eventPointCities));
 
 //  render days container (ul)
@@ -47,17 +55,18 @@ const getUniqueDates = () => {
 };
 
 const uniqueDates = getUniqueDates(sortedCardsByDate);
-const getDaysListElement = (index) => {
-  return tridDaysList.querySelector(`.trip-days__item:nth-child(${index})`).querySelector(`.trip-events__list`);
-};
 
 //  render days and events
 uniqueDates
   .forEach((date, i) => {
     render(tridDaysList, createDayItemTemplate(date, i));
-    const daysList = getDaysListElement(i + 1);
-    sortedCardsByDate.filter(({startDate}) => new Date(startDate).toDateString() === date)
-    .forEach((day) => render(daysList, createEventItemTemplate(day)));
+    const currentDay = tridDaysList.querySelector(`.trip-days__item:nth-child(${i + 1})`);
+    const daysList = currentDay.querySelector(`.trip-events__list`);
+
+    sortedCardsByDate
+      .slice(1)
+      .filter(({startDate}) => new Date(startDate).toDateString() === date)
+      .forEach((day) => render(daysList, createEventItemTemplate(day)));
   });
 
 //  render trip info
