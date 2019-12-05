@@ -1,4 +1,4 @@
-import {Months} from '../utils.js';
+import {MONTHS} from '../const.js';
 
 export const createTripInfoTemplate = (cards) => {
 
@@ -15,6 +15,6 @@ export const createTripInfoTemplate = (cards) => {
 
   return `<div class="trip-info__main">
       <h1 class="trip-info__title">${routeTemplate}</h1>
-      <p class="trip-info__dates">${startRouteDate.getDate()}&nbsp;${Months[startRouteDate.getMonth()]}&nbsp;&mdash;&nbsp;${endRouteDate.getDate()}&nbsp;${Months[endRouteDate.getMonth()]}</p>
+      <p class="trip-info__dates">${startRouteDate.getDate()}&nbsp;${MONTHS[startRouteDate.getMonth()]}&nbsp;&mdash;&nbsp;${endRouteDate.getDate()}&nbsp;${MONTHS[endRouteDate.getMonth()]}</p>
     </div>`;
 };

@@ -7,7 +7,7 @@ import {createTripInfoTemplate} from './components/trip-info.js';
 import {tripDaysContainerTemplate} from './components/trip-days-container.js';
 import {createDayItemTemplate} from './components/trip-day-item.js';
 import {createEventItemTemplate} from './components/trip-event-item.js';
-import {cards, eventPointCities, eventPointTypes, uniqueDates} from './mock/card.js';
+import {cards, eventPointCities, uniqueDates} from './mock/card.js';
 import {menu} from './mock/menu.js';
 import {siteFilters} from './mock/site-filter.js';
 import {eventSort} from './mock/event-sort.js';
@@ -43,7 +43,7 @@ const tripDaysList = tripEventsSection.querySelector(`.trip-days`);
       .filter(({startDate}) => new Date(startDate).toDateString() === date)
       .forEach((it) => {
         renderElement(day.querySelector(`.trip-events__list`), createElement(createEventItemTemplate(it)));
-        renderElement(day.querySelector(`.trip-events__list`), createElement(createEventEditFormTemplate(it, eventPointTypes, eventPointCities)));
+        renderElement(day.querySelector(`.trip-events__list`), createElement(createEventEditFormTemplate(it, eventPointCities)));
       });
 
     renderElement(tripDaysList, day);
