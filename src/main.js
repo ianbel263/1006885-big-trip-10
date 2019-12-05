@@ -43,11 +43,6 @@ const sortCardsByStartDate = (events) => {
 
 const sortedCardsByDate = sortCardsByStartDate(cards);
 
-// render edit event form
-render(tripEventsSection, createEventEditFormTemplate(sortedCardsByDate[0], eventPointTypes, eventPointCities));
-
-const sortedCardsByDate = sortCardsByStartDate(cards);
-
 //  render days container (ul)
 render(tripEventsSection, tripDaysContainerTemplate());
 const tridDaysList = tripEventsSection.querySelector(`.trip-days`);
@@ -66,10 +61,13 @@ uniqueDates
     const daysList = currentDay.querySelector(`.trip-events__list`);
 
     sortedCardsByDate
-      .slice(1)
       .filter(({startDate}) => new Date(startDate).toDateString() === date)
       .forEach((day) => render(daysList, createEventItemTemplate(day)));
   });
+
+// render edit event form
+const event = tridDaysList.querySelector(`.trip-events__item`);
+render(event, createEventEditFormTemplate(sortedCardsByDate[0], eventPointTypes, eventPointCities));
 
 //  render trip info
 const tripInfoSection = document.querySelector(`.trip-info`);
