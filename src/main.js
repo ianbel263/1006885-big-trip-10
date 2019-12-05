@@ -43,6 +43,11 @@ const sortCardsByStartDate = (events) => {
 
 const sortedCardsByDate = sortCardsByStartDate(cards);
 
+// render edit event form
+render(tripEventsSection, createEventEditFormTemplate(sortedCardsByDate[0], eventPointTypes, eventPointCities));
+
+const sortedCardsByDate = sortCardsByStartDate(cards);
+
 //  render days container (ul)
 render(tripEventsSection, tripDaysContainerTemplate());
 const tridDaysList = tripEventsSection.querySelector(`.trip-days`);
@@ -52,27 +57,19 @@ const getUniqueDates = () => {
 };
 
 const uniqueDates = getUniqueDates(sortedCardsByDate);
-const getDaysListElement = (index) => {
-  return tridDaysList.querySelector(`.trip-days__item:nth-child(${index})`).querySelector(`.trip-events__list`);
-};
 
 //  render days and events
 uniqueDates
   .forEach((date, i) => {
     render(tridDaysList, createDayItemTemplate(date, i));
-    const daysList = getDaysListElement(i + 1);
-    sortedCardsByDate.filter(({startDate}) => new Date(startDate).toDateString() === date)
-    .forEach((day) => render(daysList, createEventItemTemplate(day)));
-  });
+    const currentDay = tridDaysList.querySelector(`.trip-days__item:nth-child(${i + 1})`);
+    const daysList = currentDay.querySelector(`.trip-events__list`);
 
     sortedCardsByDate
+      .slice(1)
       .filter(({startDate}) => new Date(startDate).toDateString() === date)
       .forEach((day) => render(daysList, createEventItemTemplate(day)));
   });
-
-// render edit event form
-const event = tridDaysList.querySelector(`.trip-events__item`);
-render(event, createEventEditFormTemplate(sortedCardsByDate[0], eventPointTypes, eventPointCities));
 
 //  render trip info
 const tripInfoSection = document.querySelector(`.trip-info`);
