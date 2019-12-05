@@ -1,3 +1,4 @@
+import {createElement, renderElement} from './utils.js';
 import {createEventEditFormTemplate} from './components/event-edit.js';
 import {createEventSortTemplate} from './components/event-sort.js';
 import {createSiteFilterTemplate} from './components/site-filter.js';
@@ -32,23 +33,21 @@ const eventSortFilter = tripEventsSection.querySelector(`.trip-sort`);
 
 //  render days container (ul)
 render(tripEventsSection, tripDaysContainerTemplate());
-const tridDaysList = tripEventsSection.querySelector(`.trip-days`);
+const tripDaysList = tripEventsSection.querySelector(`.trip-days`);
 
 //  render days and events
 [...uniqueDates]
   .forEach((date, i) => {
-    render(tridDaysList, createDayItemTemplate(date, i));
-    const currentDay = tridDaysList.querySelector(`.trip-days__item:nth-child(${i + 1})`);
-    const daysList = currentDay.querySelector(`.trip-events__list`);
-
+    const day = createElement(createDayItemTemplate(date, i));
     cards
       .filter(({startDate}) => new Date(startDate).toDateString() === date)
-      .forEach((day) => render(daysList, createEventItemTemplate(day)));
-  });
+      .forEach((it) => {
+        renderElement(day.querySelector(`.trip-events__list`), createElement(createEventItemTemplate(it)));
+        renderElement(day.querySelector(`.trip-events__list`), createElement(createEventEditFormTemplate(it, eventPointTypes, eventPointCities)));
+      });
 
-// render edit event form
-const event = tridDaysList.querySelector(`.trip-events__item`);
-render(event, createEventEditFormTemplate(cards[0], eventPointTypes, eventPointCities));
+    renderElement(tripDaysList, day);
+  });
 
 //  render trip info
 const tripInfoSection = document.querySelector(`.trip-info`);

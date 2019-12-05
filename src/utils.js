@@ -1,5 +1,16 @@
 export const Months = [`JAN`, `FEB`, `MAR`, `APR`, `MAY`, `JUN`, `JUL`, `AUG`, `SEP`, `OCT`, `NOV`, `DEC`];
 
+export const createElement = (template) => {
+  const newElement = document.createElement(`div`);
+  newElement.innerHTML = template;
+
+  return newElement.firstChild;
+};
+
+export const renderElement = (container, element) => {
+  container.append(element);
+};
+
 const castZeroFirstFormat = (value) => {
   return value < 10 ? `0${value}` : String(value);
 };
