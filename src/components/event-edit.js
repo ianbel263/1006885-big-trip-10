@@ -3,7 +3,6 @@ import {formatDate} from '../utils.js';
 export const createEventEditFormTemplate = (event, eventPointTypes, eventPointCities) => {
 
   const {destination, startDate, endDate, price, offers, description, photosUrls} = event;
-  console.log("offers", offers);
 
   return (
     `<form class="event  event--edit" action="#" method="post">
