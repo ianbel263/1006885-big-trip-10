@@ -624,6 +624,8 @@ main {
             transform: translateY(-50%); }
   .event__type-label--taxi::before {
     background-image: url("../img/icons/taxi.png"); }
+  .event__type-label--trip::before {
+    background-image: url("../img/icons/trip.png"); }
   .event__type-label--bus::before {
     background-image: url("../img/icons/bus.png"); }
   .event__type-label--train::before {
