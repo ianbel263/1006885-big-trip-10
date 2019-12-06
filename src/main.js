@@ -43,20 +43,19 @@ const renderEventItem = (event, currentDay) => {
   const eventEditFromComponent = new EventEditFormComponent(event);
   const eventsList = currentDay.getElement().querySelector(`.trip-events__list`);
 
-  const eventEditButton = eventItem.getElement().querySelector(`.event__rollup-btn`);
-  eventEditButton.addEventListener(`click`, () => {
+  eventItem.setEditButtonHandler(() => {
     replaceEventToEdit();
     document.addEventListener(`keydown`, onEscPress);
   });
 
-  const eventEditForm = eventEditFromComponent.getElement();
-  eventEditForm.addEventListener(`submit`, (evt) => {
+  eventEditFromComponent.setSubmitHandler((evt) => {
     evt.preventDefault();
     replaceEditToEvent();
   });
 
-  const eventEditFormCancelButton = eventEditFromComponent.getElement().querySelector(`.event__rollup-btn`);
-  eventEditFormCancelButton.addEventListener(`click`, () => replaceEditToEvent());
+  eventEditFromComponent.setCancelButtonHandler(() => {
+    replaceEditToEvent()
+  });
 
   renderElement(eventsList, eventItem);
 };
