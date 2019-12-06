@@ -1,6 +1,6 @@
 import {EVENT_POINT_TYPES} from '../const.js';
 
-const CARDS_COUNT = 20;
+const CARDS_COUNT = 10;
 
 const MAX_PHOTOS = 10;
 const MIN_OFFERS = 0;
