@@ -1,8 +1,9 @@
 //  import constants
 import {ESC_KEYCODE} from './const.js';
 
+//  import utils
+import {renderElement, RenderPosition} from './utils/render.js';
 //  import data
-import {renderElement, RenderPosition} from './utils.js';
 import {cards, uniqueDates} from './mock/card.js';
 import {siteMenu} from './mock/menu.js';
 import {siteFilters} from './mock/site-filter.js';

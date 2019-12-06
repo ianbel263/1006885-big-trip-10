@@ -1,5 +1,5 @@
 import {EVENT_POINT_TYPES} from '../const.js';
-import {formatDate} from '../utils.js';
+import {formatDate} from '../utils/common.js';
 import AbstractComponent from './abstract-component.js';
 
 const createEventEditFormTemplate = (event) => {

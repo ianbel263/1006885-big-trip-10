@@ -1,5 +1,5 @@
 import {MONTHS} from '../const.js';
-import {castDateFormat} from '../utils.js';
+import {castDateFormat} from '../utils/common.js';
 import AbstractComponent from './abstract-component.js';
 
 const createDayItemTemplate = (day, dayCount) => {

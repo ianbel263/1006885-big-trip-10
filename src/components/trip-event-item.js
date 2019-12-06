@@ -1,6 +1,4 @@
-import {castTimeFormat} from '../utils.js';
-import {calculateTimeInterval} from '../utils.js';
-import {castDateFormat} from '../utils.js';
+import {castTimeFormat, castDateFormat, calculateTimeInterval} from '../utils/common.js';
 import AbstractComponent from './abstract-component.js';
 
 const createEventItemTemplate = (event) => {
