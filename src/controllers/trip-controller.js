@@ -8,7 +8,6 @@ import EventItemComponent from '../components/event-item.js';
 import EventEditFormComponent from '../components/event-edit.js';
 import NoEventsComponent from '../components/no-events.js';
 import TripDayItemComponent from '../components/trip-day-item.js';
-import TripInfoComponent from '../components/trip-info.js';
 
 const renderEventItem = (event, currentDay) => {
   const onEscPress = (evt) => {
@@ -55,7 +54,6 @@ export default class TripController {
     this._TripDaysContainerComponent = new TripDaysContainerComponent();
     this._EventSortComponent = new EventSortComponent(eventSortFilters);
     //  this._TripDayItemComponent = new TripDayItemComponent();
-    //  this._TripInfoComponent = new TripInfoComponent();
   }
 
   renderEvents(events) {
@@ -82,15 +80,5 @@ export default class TripController {
 
         renderElement(this._TripDaysContainerComponent.getElement(), day);
       });
-
-    const tripInfoSection = document.querySelector(`.trip-info`);
-    renderElement(tripInfoSection, new TripInfoComponent(events), RenderPosition.AFTERBEGIN);
-
-    const tripTotalPrice = document.querySelector(`.trip-info__cost-value`);
-    tripTotalPrice.textContent = events.reduce((totalPrice, it) => {
-      return totalPrice + it.price + it.offers.reduce((totalOfferPrice, offer) => {
-        return totalOfferPrice + offer.price;
-      }, 0);
-    }, 0);
   }
 }
