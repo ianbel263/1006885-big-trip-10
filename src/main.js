@@ -16,7 +16,7 @@ import EventSortComponent from './components/event-sort.js';
 import NoEventsComponent from './components/no-events.js';
 import TripDaysContainerComponent from './components/trip-days-container.js';
 import TripDayItemComponent from './components/trip-day-item.js';
-import EventItemComponent from './components/trip-event-item.js';
+import EventItemComponent from './components/event-item.js';
 import EventEditFormComponent from './components/event-edit.js';
 import TripInfoComponent from './components/trip-info.js';
 
