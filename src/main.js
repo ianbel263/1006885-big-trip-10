@@ -12,6 +12,7 @@ import {eventSortFilters} from './mock/event-sort.js';
 import SiteMenuComponent from './components/site-menu.js';
 import SiteFilterComponent from './components/site-filter.js';
 import EventSortComponent from './components/event-sort.js';
+import FirstEventComponent from './components/first-event.js';
 import TripDaysContainerComponent from './components/trip-days-container.js';
 import TripDayItemComponent from './components/trip-day-item.js';
 import EventItemComponent from './components/trip-event-item.js';
