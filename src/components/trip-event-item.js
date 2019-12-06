@@ -1,6 +1,7 @@
-import {createElement, castTimeFormat} from '../utils.js';
+import {castTimeFormat} from '../utils.js';
 import {calculateTimeInterval} from '../utils.js';
 import {castDateFormat} from '../utils.js';
+import AbstractComponent from './abstract-component.js';
 
 const createEventItemTemplate = (event) => {
   const {type: {type}, destination, startDate, endDate, price, offers} = event;
@@ -43,25 +44,13 @@ const createEventItemTemplate = (event) => {
   );
 };
 
-export default class EventItem {
+export default class EventItem extends AbstractComponent {
   constructor(event) {
+    super();
     this._event = event;
-    this._element = null;
   }
 
   getTemplate() {
     return createEventItemTemplate(this._event);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
