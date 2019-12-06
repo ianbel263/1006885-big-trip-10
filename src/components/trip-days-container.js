@@ -10,15 +10,15 @@ const tripDaysContainerTemplate = () => {
 
 export default class TripDaysContainer {
   constructor() {
-    this._element = null
+    this._element = null;
   }
 
   getTemplate() {
     return tripDaysContainerTemplate();
   }
 
-  getElement () {
-    if(!this._element) {
+  getElement() {
+    if (!this._element) {
       this._element = createElement(this.getTemplate());
     }
 

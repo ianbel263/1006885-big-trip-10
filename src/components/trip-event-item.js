@@ -58,7 +58,7 @@ export default class EventItem {
       this._element = createElement(this.getTemplate());
     }
 
-    return this._element
+    return this._element;
   }
 
   removeElement() {

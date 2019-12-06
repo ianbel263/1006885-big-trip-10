@@ -24,7 +24,7 @@ const createEventSortTemplate = (eventSortFilters) => {
 };
 
 export default class EventSort {
-  constructor (eventSortFilters) {
+  constructor(eventSortFilters) {
     this._eventSortFilters = eventSortFilters;
     this._element = null;
   }
