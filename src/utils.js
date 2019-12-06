@@ -1,4 +1,7 @@
-export const Months = [`JAN`, `FEB`, `MAR`, `APR`, `MAY`, `JUN`, `JUL`, `AUG`, `SEP`, `OCT`, `NOV`, `DEC`];
+export const RenderPosition = {
+  AFTERBEGIN: `afterbegin`,
+  BEFOREEND: `beforeend`
+};
 
 export const createElement = (template) => {
   const newElement = document.createElement(`div`);
@@ -7,8 +10,15 @@ export const createElement = (template) => {
   return newElement.firstChild;
 };
 
-export const renderElement = (container, element) => {
-  container.append(element);
+export const renderElement = (container, element, place = RenderPosition.BEFOREEND) => {
+  switch (place) {
+    case RenderPosition.AFTERBEGIN:
+      container.prepend(element);
+      break;
+    case RenderPosition.BEFOREEND:
+      container.append(element);
+      break;
+  }
 };
 
 const castZeroFirstFormat = (value) => {

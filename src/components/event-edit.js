@@ -1,8 +1,8 @@
-import {formatDate} from '../utils.js';
+import {EVENT_POINT_TYPES} from '../const.js';
+import {createElement, formatDate} from '../utils.js';
 
-export const createEventEditFormTemplate = (event, eventPointTypes, eventPointCities) => {
-
-  const {destination, startDate, endDate, price, offers, description, photosUrls} = event;
+const createEventEditFormTemplate = (event) => {
+  const {type: {type}, destination, startDate, endDate, price, offers, description, photosUrls} = event;
 
   return (
     `<form class="event  event--edit" action="#" method="post">
@@ -10,24 +10,24 @@ export const createEventEditFormTemplate = (event, eventPointTypes, eventPointCi
         <div class="event__type-wrapper">
           <label class="event__type  event__type-btn" for="event-type-toggle-1">
             <span class="visually-hidden">Choose event type</span>
-            <img class="event__type-icon" width="17" height="17" src="img/icons/flight.png" alt="Event type icon">
+            <img class="event__type-icon" width="17" height="17" src="img/icons/${type}.png" alt="Event type icon">
           </label>
           <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
 
           <div class="event__type-list">
 
-    ${Array.from(new Set(eventPointTypes.map((pointTypes) => pointTypes.group)))
+    ${Array.from(new Set(EVENT_POINT_TYPES.map((pointTypes) => pointTypes.group)))
       .map((el) => {
         return (
           `<fieldset class="event__type-group">
             <legend class="visually-hidden">${el}</legend>
 
-            ${eventPointTypes.filter((eventType) => eventType.group === el)
-              .map(({type}) => {
+            ${EVENT_POINT_TYPES.filter((eventType) => eventType.group === el)
+              .map(({type: offerType}) => {
                 return (
                   `<div class="event__type-item">
-                    <input id="event-type-${type}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}">
-                    <label class="event__type-label  event__type-label--${type}" for="event-type-${type}-1">${type}</label>
+                    <input id="event-type-${offerType}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${offerType}">
+                    <label class="event__type-label  event__type-label--${offerType}" for="event-type-${offerType}-1">${offerType}</label>
                   </div>`
                 );
               }).join(`\n`)}
@@ -44,11 +44,9 @@ export const createEventEditFormTemplate = (event, eventPointTypes, eventPointCi
           </label>
           <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination}" list="destination-list-1">
           <datalist id="destination-list-1">
-    ${eventPointCities.map((city) => {
-      return (
-        `<option value="${city}"></option>`
-      );
-    }).join(`\n`)}
+
+            <option value="111111"></option>
+
           </datalist>
         </div>
 
@@ -95,11 +93,11 @@ export const createEventEditFormTemplate = (event, eventPointTypes, eventPointCi
 
           <div class="event__available-offers">
 
-    ${offers.map(({type, price: offerPrice, title, isChecked}) => {
+    ${offers.map(({type: offerType, price: offerPrice, title, isChecked}) => {
       return (
         `<div class="event__offer-selector">
-          <input class="event__offer-checkbox  visually-hidden" id="event-offer-${type}-1" type="checkbox" name="event-offer-${type}" ${isChecked ? `checked` : ``}>
-          <label class="event__offer-label" for="event-offer-${type}-1">
+          <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offerType}-1" type="checkbox" name="event-offer-${offerType}" ${isChecked ? `checked` : ``}>
+          <label class="event__offer-label" for="event-offer-${offerType}-1">
             <span class="event__offer-title">${title}</span>
             &plus;
             &euro;&nbsp;<span class="event__offer-price">${offerPrice}</span>
@@ -127,3 +125,26 @@ export const createEventEditFormTemplate = (event, eventPointTypes, eventPointCi
     </form>`
   );
 };
+
+export default class EventEditForm {
+  constructor(event) {
+    this._event = event;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createEventEditFormTemplate(this._event);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

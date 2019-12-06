@@ -1,4 +1,6 @@
-export const createSiteMenuTemplate = (menuList) => {
+import {createElement} from '../utils.js';
+
+const createSiteMenuTemplate = (menuList) => {
 
   return (
     `<nav class="trip-controls__trip-tabs trip-tabs">
@@ -8,3 +10,26 @@ export const createSiteMenuTemplate = (menuList) => {
     </nav>`
   );
 };
+
+export default class SiteMenu {
+  constructor(menuList) {
+    this._menuList = menuList;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createSiteMenuTemplate(this._menuList);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

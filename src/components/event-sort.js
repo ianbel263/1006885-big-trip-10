@@ -1,4 +1,6 @@
-export const createEventSortTemplate = (eventSortFilters) => {
+import {createElement} from '../utils.js';
+
+const createEventSortTemplate = (eventSortFilters) => {
 
   return (
     `<form class="trip-events__trip-sort  trip-sort" action="#" method="get">
@@ -20,3 +22,26 @@ export const createEventSortTemplate = (eventSortFilters) => {
     </form>`
   );
 };
+
+export default class EventSort {
+  constructor(eventSortFilters) {
+    this._eventSortFilters = eventSortFilters;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createEventSortTemplate(this._eventSortFilters);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

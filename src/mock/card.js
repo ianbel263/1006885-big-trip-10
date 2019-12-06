@@ -1,23 +1,11 @@
+import {EVENT_POINT_TYPES} from '../const.js';
+
 const CARDS_COUNT = 20;
 
 const MAX_PHOTOS = 10;
 const MIN_OFFERS = 0;
 const MAX_OFFERS = 2;
 const MAX_PRICE = 500;
-
-const eventPointTypes = [
-  {type: `bus`, isChecked: false, group: `Transfer`},
-  {type: `check-in`, isChecked: false, group: `Activity`},
-  {type: `drive`, isChecked: false, group: `Transfer`},
-  {type: `flight`, isChecked: false, group: `Transfer`},
-  {type: `restaurant`, isChecked: false, group: `Activity`},
-  {type: `ship`, isChecked: false, group: `Transfer`},
-  {type: `sightseeing`, isChecked: true, group: `Activity`},
-  {type: `taxi`, isChecked: false, group: `Transfer`},
-  {type: `train`, isChecked: false, group: `Transfer`},
-  {type: `transport`, isChecked: false, group: `Transfer`},
-  {type: `trip`, isChecked: false, group: `Transfer`}
-];
 
 const eventPointCities = [`Amsterdam`, `Berlin`, `Vienna`, `Paris`, `London`, `Barcelona`, `Madrid`, `Prague`];
 
@@ -65,7 +53,7 @@ const generateCard = () => {
   const startDate = getRandomDate();
   const endDate = getRandomDate();
   return {
-    type: getRandomArrayItem(eventPointTypes),
+    type: getRandomArrayItem(EVENT_POINT_TYPES),
     destination: getRandomArrayItem(eventPointCities),
     description: getRandomArrayItem(eventPointDescriptions),
     photosUrls: getEventPhotosUrls(),
@@ -87,4 +75,4 @@ const cards = generateCards(CARDS_COUNT);
 
 const uniqueDates = new Set(cards.map((card) => new Date(card.startDate).toDateString()));
 
-export {cards, eventPointTypes, eventPointCities, uniqueDates};
+export {cards, eventPointCities, uniqueDates};
