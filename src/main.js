@@ -2,7 +2,7 @@
 import {ESC_KEYCODE} from './const.js';
 
 //  import utils
-import {renderElement, RenderPosition} from './utils/render.js';
+import {renderElement, replaceComponents, RenderPosition} from './utils/render.js';
 //  import data
 import {cards, uniqueDates} from './mock/card.js';
 import {siteMenu} from './mock/menu.js';
@@ -22,70 +22,73 @@ import TripInfoComponent from './components/trip-info.js';
 
 // const SHOWING_EVENTS_COUNT_ON_START = 4;
 
+//  render eventItems & editForms
+const renderEventItem = (event, currentDay) => {
+  const onEscPress = (evt) => {
+    if (evt.keyCode === ESC_KEYCODE) {
+      replaceEditToEvent();
+      document.removeEventListener(`keydown`, onEscPress);
+    }
+  };
+
+  const replaceEventToEdit = () => {
+    replaceComponents(eventEditFromComponent, eventItem);
+  };
+
+  const replaceEditToEvent = () => {
+    replaceComponents(eventItem, eventEditFromComponent);
+  };
+
+  const eventItem = new EventItemComponent(event);
+  const eventEditFromComponent = new EventEditFormComponent(event);
+  const eventsList = currentDay.getElement().querySelector(`.trip-events__list`);
+
+  const eventEditButton = eventItem.getElement().querySelector(`.event__rollup-btn`);
+  eventEditButton.addEventListener(`click`, () => {
+    replaceEventToEdit();
+    document.addEventListener(`keydown`, onEscPress);
+  });
+
+  const eventEditForm = eventEditFromComponent.getElement();
+  eventEditForm.addEventListener(`submit`, (evt) => {
+    evt.preventDefault();
+    replaceEditToEvent();
+  });
+
+  const eventEditFormCancelButton = eventEditFromComponent.getElement().querySelector(`.event__rollup-btn`);
+  eventEditFormCancelButton.addEventListener(`click`, () => replaceEditToEvent());
+
+  renderElement(eventsList, eventItem);
+};
+
 //  render site menu
 const tripControlDiv = document.querySelector(`.trip-controls`);
-renderElement(tripControlDiv, new SiteMenuComponent(siteMenu).getElement());
+renderElement(tripControlDiv, new SiteMenuComponent(siteMenu));
 
 //  render site filters
-renderElement(tripControlDiv, new SiteFilterComponent(siteFilters).getElement());
+renderElement(tripControlDiv, new SiteFilterComponent(siteFilters));
 
 //  render sort filters
 const tripEventsSection = document.querySelector(`.trip-events`);
 
-if (cards.length === 0) {
-  renderElement(tripEventsSection, new NoEventsComponent().getElement());
-} else {
-  renderElement(tripEventsSection, new EventSortComponent(eventSortFilters).getElement(), RenderPosition.AFTERBEGIN);
+const renderEvents = (events) => {
+  if (events.length === 0) {
+    renderElement(tripEventsSection, new NoEventsComponent());
+    return
+  }
+
+  renderElement(tripEventsSection, new EventSortComponent(eventSortFilters), RenderPosition.AFTERBEGIN);
 
   //  render days container (ul)
-  renderElement(tripEventsSection, new TripDaysContainerComponent().getElement());
+  renderElement(tripEventsSection, new TripDaysContainerComponent());
   const tripDaysList = tripEventsSection.querySelector(`.trip-days`);
-
-  //  render eventItems & editForms
-  const renderEventItem = (event, currentDay) => {
-    const onEscPress = (evt) => {
-      if (evt.keyCode === ESC_KEYCODE) {
-        replaceEditToEvent();
-        document.removeEventListener(`keydown`, onEscPress);
-      }
-    };
-
-    const replaceEventToEdit = () => {
-      eventsList.replaceChild(eventEditFromComponent.getElement(), eventItem.getElement());
-    };
-
-    const replaceEditToEvent = () => {
-      eventsList.replaceChild(eventItem.getElement(), eventEditFromComponent.getElement());
-    };
-
-    const eventItem = new EventItemComponent(event);
-    const eventEditFromComponent = new EventEditFormComponent(event);
-    const eventsList = currentDay.querySelector(`.trip-events__list`);
-
-    const eventEditButton = eventItem.getElement().querySelector(`.event__rollup-btn`);
-    eventEditButton.addEventListener(`click`, () => {
-      replaceEventToEdit();
-      document.addEventListener(`keydown`, onEscPress);
-    });
-
-    const eventEditForm = eventEditFromComponent.getElement();
-    eventEditForm.addEventListener(`submit`, (evt) => {
-      evt.preventDefault();
-      replaceEditToEvent();
-    });
-
-    const eventEditFormCancelButton = eventEditFromComponent.getElement().querySelector(`.event__rollup-btn`);
-    eventEditFormCancelButton.addEventListener(`click`, () => replaceEditToEvent());
-
-    renderElement(eventsList, eventItem.getElement());
-  };
 
   //  render days and events
   [...uniqueDates]
     .forEach((date, i) => {
-      const day = new TripDayItemComponent(date, i).getElement();
+      const day = new TripDayItemComponent(date, i);
 
-      cards
+      events
         .filter(({startDate}) => new Date(startDate).toDateString() === date)
         .forEach((it) => {
           renderEventItem(it, day);
@@ -95,16 +98,16 @@ if (cards.length === 0) {
     });
 
   //  render trip info
-  const tripInfoSection = document.querySelector(`.trip-info`);
-  renderElement(tripInfoSection, new TripInfoComponent(cards).getElement(), RenderPosition.AFTERBEGIN);
+    const tripInfoSection = document.querySelector(`.trip-info`);
+    renderElement(tripInfoSection, new TripInfoComponent(events), RenderPosition.AFTERBEGIN);
 
   //  calculate total price
   const tripTotalPrice = document.querySelector(`.trip-info__cost-value`);
-  tripTotalPrice.textContent = cards.reduce((totalPrice, it) => {
+  tripTotalPrice.textContent = events.reduce((totalPrice, it) => {
     return totalPrice + it.price + it.offers.reduce((totalOfferPrice, offer) => {
       return totalOfferPrice + offer.price;
     }, 0);
   }, 0);
-}
+};
 
-
+renderEvents(cards);
