@@ -33,6 +33,26 @@ renderElement(tripEventsSection, new EventSortComponent(eventSortFilters).getEle
 renderElement(tripEventsSection, new TripDaysContainerComponent().getElement());
 const tripDaysList = tripEventsSection.querySelector(`.trip-days`);
 
+//  render eventItems & editForms
+const renderEventItem = (event, currentDay) => {
+  const eventItem = new EventItemComponent(event);
+  const eventEditFromComponent = new EventEditFormComponent(event);
+  const eventsList = currentDay.querySelector(`.trip-events__list`);
+
+  const eventEditButton = eventItem.getElement().querySelector(`.event__rollup-btn`);
+  eventEditButton.addEventListener(`click`, () => {
+    eventsList.replaceChild(eventEditFromComponent.getElement(), eventItem.getElement());
+  });
+
+  const eventEditForm = eventEditFromComponent.getElement();
+  eventEditForm.addEventListener(`submit`, (evt) => {
+    evt.preventDefault();
+    eventsList.replaceChild(eventItem.getElement(), eventEditFromComponent.getElement());
+  });
+
+  renderElement(eventsList, eventItem.getElement());
+};
+
 //  render days and events
 [...uniqueDates]
   .forEach((date, i) => {
@@ -41,8 +61,7 @@ const tripDaysList = tripEventsSection.querySelector(`.trip-days`);
     cards
       .filter(({startDate}) => new Date(startDate).toDateString() === date)
       .forEach((it) => {
-        renderElement(day.querySelector(`.trip-events__list`), new EventItemComponent(it).getElement());
-        renderElement(day.querySelector(`.trip-events__list`), new EventEditFormComponent(it).getElement());
+        renderEventItem(it, day);
       });
 
     renderElement(tripDaysList, day);
