@@ -1,3 +1,6 @@
+//  import constants
+import {ESC_KEYCODE} from './const.js';
+
 //  import data
 import {renderElement, RenderPosition} from './utils.js';
 import {cards, uniqueDates} from './mock/card.js';
@@ -17,7 +20,6 @@ import TripInfoComponent from './components/trip-info.js';
 
 // const SHOWING_EVENTS_COUNT_ON_START = 4;
 
-
 //  render site menu
 const tripControlDiv = document.querySelector(`.trip-controls`);
 renderElement(tripControlDiv, new SiteMenuComponent(siteMenu).getElement());
@@ -35,20 +37,39 @@ const tripDaysList = tripEventsSection.querySelector(`.trip-days`);
 
 //  render eventItems & editForms
 const renderEventItem = (event, currentDay) => {
+  const onEscPress = (evt) => {
+    if (evt.keyCode === ESC_KEYCODE) {
+      replaceEditToEvent();
+      document.removeEventListener(`keydown`, onEscPress);
+    }
+  };
+
+  const replaceEventToEdit = () => {
+    eventsList.replaceChild(eventEditFromComponent.getElement(), eventItem.getElement());
+  };
+
+  const replaceEditToEvent = () => {
+    eventsList.replaceChild(eventItem.getElement(), eventEditFromComponent.getElement());
+  };
+
   const eventItem = new EventItemComponent(event);
   const eventEditFromComponent = new EventEditFormComponent(event);
   const eventsList = currentDay.querySelector(`.trip-events__list`);
 
   const eventEditButton = eventItem.getElement().querySelector(`.event__rollup-btn`);
   eventEditButton.addEventListener(`click`, () => {
-    eventsList.replaceChild(eventEditFromComponent.getElement(), eventItem.getElement());
+    replaceEventToEdit();
+    document.addEventListener(`keydown`, onEscPress);
   });
 
   const eventEditForm = eventEditFromComponent.getElement();
   eventEditForm.addEventListener(`submit`, (evt) => {
     evt.preventDefault();
-    eventsList.replaceChild(eventItem.getElement(), eventEditFromComponent.getElement());
+    replaceEditToEvent();
   });
+
+  const eventEditFormCancelButton = eventEditFromComponent.getElement().querySelector(`.event__rollup-btn`);
+  eventEditFormCancelButton.addEventListener(`click`, () => replaceEditToEvent());
 
   renderElement(eventsList, eventItem.getElement());
 };
