@@ -1,8 +1,8 @@
-import {castTimeFormat} from '../utils.js';
+import {createElement, castTimeFormat} from '../utils.js';
 import {calculateTimeInterval} from '../utils.js';
 import {castDateFormat} from '../utils.js';
 
-export const createEventItemTemplate = (event) => {
+const createEventItemTemplate = (event) => {
   const {type: {type}, destination, startDate, endDate, price, offers} = event;
 
   return (
@@ -43,6 +43,25 @@ export const createEventItemTemplate = (event) => {
   );
 };
 
-// map(({type: {type}, destination, startDate, endDate, price, offers}) => {
+export default class EventItem {
+  constructor(event) {
+    this._event = event;
+    this._element = null;
+  }
 
-//       }).join(`\n`)
+  getTemplate() {
+    return createEventItemTemplate(this._event);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

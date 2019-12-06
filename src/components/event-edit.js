@@ -1,8 +1,7 @@
 import {EVENT_POINT_TYPES} from '../const.js';
-import {formatDate} from '../utils.js';
+import {createElement, formatDate} from '../utils.js';
 
-export const createEventEditFormTemplate = (event, eventPointCities) => {
-
+const createEventEditFormTemplate = (event) => {
   const {type: {type}, destination, startDate, endDate, price, offers, description, photosUrls} = event;
 
   return (
@@ -45,11 +44,9 @@ export const createEventEditFormTemplate = (event, eventPointCities) => {
           </label>
           <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination}" list="destination-list-1">
           <datalist id="destination-list-1">
-    ${eventPointCities.map((city) => {
-      return (
-        `<option value="${city}"></option>`
-      );
-    }).join(`\n`)}
+
+            <option value="111111"></option>
+
           </datalist>
         </div>
 
@@ -128,3 +125,26 @@ export const createEventEditFormTemplate = (event, eventPointCities) => {
     </form>`
   );
 };
+
+export default class EventEditForm {
+  constructor(event) {
+    this._event = event;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createEventEditFormTemplate(this._event);
+  }
+
+  getElement() {
+    if(!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
