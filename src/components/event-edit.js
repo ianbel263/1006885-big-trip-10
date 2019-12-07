@@ -1,5 +1,6 @@
 import {EVENT_POINT_TYPES} from '../const.js';
-import {createElement, formatDate} from '../utils.js';
+import {formatDate} from '../utils/common.js';
+import AbstractComponent from './abstract-component.js';
 
 const createEventEditFormTemplate = (event) => {
   const {type: {type}, destination, startDate, endDate, price, offers, description, photosUrls} = event;
@@ -126,25 +127,22 @@ const createEventEditFormTemplate = (event) => {
   );
 };
 
-export default class EventEditForm {
+export default class EventEditForm extends AbstractComponent {
   constructor(event) {
+    super();
     this._event = event;
-    this._element = null;
   }
 
   getTemplate() {
     return createEventEditFormTemplate(this._event);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
+  setSubmitHandler(handler) {
+    this.getElement().addEventListener(`submit`, handler);
   }
 
-  removeElement() {
-    this._element = null;
+  setCancelButtonHandler(handler) {
+    this.getElement().querySelector(`.event__rollup-btn`)
+      .addEventListener(`click`, handler);
   }
 }

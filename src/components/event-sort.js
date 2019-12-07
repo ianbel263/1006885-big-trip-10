@@ -1,4 +1,4 @@
-import {createElement} from '../utils.js';
+import AbstractComponent from './abstract-component.js';
 
 const createEventSortTemplate = (eventSortFilters) => {
 
@@ -23,25 +23,13 @@ const createEventSortTemplate = (eventSortFilters) => {
   );
 };
 
-export default class EventSort {
+export default class EventSort extends AbstractComponent {
   constructor(eventSortFilters) {
+    super();
     this._eventSortFilters = eventSortFilters;
-    this._element = null;
   }
 
   getTemplate() {
     return createEventSortTemplate(this._eventSortFilters);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
