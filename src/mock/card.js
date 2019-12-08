@@ -12,11 +12,11 @@ const eventPointCities = [`Amsterdam`, `Berlin`, `Vienna`, `Paris`, `London`, `B
 const eventPointDescriptions = [`Dolore ut ut culpa ex dolor commodo elit quis dolor cillum exercitation magna ut.`, `Lorem ipsum duis sed laborum consectetur qui dolore adipisicing nisi quis.`, `Esse in ad ea consequat commodo dolore sunt magna esse labore commodo fugiat anim voluptate est sit ad velit.`, `Aliqua aute ullamco tempor nulla id excepteur adipisicing est consectetur ullamco commodo sit dolor proident occaecat.`, `Do ut esse occaecat laborum sed est velit laborum ut aute sed eu voluptate adipisicing dolore.`];
 
 const eventPointOffers = [
-  {type: `luggage`, title: `Add luggage`, price: 10, isChecked: Math.random() > 0.5},
-  {type: `comfort`, title: `Switch to comfort class`, price: 150, isChecked: Math.random() > 0.5},
-  {type: `meal`, title: `Add meal`, price: 2, isChecked: Math.random() > 0.5},
-  {type: `seats`, title: `Choose seats`, price: 9, isChecked: Math.random() > 0.5},
-  {type: `train`, title: `Travel by train`, price: 40, isChecked: Math.random() > 0.5}
+  {type: `luggage`, title: `Add luggage`, price: 10, isChecked: false},
+  {type: `comfort`, title: `Switch to comfort class`, price: 150, isChecked: false},
+  {type: `meal`, title: `Add meal`, price: 2, isChecked: false},
+  {type: `seats`, title: `Choose seats`, price: 9, isChecked: false},
+  {type: `train`, title: `Travel by train`, price: 40, isChecked: false}
 ];
 
 const getRandomNumber = (min, max) => {
@@ -40,12 +40,14 @@ const getEventPhotosUrls = () => {
 };
 
 const generateOffers = (offers) => {
-  offers.forEach((offer) => {
-    offer.isChecked = Math.random() > 0.5;
-  });
+  const newOffers = JSON.parse(JSON.stringify(offers));
+  newOffers
+    .forEach((el) => {
+      el.isChecked = Math.random() > 0.5;
+    });
 
-  return offers
-    .filter(({isChecked}) => isChecked)
+  return newOffers
+    .filter((offer) => offer.isChecked)
     .slice(MIN_OFFERS, MAX_OFFERS);
 };
 
