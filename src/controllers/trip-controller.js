@@ -9,43 +9,6 @@ import EventEditFormComponent from '../components/event-edit.js';
 import NoEventsComponent from '../components/no-events.js';
 import TripDayItemComponent from '../components/trip-day-item.js';
 
-const renderEventItem = (event, currentDay) => {
-  const onEscPress = (evt) => {
-    if (evt.keyCode === ESC_KEYCODE) {
-      replaceEditToEvent();
-      document.removeEventListener(`keydown`, onEscPress);
-    }
-  };
-
-  const replaceEventToEdit = () => {
-    replaceComponents(eventEditFromComponent, eventItem);
-  };
-
-  const replaceEditToEvent = () => {
-    replaceComponents(eventItem, eventEditFromComponent);
-  };
-
-  const eventItem = new EventItemComponent(event);
-  const eventEditFromComponent = new EventEditFormComponent(event);
-  const eventsList = currentDay.getElement().querySelector(`.trip-events__list`);
-
-  eventItem.setEditButtonHandler(() => {
-    replaceEventToEdit();
-    document.addEventListener(`keydown`, onEscPress);
-  });
-
-  eventEditFromComponent.setSubmitHandler((evt) => {
-    evt.preventDefault();
-    replaceEditToEvent();
-  });
-
-  eventEditFromComponent.setCancelButtonHandler(() => {
-    replaceEditToEvent();
-  });
-
-  renderElement(eventsList, eventItem);
-};
-
 export default class TripController {
   constructor(container) {
     this._container = container;
@@ -53,10 +16,47 @@ export default class TripController {
     this._NoEventsComponent = new NoEventsComponent();
     this._TripDaysContainerComponent = new TripDaysContainerComponent();
     this._EventSortComponent = new EventSortComponent(eventSortFilters);
-    //  this._TripDayItemComponent = new TripDayItemComponent();
   }
 
   renderEvents(events) {
+    const renderEventItem = (event, currentDay) => {
+
+      const onEscPress = (evt) => {
+        if (evt.keyCode === ESC_KEYCODE) {
+          replaceEditToEvent();
+          document.removeEventListener(`keydown`, onEscPress);
+        }
+      };
+
+      const replaceEventToEdit = () => {
+        replaceComponents(eventEditFromComponent, eventItem);
+      };
+
+      const replaceEditToEvent = () => {
+        replaceComponents(eventItem, eventEditFromComponent);
+      };
+
+      const eventItem = new EventItemComponent(event);
+      const eventEditFromComponent = new EventEditFormComponent(event);
+      const eventsList = currentDay.getElement().querySelector(`.trip-events__list`);
+
+      eventItem.setEditButtonHandler(() => {
+        replaceEventToEdit();
+        document.addEventListener(`keydown`, onEscPress);
+      });
+
+      eventEditFromComponent.setSubmitHandler((evt) => {
+        evt.preventDefault();
+        replaceEditToEvent();
+      });
+
+      eventEditFromComponent.setCancelButtonHandler(() => {
+        replaceEditToEvent();
+      });
+
+      renderElement(eventsList, eventItem);
+    };
+
     const container = this._container;
 
     if (events.length === 0) {
