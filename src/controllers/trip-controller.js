@@ -68,17 +68,55 @@ export default class TripController {
 
     renderElement(container, this._TripDaysContainerComponent);
 
-    [...uniqueDates]
-      .forEach((date, i) => {
-        const day = new TripDayItemComponent(date, i);
+    const renderEventsByDefault = () => {
+      [...uniqueDates]
+        .forEach((date, i) => {
+          const day = new TripDayItemComponent(date, i);
 
-        events
-          .filter(({startDate}) => new Date(startDate).toDateString() === date)
-          .forEach((it) => {
-            renderEventItem(it, day);
-          });
+          events
+            .filter(({startDate}) => new Date(startDate).toDateString() === date)
+            .forEach((it) => {
+              renderEventItem(it, day);
+            });
 
-        renderElement(this._TripDaysContainerComponent.getElement(), day);
-      });
+          renderElement(this._TripDaysContainerComponent.getElement(), day);
+        });
+    };
+
+    const renderSortedEvents = (sortedEvents) => {
+      const eventsContainer = new TripDayItemComponent();
+
+      eventsContainer.getElement().querySelector(`.day__info`).innerHTML = ``;
+      sortedEvents.forEach((event) => renderEventItem(event, eventsContainer));
+      renderElement(this._TripDaysContainerComponent.getElement(), eventsContainer);
+    };
+
+    renderEventsByDefault();
+
+    let currentSortType = `event`;
+    this._EventSortComponent.setSortChangeHandler((sortType) => {
+      if (currentSortType === sortType) {
+        return;
+      }
+
+      let sortedEvents = [];
+      switch (sortType) {
+        case `event`:
+          this._TripDaysContainerComponent.getElement().innerHTML = ``;
+          renderEventsByDefault();
+          break;
+        case `time`:
+          this._TripDaysContainerComponent.getElement().innerHTML = ``;
+          sortedEvents = events.slice().sort((a, b) => (b.endDate - b.startDate) - (a.endDate - a.startDate));
+          renderSortedEvents(sortedEvents);
+          break;
+        case `price`:
+          this._TripDaysContainerComponent.getElement().innerHTML = ``;
+          sortedEvents = events.slice().sort((a, b) => b.price - a.price);
+          renderSortedEvents(sortedEvents);
+          break;
+      }
+      currentSortType = sortType;
+    });
   }
 }

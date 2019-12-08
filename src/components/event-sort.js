@@ -4,6 +4,8 @@ export default class EventSort extends AbstractComponent {
   constructor(eventSortFilters) {
     super();
     this._eventSortFilters = eventSortFilters;
+    // this._CurrentSortType = eventSortFilters[0].name.toLowerCase();
+    // console.log("this._CurrentSortType", this._CurrentSortType);
   }
 
   getTemplate() {
@@ -26,5 +28,13 @@ export default class EventSort extends AbstractComponent {
         <span class="trip-sort__item  trip-sort__item--offers">Offers</span>
       </form>`
     );
+  }
+
+  setSortChangeHandler(handler) {
+    this.getElement().querySelectorAll(`.trip-sort__btn`)
+      .forEach((el) => el.addEventListener(`click`, function () {
+        const sortType = el.getAttribute(`for`).slice(5);
+        handler(sortType);
+      }));
   }
 }
