@@ -13,9 +13,9 @@ export default class TripController {
   constructor(container) {
     this._container = container;
 
-    this._NoEventsComponent = new NoEventsComponent();
-    this._TripDaysContainerComponent = new TripDaysContainerComponent();
-    this._EventSortComponent = new EventSortComponent(eventSortFilters);
+    this._noEventsComponent = new NoEventsComponent();
+    this._tripDaysContainerComponent = new TripDaysContainerComponent();
+    this._eventSortComponent = new EventSortComponent(eventSortFilters);
   }
 
   renderEvents(events) {
@@ -60,13 +60,13 @@ export default class TripController {
     const container = this._container;
 
     if (events.length === 0) {
-      renderElement(container, this._NoEventsComponent);
+      renderElement(container, this._noEventsComponent);
       return;
     }
 
-    renderElement(container, this._EventSortComponent, RenderPosition.AFTERBEGIN);
+    renderElement(container, this._eventSortComponent, RenderPosition.AFTERBEGIN);
 
-    renderElement(container, this._TripDaysContainerComponent);
+    renderElement(container, this._tripDaysContainerComponent);
 
     const renderEventsByDefault = () => {
       [...uniqueDates]
@@ -79,7 +79,7 @@ export default class TripController {
               renderEventItem(it, day);
             });
 
-          renderElement(this._TripDaysContainerComponent.getElement(), day);
+          renderElement(this._tripDaysContainerComponent.getElement(), day);
         });
     };
 
@@ -88,13 +88,13 @@ export default class TripController {
 
       eventsContainer.getElement().querySelector(`.day__info`).innerHTML = ``;
       sortedEvents.forEach((event) => renderEventItem(event, eventsContainer));
-      renderElement(this._TripDaysContainerComponent.getElement(), eventsContainer);
+      renderElement(this._tripDaysContainerComponent.getElement(), eventsContainer);
     };
 
     renderEventsByDefault();
 
     let currentSortType = `event`;
-    this._EventSortComponent.setSortChangeHandler((sortType) => {
+    this._eventSortComponent.setSortChangeHandler((sortType) => {
       if (currentSortType === sortType) {
         return;
       }
@@ -102,16 +102,16 @@ export default class TripController {
       let sortedEvents = [];
       switch (sortType) {
         case `event`:
-          this._TripDaysContainerComponent.getElement().innerHTML = ``;
+          this._tripDaysContainerComponent.getElement().innerHTML = ``;
           renderEventsByDefault();
           break;
         case `time`:
-          this._TripDaysContainerComponent.getElement().innerHTML = ``;
+          this._tripDaysContainerComponent.getElement().innerHTML = ``;
           sortedEvents = events.slice().sort((a, b) => (b.endDate - b.startDate) - (a.endDate - a.startDate));
           renderSortedEvents(sortedEvents);
           break;
         case `price`:
-          this._TripDaysContainerComponent.getElement().innerHTML = ``;
+          this._tripDaysContainerComponent.getElement().innerHTML = ``;
           sortedEvents = events.slice().sort((a, b) => b.price - a.price);
           renderSortedEvents(sortedEvents);
           break;
