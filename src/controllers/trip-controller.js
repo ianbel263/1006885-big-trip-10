@@ -106,7 +106,12 @@ export default class TripController {
       }
 
       this._tripDaysContainerComponent.getElement().innerHTML = ``;
-      sortType === `event` ? renderEventsByDefault() : renderSortedEvents(sortedEvents);
+      if (sortType === `event`) {
+        renderEventsByDefault();
+      } else {
+        renderSortedEvents(sortedEvents);
+      }
+      // sortType === `event` ? renderEventsByDefault() : renderSortedEvents(sortedEvents);
     });
   }
 }
