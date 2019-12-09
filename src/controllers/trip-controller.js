@@ -68,12 +68,13 @@ export default class TripController {
 
     renderElement(container, this._tripDaysContainerComponent);
 
-    const renderEventsByDefault = () => {
-      [...uniqueDates]
+    const renderEvents = (data, isSortedByDefault = true) => {
+      if (isSortedByDefault) {
+        [...uniqueDates]
         .forEach((date, i) => {
           const day = new TripDayItemComponent(date, i);
 
-          events
+          data
             .filter(({startDate}) => new Date(startDate).toDateString() === date)
             .forEach((it) => {
               renderEventItem(it, day);
@@ -81,37 +82,38 @@ export default class TripController {
 
           renderElement(this._tripDaysContainerComponent.getElement(), day);
         });
+      } else {
+        const eventsContainer = new TripDayItemComponent();
+
+        eventsContainer.getElement().querySelector(`.day__info`).innerHTML = ``;
+        data.forEach((it) => renderEventItem(it, eventsContainer));
+        renderElement(this._tripDaysContainerComponent.getElement(), eventsContainer);
+      }
     };
 
-    const renderSortedEvents = (sortedEvents) => {
-      const eventsContainer = new TripDayItemComponent();
-
-      eventsContainer.getElement().querySelector(`.day__info`).innerHTML = ``;
-      sortedEvents.forEach((event) => renderEventItem(event, eventsContainer));
-      renderElement(this._tripDaysContainerComponent.getElement(), eventsContainer);
-    };
-
-    renderEventsByDefault();
+    renderEvents(events);
 
     this._eventSortComponent.setSortChangeHandler((sortType) => {
+      let isSortedByDefault = true;
       let sortedEvents = [];
 
       switch (sortType) {
+        case `event`:
+          isSortedByDefault = true;
+          sortedEvents = events.slice();
+          break;
         case `time`:
+          isSortedByDefault = false;
           sortedEvents = events.slice().sort((a, b) => (b.endDate - b.startDate) - (a.endDate - a.startDate));
           break;
         case `price`:
+          isSortedByDefault = false;
           sortedEvents = events.slice().sort((a, b) => b.price - a.price);
           break;
       }
 
       this._tripDaysContainerComponent.getElement().innerHTML = ``;
-      if (sortType === `event`) {
-        renderEventsByDefault();
-      } else {
-        renderSortedEvents(sortedEvents);
-      }
-      // sortType === `event` ? renderEventsByDefault() : renderSortedEvents(sortedEvents);
+      renderEvents(sortedEvents, isSortedByDefault);
     });
   }
 }
