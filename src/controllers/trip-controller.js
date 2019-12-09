@@ -93,30 +93,20 @@ export default class TripController {
 
     renderEventsByDefault();
 
-    let currentSortType = `event`;
     this._eventSortComponent.setSortChangeHandler((sortType) => {
-      if (currentSortType === sortType) {
-        return;
-      }
-
       let sortedEvents = [];
+
       switch (sortType) {
-        case `event`:
-          this._tripDaysContainerComponent.getElement().innerHTML = ``;
-          renderEventsByDefault();
-          break;
         case `time`:
-          this._tripDaysContainerComponent.getElement().innerHTML = ``;
           sortedEvents = events.slice().sort((a, b) => (b.endDate - b.startDate) - (a.endDate - a.startDate));
-          renderSortedEvents(sortedEvents);
           break;
         case `price`:
-          this._tripDaysContainerComponent.getElement().innerHTML = ``;
           sortedEvents = events.slice().sort((a, b) => b.price - a.price);
-          renderSortedEvents(sortedEvents);
           break;
       }
-      currentSortType = sortType;
+
+      this._tripDaysContainerComponent.getElement().innerHTML = ``;
+      sortType === `event` ? renderEventsByDefault() : renderSortedEvents(sortedEvents);
     });
   }
 }
