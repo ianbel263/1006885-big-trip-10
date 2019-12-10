@@ -32,12 +32,9 @@ export const formatDate = (dateUnix) => {
 };
 
 export const calculateTimeInterval = (time1, time2) => {
-  const startDate = new Date(time1);
-  const endDate = new Date(time2);
-
-  const daysInt = Math.floor((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
-  const hoursInt = Math.floor((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60)) - daysInt * 24;
-  const minutesInt = Math.floor((endDate.getTime() - startDate.getTime()) / (1000 * 60)) - daysInt * 60 * 24 - hoursInt * 60;
+  const daysInt = Math.floor((time2 - time1) / (1000 * 60 * 60 * 24));
+  const hoursInt = Math.floor((time2 - time1) / (1000 * 60 * 60)) - daysInt * 24;
+  const minutesInt = Math.floor((time2 - time1) / (1000 * 60)) - daysInt * 60 * 24 - hoursInt * 60;
 
   const formattedInt = `${daysInt > 0 ? castInterval(daysInt, `D`) : ``} ${hoursInt > 0 ? castInterval(hoursInt, `H`) : ``} ${castInterval(minutesInt, `M`)}`;
   return formattedInt;
