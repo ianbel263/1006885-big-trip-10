@@ -2,20 +2,6 @@ import {MONTHS} from '../const.js';
 import {castDateFormat} from '../utils/common.js';
 import AbstractComponent from './abstract-component.js';
 
-const createDayItemTemplate = (day, dayCount) => {
-  return (
-    `<li class="trip-days__item  day">
-      <div class="day__info">
-        <span class="day__counter">${dayCount + 1}</span>
-        <time class="day__date" datetime="${castDateFormat(day)}">${MONTHS[new Date(day).getMonth()]}&nbsp;${new Date(day).getDate()}</time>
-      </div>
-      <ul class="trip-events__list">
-
-      </ul>
-    </li>`
-  );
-};
-
 export default class TripDayItem extends AbstractComponent {
   constructor(day, dayCount) {
     super();
@@ -24,6 +10,16 @@ export default class TripDayItem extends AbstractComponent {
   }
 
   getTemplate() {
-    return createDayItemTemplate(this._day, this._dayCount);
+    return (
+      `<li class="trip-days__item  day">
+        <div class="day__info">
+          <span class="day__counter">${this._dayCount + 1}</span>
+          <time class="day__date" datetime="${castDateFormat(this._day)}">${MONTHS[new Date(this._day).getMonth()]}&nbsp;${new Date(this._day).getDate()}</time>
+        </div>
+        <ul class="trip-events__list">
+
+        </ul>
+      </li>`
+    );
   }
 }
