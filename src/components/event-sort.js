@@ -29,7 +29,7 @@ export default class EventSort extends AbstractComponent {
     );
   }
 
-  setSortChangeHandler(handler) {
+  setOnSortChangeClick(handler) {
     this.getElement().addEventListener(`click`, (evt) => {
       if (evt.target.className !== `trip-sort__btn`) {
         return;

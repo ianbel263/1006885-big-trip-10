@@ -133,11 +133,11 @@ export default class EventEditForm extends AbstractComponent {
     );
   }
 
-  setSubmitHandler(handler) {
+  setOnFormSubmit(handler) {
     this.getElement().addEventListener(`submit`, handler);
   }
 
-  setCancelButtonHandler(handler) {
+  setOnCancelButtonClick(handler) {
     this.getElement().querySelector(`.event__rollup-btn`)
       .addEventListener(`click`, handler);
   }

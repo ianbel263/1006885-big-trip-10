@@ -40,17 +40,17 @@ export default class TripController {
       const eventEditFromComponent = new EventEditFormComponent(event);
       const eventsList = currentDay.getElement().querySelector(`.trip-events__list`);
 
-      eventItem.setEditButtonHandler(() => {
+      eventItem.setOnEditButtonClick(() => {
         replaceEventToEdit();
         document.addEventListener(`keydown`, onEscPress);
       });
 
-      eventEditFromComponent.setSubmitHandler((evt) => {
+      eventEditFromComponent.setOnFormSubmit((evt) => {
         evt.preventDefault();
         replaceEditToEvent();
       });
 
-      eventEditFromComponent.setCancelButtonHandler(() => {
+      eventEditFromComponent.setOnCancelButtonClick(() => {
         replaceEditToEvent();
       });
 
@@ -93,7 +93,7 @@ export default class TripController {
 
     renderEvents(events);
 
-    this._eventSortComponent.setSortChangeHandler((sortType) => {
+    this._eventSortComponent.setOnSortChangeClick((sortType) => {
       let isSortedByDefault = true;
       let sortedEvents = [];
 
