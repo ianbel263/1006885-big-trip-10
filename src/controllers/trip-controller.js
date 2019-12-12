@@ -13,12 +13,19 @@ export default class TripController {
   constructor(container) {
     this._container = container;
 
+    this._events = [];
+
     this._noEventsComponent = new NoEventsComponent();
     this._tripDaysContainerComponent = new TripDaysContainerComponent();
     this._eventSortComponent = new EventSortComponent(eventSortFilters);
+
+    this._onSortTypeChange = this._onSortTypeChange.bind(this);
+    this._eventSortComponent.setOnSortChangeClick(this._onSortTypeChange);
   }
 
   renderEvents(events) {
+    this._events = events;
+
     const renderEventItem = (event, currentDay) => {
 
       const onEscPress = (evt) => {
@@ -92,28 +99,28 @@ export default class TripController {
     };
 
     renderEvents(events);
+  }
 
-    this._eventSortComponent.setOnSortChangeClick((sortType) => {
-      let isSortedByDefault = true;
-      let sortedEvents = [];
+  _onSortTypeChange(sortType) {
+    let isSortedByDefault = true;
+    let sortedEvents = [];
 
-      switch (sortType) {
-        case `event`:
-          isSortedByDefault = true;
-          sortedEvents = events.slice();
-          break;
-        case `time`:
-          isSortedByDefault = false;
-          sortedEvents = events.slice().sort((a, b) => (b.endDate - b.startDate) - (a.endDate - a.startDate));
-          break;
-        case `price`:
-          isSortedByDefault = false;
-          sortedEvents = events.slice().sort((a, b) => b.price - a.price);
-          break;
-      }
+    switch (sortType) {
+      case `event`:
+        isSortedByDefault = true;
+        sortedEvents = this._events.slice();
+        break;
+      case `time`:
+        isSortedByDefault = false;
+        sortedEvents = this._events.slice().sort((a, b) => (b.endDate - b.startDate) - (a.endDate - a.startDate));
+        break;
+      case `price`:
+        isSortedByDefault = false;
+        sortedEvents = this._events.slice().sort((a, b) => b.price - a.price);
+        break;
+    }
 
-      this._tripDaysContainerComponent.getElement().innerHTML = ``;
-      renderEvents(sortedEvents, isSortedByDefault);
-    });
+    this._tripDaysContainerComponent.getElement().innerHTML = ``;
+    this.renderEvents(sortedEvents, isSortedByDefault);
   }
 }
