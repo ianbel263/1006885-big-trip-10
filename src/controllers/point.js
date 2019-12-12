@@ -25,6 +25,9 @@ export default class PointController {
 
   renderEventItem(event) {
 
+    const oldEventItemComponent = this._eventItemComponent;
+    const oldEventEditFormComponent = this._eventEditFormComponent;
+
     this._eventItemComponent = new EventItemComponent(event);
     this._eventEditFormComponent = new EventEditFormComponent(event);
 
@@ -48,7 +51,12 @@ export default class PointController {
       }));
     });
 
-    renderElement(this._container, this._eventItemComponent);
+    if (oldEventItemComponent && oldEventEditFormComponent) {
+      replaceComponents(this._eventItemComponent, oldEventItemComponent);
+      replaceComponents(this._eventEditFormComponent, oldEventEditFormComponent);
+    } else {
+      renderElement(this._container, this._eventItemComponent);
+    }
   }
 
   _replaceEventToEdit() {
@@ -59,6 +67,8 @@ export default class PointController {
   }
 
   _replaceEditToEvent() {
+    this._eventEditFormComponent.reset();
+
     replaceComponents(this._eventItemComponent, this._eventEditFormComponent);
     this._mode = ViewMode.DEFAULT;
   }

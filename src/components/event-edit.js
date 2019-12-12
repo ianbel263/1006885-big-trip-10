@@ -1,11 +1,13 @@
 import {EVENT_POINT_TYPES} from '../const.js';
 import {formatDate} from '../utils/common.js';
-import AbstractComponent from './abstract-component.js';
+import AbstractSmartComponent from './abstract-smart-component.js';
 
-export default class EventEditForm extends AbstractComponent {
+export default class EventEditForm extends AbstractSmartComponent {
   constructor(event) {
     super();
     this._event = event;
+
+    this._subscribeOnEvents();
   }
 
   getTemplate() {
@@ -140,5 +142,35 @@ export default class EventEditForm extends AbstractComponent {
   setOnCancelButtonClick(handler) {
     this.getElement().querySelector(`.event__rollup-btn`)
       .addEventListener(`click`, handler);
+  }
+
+  setOnFavoriteButtonClick(handler) {
+    this.getElement().querySelector(`.event__favorite-btn`)
+      .addEventListener(`click`, handler);
+  }
+
+  reset() {
+    this.rerender();
+  }
+
+  rerender() {
+    super.rerender();
+  }
+
+  recoveryListeners() {
+    this._subscribeOnEvents();
+  }
+
+  _subscribeOnEvents() {
+    const element = this.getElement();
+
+    element.querySelectorAll(`.event__type-label`)
+      .forEach((it) => {
+        it.addEventListener(`click`, () => {
+          this._event.type.type = it.textContent;
+
+          this.rerender();
+        });
+      });
   }
 }
