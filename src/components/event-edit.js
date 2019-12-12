@@ -1,3 +1,4 @@
+import {destinations} from '../mock/card.js';
 import {EVENT_POINT_TYPES} from '../const.js';
 import {formatDate} from '../utils/common.js';
 import AbstractSmartComponent from './abstract-smart-component.js';
@@ -12,6 +13,7 @@ export default class EventEditForm extends AbstractSmartComponent {
 
   getTemplate() {
     const {type: {type}, destination, startDate, endDate, price, offers, description, photosUrls, isFavorite} = this._event;
+    // console.log(this._event);
 
     return (
       `<form class="event  event--edit" action="#" method="post">
@@ -53,9 +55,9 @@ export default class EventEditForm extends AbstractSmartComponent {
             </label>
             <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination}" list="destination-list-1">
             <datalist id="destination-list-1">
-
-              <option value="111111"></option>
-
+      ${[...destinations].map((it) => {
+        return `<option value="${it}"></option>`;
+      }).join(`\n`)}
             </datalist>
           </div>
 
@@ -171,6 +173,13 @@ export default class EventEditForm extends AbstractSmartComponent {
 
           this.rerender();
         });
+      });
+
+    element.querySelector(`.event__input--destination`)
+      addEventListener(`change`, (evt) => {
+        this._event.destination = evt.target.value;
+        
+        this.rerender();
       });
   }
 }

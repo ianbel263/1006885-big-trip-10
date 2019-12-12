@@ -78,4 +78,6 @@ const cards = generateCards(CARDS_COUNT);
 
 const uniqueDates = new Set(cards.map((card) => new Date(card.startDate).toDateString()));
 
-export {cards, eventPointCities, uniqueDates};
+const destinations = new Set(cards.map(({destination}) => destination));
+
+export {cards, eventPointCities, uniqueDates, destinations};
