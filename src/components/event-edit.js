@@ -7,13 +7,12 @@ export default class EventEditForm extends AbstractSmartComponent {
   constructor(event) {
     super();
     this._event = event;
-
+    // console.log(this._event);
     this._subscribeOnEvents();
   }
 
   getTemplate() {
     const {type: {type}, destination, startDate, endDate, price, offers, description, photosUrls, isFavorite} = this._event;
-    // console.log(this._event);
 
     return (
       `<form class="event  event--edit" action="#" method="post">
@@ -176,9 +175,13 @@ export default class EventEditForm extends AbstractSmartComponent {
       });
 
     element.querySelector(`.event__input--destination`)
-      addEventListener(`change`, (evt) => {
+      .addEventListener(`change`, (evt) => {
         this._event.destination = evt.target.value;
-        
+        if (!this._event.destination) {
+          element.querySelector(`.event__section--destination`).innerHTML = ``;
+          this._event.description = ``;
+        }
+
         this.rerender();
       });
   }
