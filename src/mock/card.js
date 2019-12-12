@@ -62,7 +62,8 @@ const generateCard = () => {
     offers: generateOffers(eventPointOffers),
     startDate: Math.min(startDate, endDate),
     endDate: Math.max(startDate, endDate),
-    price: getRandomNumber(0, MAX_PRICE)
+    price: getRandomNumber(0, MAX_PRICE),
+    isFavorite: Math.random() > 0.5
   };
 };
 

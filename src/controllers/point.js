@@ -4,8 +4,10 @@ import EventEditFormComponent from '../components/event-edit.js';
 import {renderElement, replaceComponents} from '../utils/render.js';
 
 export default class PointController {
-  constructor(container) {
+  constructor(container, onDataChange) {
     this._container = container;
+
+    this._onDataChange = onDataChange;
 
     this._eventItemComponent = null;
     this._eventEditFormComponent = null;
@@ -30,6 +32,12 @@ export default class PointController {
 
     this._eventEditFormComponent.setOnCancelButtonClick(() => {
       this._replaceEditToEvent();
+    });
+
+    this._eventEditFormComponent.setOnFavoriteButtonClick(() => {
+      this._onDataChange(this, event, Object.assign({}, event, {
+        isFavorite: !event.isFavorite,
+      }));
     });
 
     renderElement(this._container, this._eventItemComponent);
