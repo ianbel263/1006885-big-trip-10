@@ -11,7 +11,7 @@ export default class EventEditForm extends AbstractSmartComponent {
   }
 
   getTemplate() {
-    const {type: {type}, destination, startDate, endDate, price, offers, description, photosUrls} = this._event;
+    const {type: {type}, destination, startDate, endDate, price, offers, description, photosUrls, isFavorite} = this._event;
 
     return (
       `<form class="event  event--edit" action="#" method="post">
@@ -49,7 +49,7 @@ export default class EventEditForm extends AbstractSmartComponent {
 
           <div class="event__field-group  event__field-group--destination">
             <label class="event__label  event__type-output" for="event-destination-1">
-              ${this._event.type.type} at
+              ${this._event.type.type} to
             </label>
             <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination}" list="destination-list-1">
             <datalist id="destination-list-1">
@@ -82,7 +82,7 @@ export default class EventEditForm extends AbstractSmartComponent {
           <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
           <button class="event__reset-btn" type="reset">Delete</button>
 
-          <input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" checked>
+          <input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" ${isFavorite ? `checked` : ``}>
           <label class="event__favorite-btn" for="event-favorite-1">
             <span class="visually-hidden">Add to favorite</span>
             <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
