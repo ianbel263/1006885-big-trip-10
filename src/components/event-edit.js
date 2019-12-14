@@ -1,5 +1,5 @@
 import {destinations} from '../mock/card.js';
-import {EVENT_POINT_TYPES} from '../const.js';
+import {TripTypes} from '../const.js';
 import {formatDate} from '../utils/common.js';
 import AbstractSmartComponent from './abstract-smart-component.js';
 
@@ -7,12 +7,12 @@ export default class EventEditForm extends AbstractSmartComponent {
   constructor(event) {
     super();
     this._event = event;
-    // console.log(this._event);
+
     this._subscribeOnEvents();
   }
 
   getTemplate() {
-    const {type: {type}, destination, startDate, endDate, price, offers, description, photosUrls, isFavorite} = this._event;
+    const {type, destination, startDate, endDate, price, offers, description, photosUrls, isFavorite} = this._event;
 
     return (
       `<form class="event  event--edit" action="#" method="post">
@@ -26,37 +26,48 @@ export default class EventEditForm extends AbstractSmartComponent {
 
             <div class="event__type-list">
 
-      ${Array.from(new Set(EVENT_POINT_TYPES.map((pointTypes) => pointTypes.group)))
-        .map((el) => {
-          return (
-            `<fieldset class="event__type-group">
-              <legend class="visually-hidden">${el}</legend>
+            <fieldset class="event__type-group">
+              <legend class="visually-hidden">${TripTypes.TRANSFER}</legend>
 
-              ${EVENT_POINT_TYPES.filter((eventType) => eventType.group === el)
-                .map(({type: offerType}) => {
-                  return (
-                    `<div class="event__type-item">
-                      <input id="event-type-${offerType}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${offerType}">
-                      <label class="event__type-label  event__type-label--${offerType}" for="event-type-${offerType}-1">${offerType}</label>
-                    </div>`
-                  );
-                }).join(`\n`)}
-              </fieldset>`
-          );
-        }).join(`\n`)}
+      ${TripTypes.TRANSFER.map((el) => {
+        return (
+          `<div class="event__type-item">
+            <input id="event-type-${el}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${el}">
+            <label class="event__type-label  event__type-label--${el}" for="event-type-${el}-1">${el}</label>
+          </div>`
+        );
+      }).join(`\n`)}
+
+            </fieldset>
+
+            <fieldset class="event__type-group">
+              <legend class="visually-hidden">${TripTypes.ACTIVITY}</legend>
+
+      ${TripTypes.ACTIVITY.map((el) => {
+        return (
+          `<div class="event__type-item">
+            <input id="event-type-${el}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${el}">
+            <label class="event__type-label  event__type-label--${el}" for="event-type-${el}-1">${el}</label>
+          </div>`
+        );
+      }).join(`\n`)}
+
+            </fieldset>
 
             </div>
           </div>
 
           <div class="event__field-group  event__field-group--destination">
             <label class="event__label  event__type-output" for="event-destination-1">
-              ${this._event.type.type} to
+              ${type} to
             </label>
             <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination}" list="destination-list-1">
             <datalist id="destination-list-1">
+
       ${[...destinations].map((it) => {
         return `<option value="${it}"></option>`;
       }).join(`\n`)}
+
             </datalist>
           </div>
 
@@ -150,14 +161,6 @@ export default class EventEditForm extends AbstractSmartComponent {
       .addEventListener(`click`, handler);
   }
 
-  reset() {
-    this.rerender();
-  }
-
-  rerender() {
-    super.rerender();
-  }
-
   recoveryListeners() {
     this._subscribeOnEvents();
   }
@@ -165,24 +168,5 @@ export default class EventEditForm extends AbstractSmartComponent {
   _subscribeOnEvents() {
     const element = this.getElement();
 
-    element.querySelectorAll(`.event__type-label`)
-      .forEach((it) => {
-        it.addEventListener(`click`, () => {
-          this._event.type.type = it.textContent;
-
-          this.rerender();
-        });
-      });
-
-    element.querySelector(`.event__input--destination`)
-      .addEventListener(`change`, (evt) => {
-        this._event.destination = evt.target.value;
-        if (!this._event.destination) {
-          element.querySelector(`.event__section--destination`).innerHTML = ``;
-          this._event.description = ``;
-        }
-
-        this.rerender();
-      });
   }
 }

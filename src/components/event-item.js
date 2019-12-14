@@ -8,7 +8,7 @@ export default class EventItem extends AbstractComponent {
   }
 
   getTemplate() {
-    const {type: {type}, destination, startDate, endDate, price, offers} = this._event;
+    const {type, destination, startDate, endDate, price, offers} = this._event;
 
     return (
       `<li class="trip-events__item">
