@@ -5,7 +5,7 @@ import EventSortComponent from '../components/event-sort.js';
 import TripDaysContainerComponent from '../components/trip-days-container.js';
 import NoEventsComponent from '../components/no-events.js';
 import TripDayItemComponent from '../components/trip-day-item.js';
-import PointController from './point.js';
+import PointController from './point-controller.js';
 
 export default class TripController {
   constructor(container) {

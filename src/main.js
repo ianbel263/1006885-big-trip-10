@@ -4,7 +4,7 @@ import {siteFilters} from './mock/site-filter.js';
 import {renderElement, RenderPosition} from './utils/render.js';
 import SiteMenuComponent from './components/site-menu.js';
 import SiteFilterComponent from './components/site-filter.js';
-import TripController from './controllers/trip.js';
+import TripController from './controllers/trip-controller.js';
 import TripInfoComponent from './components/trip-info.js';
 
 const tripControlDiv = document.querySelector(`.trip-controls`);
