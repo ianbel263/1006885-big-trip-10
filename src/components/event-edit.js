@@ -32,7 +32,7 @@ export default class EventEditForm extends AbstractSmartComponent {
       ${TripTypes.TRANSFER.map((el) => {
         return (
           `<div class="event__type-item">
-            <input id="event-type-${el}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${el}">
+            <input id="event-type-${el}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${el}" ${type === el && `checked`}>
             <label class="event__type-label  event__type-label--${el}" for="event-type-${el}-1">${el}</label>
           </div>`
         );
@@ -46,7 +46,7 @@ export default class EventEditForm extends AbstractSmartComponent {
       ${TripTypes.ACTIVITY.map((el) => {
         return (
           `<div class="event__type-item">
-            <input id="event-type-${el}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${el}">
+            <input id="event-type-${el}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${el}" ${type === el && `checked`}>
             <label class="event__type-label  event__type-label--${el}" for="event-type-${el}-1">${el}</label>
           </div>`
         );
@@ -168,5 +168,12 @@ export default class EventEditForm extends AbstractSmartComponent {
   _subscribeOnEvents() {
     const element = this.getElement();
 
+    element.querySelector(`.event__type-list`)
+      .addEventListener(`click`, (evt) => {
+        if (evt.target.tagName === `INPUT`) {
+          this._event.type = evt.target.value;
+          this.rerender();
+        }
+      });
   }
 }
