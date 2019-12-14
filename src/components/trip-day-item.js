@@ -13,7 +13,7 @@ export default class TripDayItem extends AbstractComponent {
     return (
       `<li class="trip-days__item  day">
         <div class="day__info">
-          <span class="day__counter">${this._dayCount + 1}</span>
+          <span class="day__counter">${this._dayCount}</span>
           <time class="day__date" datetime="${castDateFormat(this._day)}">${MONTHS[new Date(this._day).getMonth()]}&nbsp;${new Date(this._day).getDate()}</time>
         </div>
         <ul class="trip-events__list">

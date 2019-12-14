@@ -23,8 +23,7 @@ export default class PointController {
     this._onEscPress = this._onEscPress.bind(this);
   }
 
-  renderEventItem(event) {
-
+  render(event) {
     const oldEventItemComponent = this._eventItemComponent;
     const oldEventEditFormComponent = this._eventEditFormComponent;
 
