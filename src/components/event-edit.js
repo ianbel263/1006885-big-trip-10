@@ -26,33 +26,23 @@ export default class EventEditForm extends AbstractSmartComponent {
 
             <div class="event__type-list">
 
-            <fieldset class="event__type-group">
-              <legend class="visually-hidden">${TripTypes.TRANSFER}</legend>
-
-      ${TripTypes.TRANSFER.map((el) => {
+      ${Object.keys(TripTypes).map((group) => {
         return (
-          `<div class="event__type-item">
-            <input id="event-type-${el}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${el}" ${type === el && `checked`}>
-            <label class="event__type-label  event__type-label--${el}" for="event-type-${el}-1">${doFirstLetterUppercase(el)}</label>
-          </div>`
+          `<fieldset class="event__type-group">
+            <legend class="visually-hidden">${TripTypes[group]}</legend>
+
+          ${TripTypes[group].map((el) => {
+            return (
+              `<div class="event__type-item">
+                <input id="event-type-${el}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${el}" ${type === el && `checked`}>
+                <label class="event__type-label  event__type-label--${el}" for="event-type-${el}-1">${doFirstLetterUppercase(el)}</label>
+              </div>`
+            );
+          }).join(`\n`)}
+
+          </fieldset>`
         );
       }).join(`\n`)}
-
-            </fieldset>
-
-            <fieldset class="event__type-group">
-              <legend class="visually-hidden">${TripTypes.ACTIVITY}</legend>
-
-      ${TripTypes.ACTIVITY.map((el) => {
-        return (
-          `<div class="event__type-item">
-            <input id="event-type-${el}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${el}" ${type === el && `checked`}>
-            <label class="event__type-label  event__type-label--${el}" for="event-type-${el}-1">${doFirstLetterUppercase(el)}</label>
-          </div>`
-        );
-      }).join(`\n`)}
-
-            </fieldset>
 
             </div>
           </div>
