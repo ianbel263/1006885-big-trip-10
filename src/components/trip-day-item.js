@@ -10,11 +10,15 @@ export default class TripDayItem extends AbstractComponent {
   }
 
   getTemplate() {
+    const count = this._dayCount ? this._dayCount : ``;
+    const month = this._day ? MONTHS[new Date(this._day).getMonth()] : ``;
+    const day = this._day ? new Date(this._day).getDate() : ``;
+
     return (
       `<li class="trip-days__item  day">
         <div class="day__info">
-          <span class="day__counter">${this._dayCount + 1}</span>
-          <time class="day__date" datetime="${castDateFormat(this._day)}">${MONTHS[new Date(this._day).getMonth()]}&nbsp;${new Date(this._day).getDate()}</time>
+          <span class="day__counter">${count}</span>
+          <time class="day__date" datetime="${castDateFormat(this._day)}">${month}&nbsp;${day}</time>
         </div>
         <ul class="trip-events__list">
 

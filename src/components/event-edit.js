@@ -1,15 +1,18 @@
-import {EVENT_POINT_TYPES} from '../const.js';
-import {formatDate} from '../utils/common.js';
-import AbstractComponent from './abstract-component.js';
+import {destinations} from '../mock/card.js';
+import {TripTypes} from '../const.js';
+import {formatDate, doFirstLetterUppercase, formatTripType} from '../utils/common.js';
+import AbstractSmartComponent from './abstract-smart-component.js';
 
-export default class EventEditForm extends AbstractComponent {
+export default class EventEditForm extends AbstractSmartComponent {
   constructor(event) {
     super();
     this._event = event;
+
+    this._subscribeOnEvents();
   }
 
   getTemplate() {
-    const {type: {type}, destination, startDate, endDate, price, offers, description, photosUrls} = this._event;
+    const {type, destination, startDate, endDate, price, offers, description, photosUrls, isFavorite} = this._event;
 
     return (
       `<form class="event  event--edit" action="#" method="post">
@@ -23,36 +26,37 @@ export default class EventEditForm extends AbstractComponent {
 
             <div class="event__type-list">
 
-      ${Array.from(new Set(EVENT_POINT_TYPES.map((pointTypes) => pointTypes.group)))
-        .map((el) => {
-          return (
-            `<fieldset class="event__type-group">
-              <legend class="visually-hidden">${el}</legend>
+      ${Object.keys(TripTypes).map((group) => {
+        return (
+          `<fieldset class="event__type-group">
+            <legend class="visually-hidden">${TripTypes[group]}</legend>
 
-              ${EVENT_POINT_TYPES.filter((eventType) => eventType.group === el)
-                .map(({type: offerType}) => {
-                  return (
-                    `<div class="event__type-item">
-                      <input id="event-type-${offerType}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${offerType}">
-                      <label class="event__type-label  event__type-label--${offerType}" for="event-type-${offerType}-1">${offerType}</label>
-                    </div>`
-                  );
-                }).join(`\n`)}
-              </fieldset>`
-          );
-        }).join(`\n`)}
+          ${TripTypes[group].map((el) => {
+            return (
+              `<div class="event__type-item">
+                <input id="event-type-${el}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${el}" ${type === el && `checked`}>
+                <label class="event__type-label  event__type-label--${el}" for="event-type-${el}-1">${doFirstLetterUppercase(el)}</label>
+              </div>`
+            );
+          }).join(`\n`)}
+
+          </fieldset>`
+        );
+      }).join(`\n`)}
 
             </div>
           </div>
 
           <div class="event__field-group  event__field-group--destination">
             <label class="event__label  event__type-output" for="event-destination-1">
-              ${this._event.type.type} at
+              ${formatTripType(type)}
             </label>
             <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination}" list="destination-list-1">
             <datalist id="destination-list-1">
 
-              <option value="111111"></option>
+      ${[...destinations].map((it) => {
+        return `<option value="${it}"></option>`;
+      }).join(`\n`)}
 
             </datalist>
           </div>
@@ -80,7 +84,7 @@ export default class EventEditForm extends AbstractComponent {
           <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
           <button class="event__reset-btn" type="reset">Delete</button>
 
-          <input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" checked>
+          <input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" ${isFavorite ? `checked` : ``}>
           <label class="event__favorite-btn" for="event-favorite-1">
             <span class="visually-hidden">Add to favorite</span>
             <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
@@ -133,12 +137,33 @@ export default class EventEditForm extends AbstractComponent {
     );
   }
 
-  setSubmitHandler(handler) {
+  setOnFormSubmit(handler) {
     this.getElement().addEventListener(`submit`, handler);
   }
 
-  setCancelButtonHandler(handler) {
+  setOnCancelButtonClick(handler) {
     this.getElement().querySelector(`.event__rollup-btn`)
       .addEventListener(`click`, handler);
+  }
+
+  setOnFavoriteButtonClick(handler) {
+    this.getElement().querySelector(`.event__favorite-btn`)
+      .addEventListener(`click`, handler);
+  }
+
+  recoveryListeners() {
+    this._subscribeOnEvents();
+  }
+
+  _subscribeOnEvents() {
+    const element = this.getElement();
+
+    element.querySelector(`.event__type-list`)
+      .addEventListener(`click`, (evt) => {
+        if (evt.target.tagName === `INPUT`) {
+          this._event.type = evt.target.value;
+          this.rerender();
+        }
+      });
   }
 }

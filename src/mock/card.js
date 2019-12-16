@@ -1,4 +1,4 @@
-import {EVENT_POINT_TYPES} from '../const.js';
+import {TripTypes} from '../const.js';
 
 const CARDS_COUNT = 10;
 
@@ -55,14 +55,15 @@ const generateCard = () => {
   const startDate = getRandomDate();
   const endDate = getRandomDate();
   return {
-    type: getRandomArrayItem(EVENT_POINT_TYPES),
+    type: getRandomArrayItem(Math.random() > 0.5 ? TripTypes.TRANSFER : TripTypes.ACTIVITY),
     destination: getRandomArrayItem(eventPointCities),
     description: getRandomArrayItem(eventPointDescriptions),
     photosUrls: getEventPhotosUrls(),
     offers: generateOffers(eventPointOffers),
     startDate: Math.min(startDate, endDate),
     endDate: Math.max(startDate, endDate),
-    price: getRandomNumber(0, MAX_PRICE)
+    price: getRandomNumber(0, MAX_PRICE),
+    isFavorite: Math.random() > 0.5
   };
 };
 
@@ -75,6 +76,6 @@ const generateCards = (count) => {
 
 const cards = generateCards(CARDS_COUNT);
 
-const uniqueDates = new Set(cards.map((card) => new Date(card.startDate).toDateString()));
+const destinations = new Set(cards.map(({destination}) => destination));
 
-export {cards, eventPointCities, uniqueDates};
+export {cards, eventPointCities, destinations};

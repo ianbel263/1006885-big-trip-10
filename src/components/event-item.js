@@ -1,4 +1,4 @@
-import {castTimeFormat, castDateFormat, calculateTimeInterval} from '../utils/common.js';
+import {castTimeFormat, castDateFormat, calculateTimeInterval, formatTripType} from '../utils/common.js';
 import AbstractComponent from './abstract-component.js';
 
 export default class EventItem extends AbstractComponent {
@@ -8,7 +8,7 @@ export default class EventItem extends AbstractComponent {
   }
 
   getTemplate() {
-    const {type: {type}, destination, startDate, endDate, price, offers} = this._event;
+    const {type, destination, startDate, endDate, price, offers} = this._event;
 
     return (
       `<li class="trip-events__item">
@@ -16,7 +16,7 @@ export default class EventItem extends AbstractComponent {
           <div class="event__type">
             <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
           </div>
-          <h3 class="event__title">${type} to ${destination}</h3>
+          <h3 class="event__title">${formatTripType(type)} ${destination}</h3>
           <div class="event__schedule">
             <p class="event__time">
               <time class="event__start-time" datetime="${castDateFormat(startDate)}T${castTimeFormat(startDate)}">${castTimeFormat(startDate)}</time>
@@ -48,7 +48,7 @@ export default class EventItem extends AbstractComponent {
     );
   }
 
-  setEditButtonHandler(handler) {
+  setOnEditButtonClick(handler) {
     this.getElement().querySelector(`.event__rollup-btn`)
       .addEventListener(`click`, handler);
   }
