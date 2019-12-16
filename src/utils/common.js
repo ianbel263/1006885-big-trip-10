@@ -44,4 +44,4 @@ const castInterval = (timeValue, unitOfTime) => timeValue < 10 ? `0${timeValue}$
 
 export const doFirstLetterUppercase = (string) => {
   return string.charAt(0).toUpperCase() + string.slice(1);
-}
+};

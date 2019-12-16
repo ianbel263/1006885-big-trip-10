@@ -45,7 +45,7 @@ export default class TripController {
     this._pointControllers = [];
 
     this._noEventsComponent = new NoEventsComponent();
-    this._eventSortComponent = new EventSortComponent(eventSortFilters)
+    this._eventSortComponent = new EventSortComponent(eventSortFilters);
 
     this._onSortTypeChange = this._onSortTypeChange.bind(this);
     this._onDataChange = this._onDataChange.bind(this);
@@ -54,12 +54,12 @@ export default class TripController {
 
   render(events) {
     this._events = events;
-    
+
     if (this._events.length === 0) {
       renderElement(this._container, this._noEventsComponent);
       return;
     }
-        
+
     renderElement(this._container.parentElement, this._eventSortComponent, RenderPosition.AFTERBEGIN);
     this._eventSortComponent.setOnSortChangeClick(this._onSortTypeChange);
 

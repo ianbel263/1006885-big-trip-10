@@ -11,7 +11,7 @@ export default class TripDayItem extends AbstractComponent {
 
   getTemplate() {
     const count = this._dayCount ? this._dayCount : ``;
-    const month = this._day ? MONTHS[new Date(this._day).getMonth()] : ``; 
+    const month = this._day ? MONTHS[new Date(this._day).getMonth()] : ``;
     const day = this._day ? new Date(this._day).getDate() : ``;
 
     return (
