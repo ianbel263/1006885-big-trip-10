@@ -1,6 +1,6 @@
 import {destinations} from '../mock/card.js';
 import {TripTypes} from '../const.js';
-import {formatDate} from '../utils/common.js';
+import {formatDate, doFirstLetterUppercase} from '../utils/common.js';
 import AbstractSmartComponent from './abstract-smart-component.js';
 
 export default class EventEditForm extends AbstractSmartComponent {
@@ -33,7 +33,7 @@ export default class EventEditForm extends AbstractSmartComponent {
         return (
           `<div class="event__type-item">
             <input id="event-type-${el}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${el}" ${type === el && `checked`}>
-            <label class="event__type-label  event__type-label--${el}" for="event-type-${el}-1">${el}</label>
+            <label class="event__type-label  event__type-label--${el}" for="event-type-${el}-1">${doFirstLetterUppercase(el)}</label>
           </div>`
         );
       }).join(`\n`)}
@@ -47,7 +47,7 @@ export default class EventEditForm extends AbstractSmartComponent {
         return (
           `<div class="event__type-item">
             <input id="event-type-${el}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${el}" ${type === el && `checked`}>
-            <label class="event__type-label  event__type-label--${el}" for="event-type-${el}-1">${el}</label>
+            <label class="event__type-label  event__type-label--${el}" for="event-type-${el}-1">${doFirstLetterUppercase(el)}</label>
           </div>`
         );
       }).join(`\n`)}
@@ -59,7 +59,7 @@ export default class EventEditForm extends AbstractSmartComponent {
 
           <div class="event__field-group  event__field-group--destination">
             <label class="event__label  event__type-output" for="event-destination-1">
-              ${type} to
+              ${doFirstLetterUppercase(type)} to
             </label>
             <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination}" list="destination-list-1">
             <datalist id="destination-list-1">

@@ -41,3 +41,7 @@ export const calculateTimeInterval = (time1, time2) => {
 };
 
 const castInterval = (timeValue, unitOfTime) => timeValue < 10 ? `0${timeValue}${unitOfTime}` : `${timeValue}${unitOfTime}`;
+
+export const doFirstLetterUppercase = (string) => {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}
