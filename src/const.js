@@ -5,4 +5,10 @@ export const MONTHS = [`JAN`, `FEB`, `MAR`, `APR`, `MAY`, `JUN`, `JUL`, `AUG`, `
 export const TripTypes = {
   TRANSFER: [`bus`, `drive`, `flight`, `ship`, `taxi`, `train`, `transport`, `trip`],
   ACTIVITY: [`check-in`, `restaurant`, `sightseeing`]
-}
+};
+
+export const SortTypes = {
+  EVENT: `event`,
+  TIME: `time`,
+  PRICE: `price`
+};
