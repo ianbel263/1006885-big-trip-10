@@ -1,6 +1,6 @@
 import {destinations} from '../mock/card.js';
 import {TripTypes} from '../const.js';
-import {formatDate, doFirstLetterUppercase} from '../utils/common.js';
+import {formatDate, doFirstLetterUppercase, formatTripType} from '../utils/common.js';
 import AbstractSmartComponent from './abstract-smart-component.js';
 
 export default class EventEditForm extends AbstractSmartComponent {
@@ -49,7 +49,7 @@ export default class EventEditForm extends AbstractSmartComponent {
 
           <div class="event__field-group  event__field-group--destination">
             <label class="event__label  event__type-output" for="event-destination-1">
-              ${doFirstLetterUppercase(type)} to
+              ${formatTripType(type)}
             </label>
             <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination}" list="destination-list-1">
             <datalist id="destination-list-1">

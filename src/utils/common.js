@@ -1,3 +1,5 @@
+import {TripTypes} from '../const.js';
+
 const castZeroFirstFormat = (value) => {
   return value < 10 ? `0${value}` : String(value);
 };
@@ -44,4 +46,20 @@ const castInterval = (timeValue, unitOfTime) => timeValue < 10 ? `0${timeValue}$
 
 export const doFirstLetterUppercase = (string) => {
   return string.charAt(0).toUpperCase() + string.slice(1);
+};
+
+export const formatTripType = (tripType) => {
+  let formattedTripType = ``;
+  Object.keys(TripTypes).forEach((el) => {
+    TripTypes[el].forEach((it) => {
+      if (tripType === it && el === `ACTIVITY`) {
+        formattedTripType = `${doFirstLetterUppercase(tripType)} in`;
+      } else if (tripType === it && el === `TRANSFER`) {
+        formattedTripType = `${doFirstLetterUppercase(tripType)} to`;
+      } else if (tripType === `check-in`) {
+        formattedTripType = `${doFirstLetterUppercase(tripType).slice(0, 5)} in`;
+      }
+    });
+  });
+  return formattedTripType;
 };
