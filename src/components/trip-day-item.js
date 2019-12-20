@@ -1,5 +1,5 @@
 import {MONTHS} from '../const.js';
-import {castDateFormat} from '../utils/common.js';
+import {dateFormat} from '../utils/common.js';
 import AbstractComponent from './abstract-component.js';
 
 export default class TripDayItem extends AbstractComponent {
@@ -18,7 +18,7 @@ export default class TripDayItem extends AbstractComponent {
       `<li class="trip-days__item  day">
         <div class="day__info">
           <span class="day__counter">${count}</span>
-          <time class="day__date" datetime="${castDateFormat(this._day)}">${month}&nbsp;${day}</time>
+          <time class="day__date" datetime="${dateFormat(this._day)}">${month}&nbsp;${day}</time>
         </div>
         <ul class="trip-events__list">
 
