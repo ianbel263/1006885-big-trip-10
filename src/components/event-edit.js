@@ -1,6 +1,7 @@
+import flatpickr from 'flatpickr';
 import {destinations} from '../mock/card.js';
 import {TripTypes} from '../const.js';
-import {formatDate, doFirstLetterUppercase, formatTripType} from '../utils/common.js';
+import {doFirstLetterUppercase, formatTripType} from '../utils/common.js';
 import AbstractSmartComponent from './abstract-smart-component.js';
 
 export default class EventEditForm extends AbstractSmartComponent {
@@ -8,6 +9,9 @@ export default class EventEditForm extends AbstractSmartComponent {
     super();
     this._event = event;
 
+    this._flatpickr = null;
+
+    this._applyFlatpickr();
     this._subscribeOnEvents();
   }
 
@@ -65,12 +69,12 @@ export default class EventEditForm extends AbstractSmartComponent {
             <label class="visually-hidden" for="event-start-time-1">
               From
             </label>
-            <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${formatDate(startDate)}">
+            <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${startDate}">
             &mdash;
             <label class="visually-hidden" for="event-end-time-1">
               To
             </label>
-            <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${formatDate(endDate)}">
+            <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${endDate}">
           </div>
 
           <div class="event__field-group  event__field-group--price">
@@ -137,6 +141,21 @@ export default class EventEditForm extends AbstractSmartComponent {
     );
   }
 
+  removeElement() {
+    if (this._flatpickr) {
+      this._flatpickr.destroy();
+      this._flatpickr = null;
+    }
+
+    super.removeElement();
+  }
+
+  rerender() {
+    super.rerender();
+
+    this._applyFlatpickr();
+  }
+
   setOnFormSubmit(handler) {
     this.getElement().addEventListener(`submit`, handler);
   }
@@ -165,5 +184,25 @@ export default class EventEditForm extends AbstractSmartComponent {
           this.rerender();
         }
       });
+  }
+
+  _applyFlatpickr() {
+    if (this._flatpickr) {
+      this._flatpickr.destroy();
+      this._flatpickr = null;
+    }
+
+    this._setFlatpickr(this.getElement().querySelector(`#event-start-time-1`), this._event.startDate);
+    this._setFlatpickr(this.getElement().querySelector(`#event-end-time-1`), this._event.endDate);
+  }
+
+  _setFlatpickr(input, defaultTime) {
+    this._flatpickr = flatpickr(input, {
+      enableTime: true,
+      dateFormat: `d/m/y H:i`,
+      minDate: `today`,
+      defaultDate: defaultTime,
+      allowInput: true,
+    });
   }
 }
