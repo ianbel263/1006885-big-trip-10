@@ -28,12 +28,14 @@ export const formatTripType = (tripType) => {
   let formattedTripType = ``;
   Object.keys(TripType).forEach((el) => {
     TripType[el].forEach((it) => {
-      if (tripType === it && el === `ACTIVITY`) {
-        formattedTripType = `${doFirstLetterUppercase(tripType)} in`;
-      } else if (tripType === it && el === `TRANSFER`) {
+      if (tripType === it && el === `TRANSFER`) {
         formattedTripType = `${doFirstLetterUppercase(tripType)} to`;
+      } else if (tripType === `restaurant`) {
+        formattedTripType = `${doFirstLetterUppercase(tripType)} in`;
       } else if (tripType === `check-in`) {
-        formattedTripType = `${doFirstLetterUppercase(tripType).slice(0, 5)} in`;
+        formattedTripType = `${doFirstLetterUppercase(tripType).slice(0, 5)} into`;
+      } else if (tripType === `sightseeing`) {
+        formattedTripType = `${doFirstLetterUppercase(tripType)} at`;
       }
     });
   });

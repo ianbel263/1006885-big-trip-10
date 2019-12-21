@@ -20,6 +20,11 @@ pointsModel.setPoints(cards);
 const filterController = new FilterController(tripControlDiv, pointsModel);
 filterController.render();
 
+document.querySelector(`.trip-main__event-add-btn`)
+  .addEventListener(`click`, () => {
+    tripController.createPoint();
+  });
+
 const daysList = tripEventsSection.querySelector(`.trip-days`);
 const tripController = new TripController(daysList, pointsModel);
 tripController.render();

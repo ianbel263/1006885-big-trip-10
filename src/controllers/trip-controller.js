@@ -4,7 +4,7 @@ import {eventSortFilters} from '../mock/event-sort.js';
 import NoEventsComponent from '../components/no-events.js';
 import EventSortComponent from '../components/event-sort.js';
 import TripDayItemComponent from '../components/trip-day-item.js';
-import PointController from './point-controller.js';
+import PointController, {ViewMode as PointControllerMode, EmptyCard} from './point-controller.js';
 
 const renderCards = (cards, container, onDataChange, onViewChange, isSortedByDefault = true) => {
   const pointControllers = [];
@@ -27,7 +27,7 @@ const renderCards = (cards, container, onDataChange, onViewChange, isSortedByDef
             onViewChange
         );
 
-        pointController.render(_event);
+        pointController.render(_event, PointControllerMode.DEFAULT);
         pointControllers.push(pointController);
       });
 
@@ -44,7 +44,7 @@ export default class TripController {
 
     // this._events = [];
     this._pointControllers = [];
-
+    this._creatingPoint = null;
     this._isSortedByDefault = true;
 
     this._noEventsComponent = new NoEventsComponent();
@@ -70,6 +70,16 @@ export default class TripController {
     this._eventSortComponent.setOnSortChange(this._onSortTypeChange);
 
     this._pointControllers = renderCards(cards, this._container, this._onDataChange, this._onViewChange);
+  }
+
+  createPoint() {
+    if (this._creatingPoint) {
+      return;
+    }
+
+    this._creatingPoint = new PointController(null, this._onDataChange, this._onViewChange);
+    console.log('this._creatingPoint', this._creatingPoint)
+    this._creatingPoint.render(EmptyCard, PointControllerMode.ADD);
   }
 
   _onSortTypeChange(sortType) {
