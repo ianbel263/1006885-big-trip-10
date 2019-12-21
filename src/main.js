@@ -11,8 +11,6 @@ import FilterController from './controllers/filter-controller.js';
 const tripControlDiv = document.querySelector(`.trip-controls`);
 renderElement(tripControlDiv, new SiteMenuComponent(siteMenu));
 
-renderElement(tripControlDiv, new SiteFilterComponent(siteFilters));
-
 const tripEventsSection = document.querySelector(`.trip-events`);
 renderElement(tripEventsSection, new TripDaysContainerComponent());
 

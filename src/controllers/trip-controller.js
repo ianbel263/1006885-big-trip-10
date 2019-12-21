@@ -106,11 +106,11 @@ export default class TripController {
   _onViewChange() {
     this._pointControllers.forEach((it) => it.setDefaultView());
   }
-}
 
-_onFilterChange() {
-  const cards = this._pointsModel.getPoints();
+  _onFilterChange() {
+    const cards = this._pointsModel.getPoints();
 
-  this._container.innerHTML = ``;
-  this._pointControllers = renderCards(cards, this._container, this._onDataChange, this._onViewChange, this._isSortedByDefault);
+    this._container.innerHTML = ``;
+    this._pointControllers = renderCards(cards, this._container, this._onDataChange, this._onViewChange, this._isSortedByDefault);
+  }
 }

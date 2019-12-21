@@ -21,10 +21,10 @@ export default class SiteFilter extends AbstractComponent {
     </form>`
     );
   }
-}
 
-setOnFilterChange(handler) {
-  this.getElement().addEventListener(`change`, (evt) => {
-    handler(evt.target.dataset.filter);
-  });
+  setOnFilterChange(handler) {
+    this.getElement().addEventListener(`change`, (evt) => {
+      handler(evt.target.dataset.filter);
+    });
+  }
 }
