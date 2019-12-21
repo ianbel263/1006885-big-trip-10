@@ -1,4 +1,4 @@
-import {TripTypes} from '../const.js';
+import {TripType} from '../const.js';
 import moment from 'moment';
 
 export const timeFormat = (date) => {
@@ -26,8 +26,8 @@ export const doFirstLetterUppercase = (string) => {
 
 export const formatTripType = (tripType) => {
   let formattedTripType = ``;
-  Object.keys(TripTypes).forEach((el) => {
-    TripTypes[el].forEach((it) => {
+  Object.keys(TripType).forEach((el) => {
+    TripType[el].forEach((it) => {
       if (tripType === it && el === `ACTIVITY`) {
         formattedTripType = `${doFirstLetterUppercase(tripType)} in`;
       } else if (tripType === it && el === `TRANSFER`) {

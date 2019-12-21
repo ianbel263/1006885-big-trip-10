@@ -1,4 +1,4 @@
-import {TripTypes} from '../const.js';
+import {TripType} from '../const.js';
 
 const CARDS_COUNT = 10;
 
@@ -56,7 +56,7 @@ const generateCard = () => {
   const endDate = getRandomDate();
   return {
     id: Math.random(),
-    type: getRandomArrayItem(Math.random() > 0.5 ? TripTypes.TRANSFER : TripTypes.ACTIVITY),
+    type: getRandomArrayItem(Math.random() > 0.5 ? TripType.TRANSFER : TripType.ACTIVITY),
     destination: getRandomArrayItem(eventPointCities),
     description: getRandomArrayItem(eventPointDescriptions),
     photosUrls: getEventPhotosUrls(),

@@ -1,6 +1,6 @@
 import flatpickr from 'flatpickr';
 import {destinations} from '../mock/card.js';
-import {TripTypes} from '../const.js';
+import {TripType} from '../const.js';
 import {doFirstLetterUppercase, formatTripType} from '../utils/common.js';
 import AbstractSmartComponent from './abstract-smart-component.js';
 
@@ -30,12 +30,12 @@ export default class EventEditForm extends AbstractSmartComponent {
 
             <div class="event__type-list">
 
-      ${Object.keys(TripTypes).map((group) => {
+      ${Object.keys(TripType).map((group) => {
         return (
           `<fieldset class="event__type-group">
-            <legend class="visually-hidden">${TripTypes[group]}</legend>
+            <legend class="visually-hidden">${TripType[group]}</legend>
 
-          ${TripTypes[group].map((el) => {
+          ${TripType[group].map((el) => {
             return (
               `<div class="event__type-item">
                 <input id="event-type-${el}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${el}" ${type === el && `checked`}>
