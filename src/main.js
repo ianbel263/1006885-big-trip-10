@@ -22,6 +22,7 @@ filterController.render();
 
 document.querySelector(`.trip-main__event-add-btn`)
   .addEventListener(`click`, () => {
+    console.log(`NEW`);
     tripController.createPoint();
   });
 

@@ -38,7 +38,7 @@ export default class EventItem extends AbstractComponent {
             &euro;&nbsp;<span class="event__offer-price">${offerPrice}</span>
           </li>`
         );
-      }).join(`\n`)}
+      }).slice(0, 2).join(`\n`)}
           </ul>
           <button class="event__rollup-btn" type="button">
             <span class="visually-hidden">Open event</span>

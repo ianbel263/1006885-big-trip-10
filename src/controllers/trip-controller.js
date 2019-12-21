@@ -1,10 +1,12 @@
 import {SortType} from '../const.js';
-import {renderElement, RenderPosition} from '../utils/render.js';
+import {renderElement, RenderPosition, removeComponent} from '../utils/render.js';
 import {eventSortFilters} from '../mock/event-sort.js';
 import NoEventsComponent from '../components/no-events.js';
 import EventSortComponent from '../components/event-sort.js';
 import TripDayItemComponent from '../components/trip-day-item.js';
 import PointController, {ViewMode as PointControllerMode, EmptyCard} from './point-controller.js';
+
+let days = [];
 
 const renderCards = (cards, container, onDataChange, onViewChange, isSortedByDefault = true) => {
   const pointControllers = [];
@@ -32,6 +34,7 @@ const renderCards = (cards, container, onDataChange, onViewChange, isSortedByDef
       });
 
     renderElement(container, day);
+    days.push(day);
   });
 
   return pointControllers;
@@ -42,34 +45,40 @@ export default class TripController {
     this._container = container;
     this._pointsModel = pointsModel;
 
-    // this._events = [];
     this._pointControllers = [];
     this._creatingPoint = null;
     this._isSortedByDefault = true;
 
     this._noEventsComponent = new NoEventsComponent();
-    this._eventSortComponent = new EventSortComponent(eventSortFilters);
+    this._eventSortComponent = null;
 
     this._onSortTypeChange = this._onSortTypeChange.bind(this);
     this._onDataChange = this._onDataChange.bind(this);
     this._onViewChange = this._onViewChange.bind(this);
-    this._onFilterChange = this._onFilterChange.bind(this);
+    this._updatePoints = this._updatePoints.bind(this);
 
-    this._pointsModel.setOnFilterChange(this._onFilterChange);
+    this._pointsModel.setOnDataChange(this._updatePoints);
+    this._pointsModel.setOnFilterChange(this._updatePoints);
   }
 
   render() {
     const cards = this._pointsModel.getPoints();
+    const cardsAll = this._pointsModel.getPointsAll();
 
-    if (cards.length === 0) {
+    if (cardsAll.length === 0) {
       renderElement(this._container, this._noEventsComponent);
       return;
+    } else {
+      removeComponent(this._noEventsComponent);
     }
 
-    renderElement(this._container.parentElement, this._eventSortComponent, RenderPosition.AFTERBEGIN);
-    this._eventSortComponent.setOnSortChange(this._onSortTypeChange);
-
-    this._pointControllers = renderCards(cards, this._container, this._onDataChange, this._onViewChange);
+    if (!this._eventSortComponent) {
+      this._eventSortComponent = new EventSortComponent(eventSortFilters);
+      renderElement(this._container.parentElement, this._eventSortComponent, RenderPosition.AFTERBEGIN);
+      this._eventSortComponent.setOnSortChange(this._onSortTypeChange);
+    }
+    
+    this._pointControllers = renderCards(cards, this._container, this._onDataChange, this._onViewChange, this._isSortedByDefault);
   }
 
   createPoint() {
@@ -78,7 +87,6 @@ export default class TripController {
     }
 
     this._creatingPoint = new PointController(null, this._onDataChange, this._onViewChange);
-    console.log('this._creatingPoint', this._creatingPoint)
     this._creatingPoint.render(EmptyCard, PointControllerMode.ADD);
   }
 
@@ -105,28 +113,43 @@ export default class TripController {
     this._pointControllers = renderCards(sortedEvents, this._container, this._onDataChange, this._onViewChange, this._isSortedByDefault);
   }
 
+  _removePoints() {
+    this._pointControllers.forEach((_pointcontroller) => _pointcontroller.destroy());
+    this._pointcontrollers = [];
+
+    days.forEach((_day) => removeComponent(_day));
+    days = [];
+  }
+
+  _updatePoints() {
+    this._removePoints();
+    this.render();
+  }
+
   _onDataChange(pointController, oldData, newData) {
+    // console.log('oldData', oldData)
+    // console.log('newData', newData)
+    if (oldData === EmptyCard) {
+      this._creatingPoint = null;
+      if (newData === null) {
+        pointController.destroy();
+      } else {
+        // console.log(`ADD NEW DATA`);
+        this._pointsModel.addPoint(newData);
+        pointController.render(newData, PointControllerMode.ADD);
+      }
+    }
     if (newData === null) {
       this._pointsModel.removePoint(oldData.id);
-      this._container.innerHTML = ``;
-      this._pointControllers = renderCards(this._pointsModel.getPoints(), this._container, this._onDataChange, this._onViewChange, this._isSortedByDefault);
-    }
-
-    const isSuccess = this._pointsModel.updatePoint(oldData.id, newData);
-
-    if (isSuccess) {
-      pointController.render(newData);
+    } else {
+      const isSuccess = this._pointsModel.updatePoint(oldData.id, newData);
+      if (isSuccess) {
+        pointController.render(newData, PointControllerMode.DEFAULT);
+      }
     }
   }
 
   _onViewChange() {
     this._pointControllers.forEach((it) => it.setDefaultView());
-  }
-
-  _onFilterChange() {
-    const cards = this._pointsModel.getPoints();
-
-    this._container.innerHTML = ``;
-    this._pointControllers = renderCards(cards, this._container, this._onDataChange, this._onViewChange, this._isSortedByDefault);
   }
 }

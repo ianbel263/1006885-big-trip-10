@@ -1,6 +1,6 @@
 import {TripType} from '../const.js';
 
-const CARDS_COUNT = 10;
+const CARDS_COUNT = 4;
 
 const MAX_PHOTOS = 10;
 const MIN_OFFERS = 0;

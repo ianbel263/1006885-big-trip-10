@@ -1,5 +1,5 @@
-import flatpickr from 'flatpickr';
 import {destinations} from '../mock/card.js';
+import flatpickr from 'flatpickr';
 import {TripType} from '../const.js';
 import {doFirstLetterUppercase, formatTripType} from '../utils/common.js';
 import AbstractSmartComponent from './abstract-smart-component.js';
@@ -13,7 +13,8 @@ export default class EventEditForm extends AbstractSmartComponent {
     this._deleteHandler = null;
     this._cancelHandler = null;
 
-    this._flatpickr = null;
+    this._flatpickrStartDate = null;
+    this._flatpickrEndDate = null;
 
     this._applyFlatpickr();
     this._subscribeOnEvents();
@@ -145,12 +146,36 @@ export default class EventEditForm extends AbstractSmartComponent {
     );
   }
 
-  removeElement() {
-    if (this._flatpickr) {
-      this._flatpickr.destroy();
-      this._flatpickr = null;
-    }
+  getData() {
+    const element = this.getElement();
 
+    const formData = new FormData(element);
+    const offersChecked = [...element.querySelectorAll(`.event__offer-checkbox`)]
+      .filter((input) => input.checked)
+      .map((input) => {
+        return {
+          type: input.name.slice(12),
+          title: input.parentElement.querySelector(`.event__offer-title`).textContent,
+          price: input.parentElement.querySelector(`.event__offer-price`).textContent,
+          isChecked: input.checked
+        };
+      });
+
+    return {
+      type: formData.get(`event-type`),
+      destination: formData.get(`event-destination`),
+      description: element.querySelector(`.event__destination-description`).textContent,
+      photosUrls: [...element.querySelectorAll(`.event__photo`)].map((el) => el.src),
+      offers: offersChecked,
+      startDate: formData.get(`event-start-time`),
+      endDate: formData.get(`event-end-time`),
+      price: formData.get(`event-price`),
+      isFavorite: false
+    };
+  }
+
+  removeElement() {
+    this._deleteFlatpickrs();
     super.removeElement();
   }
 
@@ -204,18 +229,24 @@ export default class EventEditForm extends AbstractSmartComponent {
       });
   }
 
-  _applyFlatpickr() {
-    if (this._flatpickr) {
-      this._flatpickr.destroy();
-      this._flatpickr = null;
+  _deleteFlatpickrs() {
+    if (this._flatpickrStartDate && this._flatpickrEndDate) {
+      this._flatpickrStartDate.destroy();
+      this._flatpickrStartDate = null;
+      this._flatpickrEndDate.destroy();
+      this._flatpickrEndDate = null;
     }
+  }
 
-    this._setFlatpickr(this.getElement().querySelector(`#event-start-time-1`), this._event.startDate);
-    this._setFlatpickr(this.getElement().querySelector(`#event-end-time-1`), this._event.endDate);
+  _applyFlatpickr() {
+    this._deleteFlatpickrs();
+
+    this._flatpickrStartDate = this._setFlatpickr(this.getElement().querySelector(`#event-start-time-1`), this._event.startDate);
+    this._flatpickrEndDate = this._setFlatpickr(this.getElement().querySelector(`#event-end-time-1`), this._event.endDate);
   }
 
   _setFlatpickr(input, defaultTime) {
-    this._flatpickr = flatpickr(input, {
+    return flatpickr(input, {
       enableTime: true,
       dateFormat: `d/m/y H:i`,
       minDate: `today`,

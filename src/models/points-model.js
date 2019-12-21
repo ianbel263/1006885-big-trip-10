@@ -28,6 +28,11 @@ export default class Points {
     this._filterChangeHandlers.forEach((handler) => handler());
   }
 
+  addPoint(point) {
+    this._points = [].concat(point, this._points);
+    this._dataChangeHandlers.forEach((handler) => handler());
+  }
+
   updatePoint(id, point) {
     const index = this._points.findIndex((it) => it.id === id);
 

@@ -11,11 +11,12 @@ export const ViewMode = {
 };
 
 export const EmptyCard = {
-  type: ``,
+  id: 0,
+  type: `flight`,
   destination: ``,
   description: ``,
   photosUrls: [],
-  offers: [],
+  offers: [{}],
   startDate: Date.now(),
   endDate: Date.now(),
   price: 0,
@@ -33,6 +34,7 @@ export default class PointController {
 
     this._eventItemComponent = null;
     this._eventEditFormComponent = null;
+    this._createNewEventComponent = null;
 
     this._onEscPress = this._onEscPress.bind(this);
   }
@@ -42,10 +44,10 @@ export default class PointController {
 
     const oldEventItemComponent = this._eventItemComponent;
     const oldEventEditFormComponent = this._eventEditFormComponent;
+    const oldCreateNewEventComponent = this._createNewEventComponent;
 
     this._eventItemComponent = new EventItemComponent(event);
     this._eventEditFormComponent = new EventEditFormComponent(event);
-    this._createNewEventComponent = new CreateNewEventComponent(EmptyCard);
 
     this._eventItemComponent.setOnEditButtonClick(() => {
       this._replaceEventToEdit();
@@ -54,7 +56,9 @@ export default class PointController {
 
     this._eventEditFormComponent.setOnFormSubmit((evt) => {
       evt.preventDefault();
-      this._replaceEditToEvent();
+
+      const data = this._eventEditFormComponent.getData();
+      this._onDataChange(this, event, data);
     });
 
     this._eventEditFormComponent.setOnDeleteButtonClick(() => {
@@ -72,32 +76,39 @@ export default class PointController {
     });
 
     switch (viewMode) {
-      case ViewMode.DEFAULT: 
+      case ViewMode.DEFAULT:
         if (oldEventItemComponent && oldEventEditFormComponent) {
           replaceComponents(this._eventItemComponent, oldEventItemComponent);
           replaceComponents(this._eventEditFormComponent, oldEventEditFormComponent);
+          this._replaceEditToEvent();
         } else {
           renderElement(this._container, this._eventItemComponent);
         }
         break;
-      case ViewMode.ADD: 
-        if (oldEventItemComponent && oldEventEditFormComponent) {
+      case ViewMode.ADD:
+        if (oldEventItemComponent && oldEventEditFormComponent && oldCreateNewEventComponent) {
           removeComponent(oldEventItemComponent);
           removeComponent(oldEventEditFormComponent);
+          removeComponent(oldCreateNewEventComponent);
+          // this._replaceEditToEvent();
+        } else {
+          const sortFilter = document.querySelector(`.trip-sort`);
+          this._createNewEventComponent = new CreateNewEventComponent(EmptyCard);
+          sortFilter.after(this._createNewEventComponent.getElement());
+
+          this._createNewEventComponent.setOnFormSubmit((evt) => {
+            evt.preventDefault();
+
+            const data = this._createNewEventComponent.getData();
+            this._onDataChange(this, event, data);
+            document.addEventListener(`keydown`, this._onEscPress);
+          });
+
+          this._createNewEventComponent.setOnCancelButtonClick(() => {
+            console.log(`buttonCancel`);
+            this._onDataChange(this, event, null);
+          });
         }
-
-        const sortFilter = document.querySelector(`.trip-sort`);
-        // const createNewEventComponent = new CreateNewEventComponent();
-        sortFilter.after(this._createNewEventComponent.getElement());
-        
-        this._createNewEventComponent.setOnFormSubmit((evt) => {
-          evt.preventDefault();
-
-          const data = this._createNewEventComponent.getData();
-          console.log('data', data);
-          this._onDataChange(this, event, data);
-        });
-        // document.addEventListener(`keydown`, this._onEscPress);
         break;
     }
   }
@@ -106,6 +117,15 @@ export default class PointController {
     if (this._mode !== ViewMode.DEFAULT) {
       this._replaceEditToEvent();
     }
+  }
+
+  destroy() {
+    removeComponent(this._eventItemComponent);
+    removeComponent(this._eventEditFormComponent);
+    if (this._createNewEventComponent) {
+      removeComponent(this._createNewEventComponent);
+    }
+    document.removeEventListener(`keydown`, this._onEscKeyDown);
   }
 
   _replaceEventToEdit() {
@@ -124,9 +144,11 @@ export default class PointController {
     if (evt.keyCode === ESC_KEYCODE) {
       console.log('ESC_KEYCODE', ESC_KEYCODE);
 
-      this._replaceEditToEvent();
-      document.removeEventListener(`keydown`, this._onEscPress);
+      if (this._mode === ViewMode.ADD) {
+        this._onDataChange(this, EmptyCard, null);
+      }
+      // this._replaceEditToEvent();
+      // document.removeEventListener(`keydown`, this._onEscPress);
     }
   }
 }
-
