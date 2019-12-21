@@ -96,6 +96,12 @@ export default class TripController {
   }
 
   _onDataChange(pointController, oldData, newData) {
+    if (newData === null) {
+      this._pointsModel.removePoint(oldData.id);
+      this._container.innerHTML = ``;
+      this._pointControllers = renderCards(this._pointsModel.getPoints(), this._container, this._onDataChange, this._onViewChange, this._isSortedByDefault);
+    }
+
     const isSuccess = this._pointsModel.updatePoint(oldData.id, newData);
 
     if (isSuccess) {

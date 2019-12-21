@@ -40,6 +40,11 @@ export default class PointController {
       this._replaceEditToEvent();
     });
 
+    this._eventEditFormComponent.setOnDeleteButtonClick(() => {
+      this._onDataChange(this, event, null);
+      // this._replaceEditToEvent();
+    });
+
     this._eventEditFormComponent.setOnCancelButtonClick(() => {
       this._replaceEditToEvent();
     });

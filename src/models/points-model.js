@@ -7,6 +7,7 @@ export default class Points {
 
     this._activeFilterType = FilterType.EVERYTHING;
 
+    this._dataChangeHandlers = [];
     this._filterChangeHandlers = [];
   }
 
@@ -27,10 +28,6 @@ export default class Points {
     this._filterChangeHandlers.forEach((handler) => handler());
   }
 
-  setOnFilterChange(handler) {
-    this._filterChangeHandlers.push(handler);
-  }
-
   updatePoint(id, point) {
     const index = this._points.findIndex((it) => it.id === id);
 
@@ -45,5 +42,29 @@ export default class Points {
     ];
 
     return true;
+  }
+
+  removePoint(id) {
+    const index = this._points.findIndex((it) => it.id === id);
+
+    if (index === -1) {
+      return false;
+    }
+
+    this._points = [
+      ...this._points.slice(0, index),
+      ...this._points.slice(index + 1)
+    ];
+
+    this._dataChangeHandlers.forEach((handler) => handler());
+
+    return true;
+  }
+
+  setOnDataChange(handler) {
+    this._dataChangeHandlers.push(handler);
+  }
+  setOnFilterChange(handler) {
+    this._filterChangeHandlers.push(handler);
   }
 }

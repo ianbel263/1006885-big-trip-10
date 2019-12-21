@@ -10,6 +10,7 @@ export default class EventEditForm extends AbstractSmartComponent {
     this._event = event;
 
     this._submitHandler = null;
+    this._deleteHandler = null;
     this._cancelHandler = null;
 
     this._flatpickr = null;
@@ -165,6 +166,13 @@ export default class EventEditForm extends AbstractSmartComponent {
     this._submitHandler = handler;
   }
 
+  setOnDeleteButtonClick(handler) {
+    this.getElement().querySelector(`.event__reset-btn`)
+      .addEventListener(`click`, handler);
+
+    this._deleteHandler = handler;
+  }
+
   setOnCancelButtonClick(handler) {
     this.getElement().querySelector(`.event__rollup-btn`)
       .addEventListener(`click`, handler);
@@ -179,6 +187,7 @@ export default class EventEditForm extends AbstractSmartComponent {
 
   recoveryListeners() {
     this.setOnFormSubmit(this._submitHandler);
+    this.setOnDeleteButtonClick(this._deleteHandler);
     this.setOnCancelButtonClick(this._cancelHandler);
     this._subscribeOnEvents();
   }
