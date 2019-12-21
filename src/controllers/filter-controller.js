@@ -1,4 +1,3 @@
-import {siteFilters} from '../mock/site-filter.js';
 import SiteFilterComponent from '../components/site-filter.js';
 import {renderElement, replaceComponents} from '../utils/render.js';
 import {FilterType} from '../const.js';
@@ -18,6 +17,13 @@ export default class FilterController {
   }
 
   render() {
+    const siteFilters = Object.values(FilterType).map((filterType) => {
+      return {
+        name: filterType,
+        isChecked: filterType === this._activeFilterType
+      };
+    });
+
     const oldComponent = this._siteFilterComponent;
 
     this._siteFilterComponent = new SiteFilterComponent(siteFilters);
