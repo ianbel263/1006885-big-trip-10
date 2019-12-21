@@ -38,8 +38,9 @@ const renderCards = (cards, container, onDataChange, onViewChange, isSortedByDef
 };
 
 export default class TripController {
-  constructor(container) {
+  constructor(container, pointsModel) {
     this._container = container;
+    this._pointsModel = pointsModel;
 
     this._events = [];
     this._pointControllers = [];
@@ -52,10 +53,10 @@ export default class TripController {
     this._onViewChange = this._onViewChange.bind(this);
   }
 
-  render(events) {
-    this._events = events;
+  render() {
+    const cards = this._pointsModel.getPoints();
 
-    if (this._events.length === 0) {
+    if (cards.length === 0) {
       renderElement(this._container, this._noEventsComponent);
       return;
     }
@@ -63,7 +64,7 @@ export default class TripController {
     renderElement(this._container.parentElement, this._eventSortComponent, RenderPosition.AFTERBEGIN);
     this._eventSortComponent.setOnSortChangeClick(this._onSortTypeChange);
 
-    this._pointControllers = renderCards(this._events, this._container, this._onDataChange, this._onViewChange);
+    this._pointControllers = renderCards(cards, this._container, this._onDataChange, this._onViewChange);
   }
 
   _onSortTypeChange(sortType) {
@@ -90,19 +91,11 @@ export default class TripController {
   }
 
   _onDataChange(pointController, oldData, newData) {
-    const index = this._events.findIndex((it) => it === oldData);
+    const isSuccess = this._pointsModel.updatePoint(oldData.id, newData);
 
-    if (index === -1) {
-      return;
+    if (isSuccess) {
+      pointController.render(newData);
     }
-
-    this._events = [
-      ...this._events.slice(0, index),
-      newData,
-      ...this._events.slice(index + 1)
-    ];
-
-    pointController.render(this._events[index]);
   }
 
   _onViewChange() {

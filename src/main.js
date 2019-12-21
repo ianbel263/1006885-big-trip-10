@@ -7,6 +7,7 @@ import SiteFilterComponent from './components/site-filter.js';
 import TripDaysContainerComponent from './components/trip-days-container.js';
 import TripController from './controllers/trip-controller.js';
 import TripInfoComponent from './components/trip-info.js';
+import PointsModel from './models/points-model.js';
 
 const tripControlDiv = document.querySelector(`.trip-controls`);
 renderElement(tripControlDiv, new SiteMenuComponent(siteMenu));
@@ -16,9 +17,12 @@ renderElement(tripControlDiv, new SiteFilterComponent(siteFilters));
 const tripEventsSection = document.querySelector(`.trip-events`);
 renderElement(tripEventsSection, new TripDaysContainerComponent());
 
+const pointsModel = new PointsModel();
+pointsModel.setPoints(cards);
+
 const daysList = tripEventsSection.querySelector(`.trip-days`);
-const tripController = new TripController(daysList);
-tripController.render(cards);
+const tripController = new TripController(daysList, pointsModel);
+tripController.render();
 
 const tripInfoSection = document.querySelector(`.trip-info`);
 renderElement(tripInfoSection, new TripInfoComponent(cards), RenderPosition.AFTERBEGIN);

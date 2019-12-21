@@ -55,6 +55,7 @@ const generateCard = () => {
   const startDate = getRandomDate();
   const endDate = getRandomDate();
   return {
+    id: Math.random(),
     type: getRandomArrayItem(Math.random() > 0.5 ? TripTypes.TRANSFER : TripTypes.ACTIVITY),
     destination: getRandomArrayItem(eventPointCities),
     description: getRandomArrayItem(eventPointDescriptions),
