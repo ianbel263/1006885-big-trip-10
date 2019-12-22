@@ -20,7 +20,7 @@ export default class CreateNewEvent extends AbstractSmartComponent {
   }
 
   getTemplate() {
-    const {type, destination, startDate, endDate, price, description, photosUrls} = this._event;
+    const {type, startDate, endDate, price, description, photosUrls} = this._event;
 
     return this._destination ?
       (`<form class="trip-events__item  event  event--edit" action="#" method="post">
@@ -308,7 +308,7 @@ export default class CreateNewEvent extends AbstractSmartComponent {
     element.querySelector(`.event__input--destination`)
       .addEventListener(`change`, (evt) => {
         this._destination = evt.target.value;
-        
+
         this.rerender();
       });
   }

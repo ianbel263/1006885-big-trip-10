@@ -77,7 +77,7 @@ export default class TripController {
       renderElement(this._container.parentElement, this._eventSortComponent, RenderPosition.AFTERBEGIN);
       this._eventSortComponent.setOnSortChange(this._onSortTypeChange);
     }
-    
+
     this._pointControllers = renderCards(cards, this._container, this._onDataChange, this._onViewChange, this._isSortedByDefault);
   }
 

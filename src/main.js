@@ -22,8 +22,8 @@ filterController.render();
 
 document.querySelector(`.trip-main__event-add-btn`)
   .addEventListener(`click`, () => {
-    console.log(`NEW`);
-    tripController.createPoint();
+    // console.log(`NEW`);
+    tripController.createPoint(); // поставить потом обработчик по esc
   });
 
 const daysList = tripEventsSection.querySelector(`.trip-days`);

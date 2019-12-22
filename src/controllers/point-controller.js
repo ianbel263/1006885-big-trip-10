@@ -101,11 +101,10 @@ export default class PointController {
 
             const data = this._createNewEventComponent.getData();
             this._onDataChange(this, event, data);
-            document.addEventListener(`keydown`, this._onEscPress);
           });
 
           this._createNewEventComponent.setOnCancelButtonClick(() => {
-            console.log(`buttonCancel`);
+            // console.log(`buttonCancel`);
             this._onDataChange(this, event, null);
           });
         }
@@ -142,13 +141,13 @@ export default class PointController {
 
   _onEscPress(evt) {
     if (evt.keyCode === ESC_KEYCODE) {
-      console.log('ESC_KEYCODE', ESC_KEYCODE);
+      // console.log('ESC_KEYCODE', ESC_KEYCODE);
 
-      if (this._mode === ViewMode.ADD) {
-        this._onDataChange(this, EmptyCard, null);
-      }
-      // this._replaceEditToEvent();
-      // document.removeEventListener(`keydown`, this._onEscPress);
+      // if (this._mode === ViewMode.ADD) {
+      //   this._onDataChange(this, EmptyCard, null);
+      // }
+      this._replaceEditToEvent();
+      document.removeEventListener(`keydown`, this._onEscPress);
     }
   }
 }
