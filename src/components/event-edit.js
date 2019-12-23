@@ -5,8 +5,8 @@ import {TripType} from '../const.js';
 import {doFirstLetterUppercase, formatTripType, parseDate} from '../utils/common.js';
 import AbstractSmartComponent from './abstract-smart-component.js';
 
-const createEventEditFormTemplate = (event) => {
-  const {type, destination, startDate, endDate, price, offers, description, photosUrls, isFavorite} = event;
+const createEventEditFormTemplate = (event, destination) => {
+  const {type, startDate, endDate, price, offers, description, photosUrls, isFavorite} = event;
 
   return (
     `<form class="event  event--edit" action="#" method="post">
@@ -351,7 +351,7 @@ export default class EventEditForm extends AbstractSmartComponent {
     this._event = event;
     this._mode = mode;
 
-    this._destination = null;
+    this._destination = event.destination;
 
     this._submitHandler = null;
     this._deleteHandler = null;
@@ -366,7 +366,7 @@ export default class EventEditForm extends AbstractSmartComponent {
 
   getTemplate() {
     return this._mode === ViewMode.DEFAULT
-      ? createEventEditFormTemplate(this._event)
+      ? createEventEditFormTemplate(this._event, this._destination)
       : createNewEventFormTemplate(this._event, this._destination);
   }
 
@@ -438,8 +438,11 @@ export default class EventEditForm extends AbstractSmartComponent {
   recoveryListeners() {
     this.setOnFormSubmit(this._submitHandler);
     this.setOnDeleteButtonClick(this._deleteHandler);
-    this.setOnCancelButtonClick(this._cancelHandler);
     this._subscribeOnEvents();
+
+    if (this._mode === ViewMode.DEFAULT) {
+      this.setOnCancelButtonClick(this._cancelHandler);
+    }
   }
 
   _subscribeOnEvents() {
@@ -455,6 +458,7 @@ export default class EventEditForm extends AbstractSmartComponent {
 
     element.querySelector(`.event__input--destination`)
     .addEventListener(`change`, (evt) => {
+      // this._event.destination = evt.target.value;
       this._destination = evt.target.value;
 
       this.rerender();

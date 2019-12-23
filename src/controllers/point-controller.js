@@ -2,7 +2,7 @@ import {ESC_KEYCODE} from '../const.js';
 import EventItemComponent from '../components/event-item.js';
 import EventEditFormComponent from '../components/event-edit.js';
 import {renderElement, replaceComponents, removeComponent} from '../utils/render.js';
-import {ViewMode} from '../utils/common.js';
+import {ViewMode, EmptyCard} from '../utils/common.js';
 
 export default class PointController {
   constructor(container, onDataChange, onViewChange) {
@@ -39,6 +39,9 @@ export default class PointController {
 
           const data = this._eventEditFormComponent.getData();
           this._onDataChange(this, event, data);
+          // console.log('this', this)
+          // console.log('event', event)
+          // console.log('data', data)
         });
 
         this._eventEditFormComponent.setOnDeleteButtonClick(() => {
@@ -64,7 +67,7 @@ export default class PointController {
         }
         break;
       case ViewMode.ADD:
-        this._eventEditFormComponent = new EventEditFormComponent(event, viewMode);
+        this._eventEditFormComponent = new EventEditFormComponent(EmptyCard, viewMode);
         this._eventEditFormComponent.setOnFormSubmit((evt) => {
           evt.preventDefault();
 

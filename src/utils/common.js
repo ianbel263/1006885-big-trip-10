@@ -24,7 +24,7 @@ export const doFirstLetterUppercase = (string) => {
   return string.charAt(0).toUpperCase() + string.slice(1);
 };
 
-export const parseDate = (dateString) => moment(dateString, `DD/MM/YY HH:mm`).unix() * 1000;
+export const parseDate = (dateString) => moment(dateString, `DD/MM/YY HH:mm`).valueOf();
 
 export const formatTripType = (tripType) => {
   let formattedTripType = ``;

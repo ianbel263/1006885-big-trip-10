@@ -46,6 +46,8 @@ export default class Points {
       ...this._points.slice(index + 1)
     ];
 
+    this._callHandlers(this._dataChangeHandlers);
+
     return true;
   }
 
