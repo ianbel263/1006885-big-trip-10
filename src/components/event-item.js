@@ -30,15 +30,17 @@ export default class EventItem extends AbstractComponent {
           </p>
           <h4 class="visually-hidden">Offers:</h4>
           <ul class="event__selected-offers">
-      ${offers.map(({title, price: offerPrice}) => {
-        return (
-          `<li class="event__offer">
-            <span class="event__offer-title">${title}</span>
-            &plus;
-            &euro;&nbsp;<span class="event__offer-price">${offerPrice}</span>
-          </li>`
-        );
-      }).slice(0, 2).join(`\n`)}
+      ${offers
+        .filter(({isChecked}) => isChecked)
+        .map(({title, price: offerPrice}) => {
+          return (
+            `<li class="event__offer">
+              <span class="event__offer-title">${title}</span>
+              &plus;
+              &euro;&nbsp;<span class="event__offer-price">${offerPrice}</span>
+            </li>`
+          );
+        }).slice(0, 2).join(`\n`)}
           </ul>
           <button class="event__rollup-btn" type="button">
             <span class="visually-hidden">Open event</span>

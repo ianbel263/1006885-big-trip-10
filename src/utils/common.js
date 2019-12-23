@@ -1,13 +1,13 @@
 import {TripType} from '../const.js';
 import moment from 'moment';
 
-export const timeFormat = (date) => {
-  return moment(date).format(`hh:mm`);
-};
+export const timeFormat = (date) => moment(date).format(`HH:mm`);
 
-export const dateFormat = (date) => {
-  return moment(date).format();
-};
+export const dateFormat = (date) => moment(date).format();
+
+export const formatDateWithoutTime = (date) => moment(date).format(`DD MMM YYYY`);
+
+export const formatDateForDayItems = (date) => moment(date).format(`MMM DD`);
 
 export const calculateTimeInterval = (time1, time2) => {
   const daysInt = moment(time2).diff(moment(time1), `days`);
@@ -23,6 +23,8 @@ const castInterval = (timeValue, unitOfTime) => timeValue < 10 ? `0${timeValue}$
 export const doFirstLetterUppercase = (string) => {
   return string.charAt(0).toUpperCase() + string.slice(1);
 };
+
+export const parseDate = (dateString) => moment(dateString, `DD/MM/YY HH:mm`).unix() * 1000;
 
 export const formatTripType = (tripType) => {
   let formattedTripType = ``;
@@ -40,4 +42,23 @@ export const formatTripType = (tripType) => {
     });
   });
   return formattedTripType;
+};
+
+export const ViewMode = {
+  DEFAULT: `default`,
+  EDIT: `edit`,
+  ADD: `add`
+};
+
+export const EmptyCard = {
+  id: 0,
+  type: `flight`,
+  destination: ``,
+  description: ``,
+  photosUrls: [],
+  offers: [{}],
+  startDate: Date.now(),
+  endDate: Date.now(),
+  price: 0,
+  isFavorite: false
 };

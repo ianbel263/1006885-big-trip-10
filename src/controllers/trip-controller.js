@@ -4,15 +4,14 @@ import {eventSortFilters} from '../mock/event-sort.js';
 import NoEventsComponent from '../components/no-events.js';
 import EventSortComponent from '../components/event-sort.js';
 import TripDayItemComponent from '../components/trip-day-item.js';
-import PointController, {ViewMode as PointControllerMode, EmptyCard} from './point-controller.js';
-
-let days = [];
+import PointController from './point-controller.js';
+import {ViewMode as PointControllerMode, EmptyCard, formatDateWithoutTime} from '../utils/common.js';
 
 const renderCards = (cards, container, onDataChange, onViewChange, isSortedByDefault = true) => {
   const pointControllers = [];
 
   const dates = isSortedByDefault
-    ? [...new Set(cards.map((card) => new Date(card.startDate).toDateString()))]
+    ? [...new Set(cards.map((card) => formatDateWithoutTime(card.startDate)))]
     : [true];
 
   dates.forEach((date, dateIndex) => {
@@ -20,7 +19,7 @@ const renderCards = (cards, container, onDataChange, onViewChange, isSortedByDef
 
     cards
       .filter((_event) => {
-        return isSortedByDefault ? new Date(_event.startDate).toDateString() === date : _event;
+        return isSortedByDefault ? formatDateWithoutTime(_event.startDate) === date : _event;
       })
       .forEach((_event) => {
         const pointController = new PointController(
@@ -34,7 +33,6 @@ const renderCards = (cards, container, onDataChange, onViewChange, isSortedByDef
       });
 
     renderElement(container, day);
-    days.push(day);
   });
 
   return pointControllers;
@@ -114,11 +112,9 @@ export default class TripController {
   }
 
   _removePoints() {
+    this._container.innerHTML = ``;
     this._pointControllers.forEach((_pointcontroller) => _pointcontroller.destroy());
     this._pointcontrollers = [];
-
-    days.forEach((_day) => removeComponent(_day));
-    days = [];
   }
 
   _updatePoints() {

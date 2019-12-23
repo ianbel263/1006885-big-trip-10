@@ -1,10 +1,10 @@
 import {TripType} from '../const.js';
 
-const CARDS_COUNT = 4;
+const CARDS_COUNT = 14;
 
 const MAX_PHOTOS = 10;
-const MIN_OFFERS = 0;
-const MAX_OFFERS = 2;
+// const MIN_OFFERS = 0;
+// const MAX_OFFERS = 2;
 const MAX_PRICE = 500;
 
 const eventPointCities = [`Amsterdam`, `Berlin`, `Vienna`, `Paris`, `London`, `Barcelona`, `Madrid`, `Prague`];
@@ -46,9 +46,9 @@ const generateOffers = (offers) => {
       el.isChecked = Math.random() > 0.5;
     });
 
-  return newOffers
-    .filter((offer) => offer.isChecked)
-    .slice(MIN_OFFERS, MAX_OFFERS);
+  return newOffers;
+  // .filter((offer) => offer.isChecked)
+  // .slice(MIN_OFFERS, MAX_OFFERS);
 };
 
 const generateCard = () => {
