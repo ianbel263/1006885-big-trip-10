@@ -5,7 +5,7 @@ import NoEventsComponent from '../components/no-events.js';
 import EventSortComponent from '../components/event-sort.js';
 import TripDayItemComponent from '../components/trip-day-item.js';
 import PointController from './point-controller.js';
-import {ViewMode as PointControllerMode, EmptyCard, formatDateWithoutTime} from '../utils/common.js';
+import {ViewMode as PointControllerMode, EmptyCard, formatDateWithoutTime, parseDateWithoutTime} from '../utils/common.js';
 
 const renderCards = (cards, container, onDataChange, onViewChange, isSortedByDefault = true) => {
   const pointControllers = [];
@@ -15,7 +15,7 @@ const renderCards = (cards, container, onDataChange, onViewChange, isSortedByDef
     : [true];
 
   dates.forEach((date, dateIndex) => {
-    const day = isSortedByDefault ? new TripDayItemComponent(date, dateIndex + 1) : new TripDayItemComponent();
+    const day = isSortedByDefault ? new TripDayItemComponent(parseDateWithoutTime(date), dateIndex + 1) : new TripDayItemComponent();
 
     cards
       .filter((_event) => {
