@@ -6,11 +6,11 @@ import {doFirstLetterUppercase, formatTripType, parseDate} from '../utils/common
 import AbstractSmartComponent from './abstract-smart-component.js';
 
 export default class EventEditForm extends AbstractSmartComponent {
-  constructor(event, mode = ViewMode.DEFAULT) {
+  constructor(event) {
     super();
     this._event = event;
-    this._mode = mode;
 
+    this._mode = ViewMode.DEFAULT;
     this._destination = event.destination;
 
     this._submitHandler = null;
@@ -113,8 +113,9 @@ export default class EventEditForm extends AbstractSmartComponent {
       }
         </header>
 
-      ${this._destination
-        ? `<section class="event__details">
+      ${!this._destination && this._mode === ViewMode.ADD
+        ? ``
+        : `<section class="event__details">
 
           <section class="event__section  event__section--offers">
           <h3 class="event__section-title  event__section-title--offers">Offers</h3>
@@ -180,7 +181,7 @@ export default class EventEditForm extends AbstractSmartComponent {
               </div>
             </section>
           </section>`
-        : ``}
+      }
       </form>`
     );
   }
@@ -212,6 +213,12 @@ export default class EventEditForm extends AbstractSmartComponent {
       price: formData.get(`event-price`),
       isFavorite: false
     };
+  }
+
+  setMode(mode) {
+    this._mode = mode;
+
+    this.rerender();
   }
 
   removeElement() {
