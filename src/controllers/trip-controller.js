@@ -1,6 +1,5 @@
 import {SortType} from '../const.js';
 import {renderElement, RenderPosition, removeComponent} from '../utils/render.js';
-import {eventSortFilters} from '../mock/event-sort.js';
 import NoEventsComponent from '../components/no-events.js';
 import EventSortComponent from '../components/event-sort.js';
 import TripDayItemComponent from '../components/trip-day-item.js';
@@ -45,6 +44,8 @@ export default class TripController {
 
     this._pointControllers = [];
     this._creatingPoint = null;
+
+    this._activeSortType = SortType.EVENT;
     this._isSortedByDefault = true;
 
     this._noEventsComponent = new NoEventsComponent();
@@ -71,6 +72,13 @@ export default class TripController {
     }
 
     if (!this._eventSortComponent) {
+      const eventSortFilters = Object.values(SortType)
+        .map((sortType) => {
+          return {
+            name: sortType,
+            isChecked: sortType === this._activeSortType
+          };
+        });
       this._eventSortComponent = new EventSortComponent(eventSortFilters);
       renderElement(this._container.parentElement, this._eventSortComponent, RenderPosition.AFTERBEGIN);
       this._eventSortComponent.setOnSortChange(this._onSortTypeChange);
