@@ -1,4 +1,4 @@
-import {timeFormat, dateFormat, calculateTimeInterval, formatTripType} from '../utils/common.js';
+import {formatTime, formatDateForDatetimeAttr, calculateTimeInterval, formatTripType} from '../utils/common.js';
 import AbstractComponent from './abstract-component.js';
 
 export default class EventItem extends AbstractComponent {
@@ -19,9 +19,9 @@ export default class EventItem extends AbstractComponent {
           <h3 class="event__title">${formatTripType(type)} ${destination}</h3>
           <div class="event__schedule">
             <p class="event__time">
-              <time class="event__start-time" datetime="${dateFormat(startDate)}">${timeFormat(startDate)}</time>
+              <time class="event__start-time" datetime="${formatDateForDatetimeAttr(startDate)}">${formatTime(startDate)}</time>
               &mdash;
-              <time class="event__end-time" datetime="${dateFormat(endDate)}">${timeFormat(endDate)}</time>
+              <time class="event__end-time" datetime="${formatDateForDatetimeAttr(endDate)}">${formatTime(endDate)}</time>
             </p>
             <p class="event__duration">${calculateTimeInterval(startDate, endDate)}</p>
           </div>

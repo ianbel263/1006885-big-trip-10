@@ -1,11 +1,13 @@
 import {TripType} from '../const.js';
 import moment from 'moment';
 
-export const timeFormat = (date) => moment(date).format(`HH:mm`);
+export const formatTime = (date) => moment(date).format(`HH:mm`);
 
-export const dateFormat = (date) => moment(date).format();
+export const formatDateForDatetimeAttr = (date) => moment(date).format();
 
-export const formatDateWithoutTime = (date) => moment(date).format(`DD MMM YYYY`);
+export const formatDateWithoutTime = (date) => moment(date).format(`YYYY MMM DD`);
+
+// export const formatDateWithTime = (date) => moment(date).format(`DD/MM/YY HH:mm`);
 
 export const formatDateForDayItems = (date) => moment(date).format(`MMM DD`);
 

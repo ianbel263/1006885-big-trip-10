@@ -359,6 +359,7 @@ export default class EventEditForm extends AbstractSmartComponent {
 
     this._flatpickrStartDate = null;
     this._flatpickrEndDate = null;
+    // this._flatpickrMinDate = `today`;
 
     this._applyFlatpickr();
     this._subscribeOnEvents();
@@ -463,6 +464,17 @@ export default class EventEditForm extends AbstractSmartComponent {
 
       this.rerender();
     });
+
+    element.querySelector(`#event-start-time-1`)
+      .addEventListener(`change`, (evt) => {
+        this._event.startDate = parseDate(evt.target.value);
+        this._event.endDate = this._event.startDate > this._event.endDate
+          ? this._event.startDate
+          : this._event.endDate;
+
+
+        this.rerender();
+      });
   }
 
   _deleteFlatpickrs() {
@@ -478,14 +490,14 @@ export default class EventEditForm extends AbstractSmartComponent {
     this._deleteFlatpickrs();
 
     this._flatpickrStartDate = this._setFlatpickr(this.getElement().querySelector(`#event-start-time-1`), this._event.startDate);
-    this._flatpickrEndDate = this._setFlatpickr(this.getElement().querySelector(`#event-end-time-1`), this._event.endDate);
+    this._flatpickrEndDate = this._setFlatpickr(this.getElement().querySelector(`#event-end-time-1`), this._event.endDate, this._event.startDate);
   }
 
-  _setFlatpickr(input, defaultTime) {
+  _setFlatpickr(input, defaultTime, dateMin = `today`) {
     return flatpickr(input, {
       enableTime: true,
       dateFormat: `d/m/y H:i`,
-      minDate: `today`,
+      minDate: dateMin,
       defaultDate: defaultTime,
       allowInput: true,
     });
