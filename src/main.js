@@ -23,7 +23,7 @@ filterController.render();
 document.querySelector(`.trip-main__event-add-btn`)
   .addEventListener(`click`, () => {
     // console.log(`NEW`);
-    tripController.createPoint(); // поставить потом обработчик по esc
+    tripController.createPoint(); // поставить потом обработчик по esc, а также _onViewChange
   });
 
 const daysList = tripEventsSection.querySelector(`.trip-days`);

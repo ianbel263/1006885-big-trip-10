@@ -118,7 +118,7 @@ export default class TripController {
   }
 
   _updatePoints() {
-    console.log('_updatePoints');
+    // console.log('_updatePoints');
     this._removePoints();
     this.render();
   }
