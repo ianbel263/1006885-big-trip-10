@@ -8,7 +8,6 @@ export default class PointController {
   constructor(container, onDataChange, onViewChange) {
     this._container = container;
 
-    this._event = null;
     this._mode = ViewMode.DEFAULT;
 
     this._onDataChange = onDataChange;
@@ -17,12 +16,10 @@ export default class PointController {
     this._eventItemComponent = null;
     this._eventEditFormComponent = null;
 
-    this._onFormSubmit = this._onFormSubmit.bind(this);
     this._onEscPress = this._onEscPress.bind(this);
   }
 
   render(event, viewMode) {
-    this._event = event;
     this._mode = viewMode;
 
     const oldEventItemComponent = this._eventItemComponent;
@@ -35,7 +32,12 @@ export default class PointController {
     });
 
     this._eventEditFormComponent = new EventEditFormComponent(event);
-    this._eventEditFormComponent.setOnFormSubmit(this._onFormSubmit);
+    this._eventEditFormComponent.setOnFormSubmit((evt) => {
+      evt.preventDefault();
+
+      const newData = this._eventEditFormComponent.getData();
+      this._onDataChange(this, event, newData);
+    });
     this._eventEditFormComponent.setOnDeleteButtonClick(() => {
       this._onDataChange(this, event, null);
     });
@@ -99,13 +101,6 @@ export default class PointController {
   _replaceEditToEvent() {
     replaceComponents(this._eventItemComponent, this._eventEditFormComponent);
     this._mode = ViewMode.DEFAULT;
-  }
-
-  _onFormSubmit(evt) {
-    evt.preventDefault();
-
-    const newData = this._eventEditFormComponent.getData();
-    this._onDataChange(this, this._event, newData);
   }
 
   _onEscPress(evt) {
