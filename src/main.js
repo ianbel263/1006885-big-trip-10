@@ -15,13 +15,13 @@ const pointsModel = new PointsModel();
 // pointsModel.setPoints(cards);
 
 const tripControlDiv = document.querySelector(`.trip-controls`);
+renderElement(tripControlDiv, new SiteMenuComponent(siteMenu));
 const tripEventsSection = document.querySelector(`.trip-events`);
+renderElement(tripEventsSection, new TripDaysContainerComponent());
 const filterController = new FilterController(tripControlDiv, pointsModel);
 const daysList = tripEventsSection.querySelector(`.trip-days`);
 const tripController = new TripController(daysList, pointsModel);
 
-renderElement(tripControlDiv, new SiteMenuComponent(siteMenu));
-renderElement(tripEventsSection, new TripDaysContainerComponent());
 // tripController.render();
 filterController.render();
 
