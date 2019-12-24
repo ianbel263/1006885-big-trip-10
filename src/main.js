@@ -1,6 +1,7 @@
 // import {cards} from './mock/card.js';
 import {AUTHORIZATION, END_POINT} from './const.js';
 import API from './api.js';
+import Store from './store.js';
 import {siteMenu} from './mock/menu.js';
 import {renderElement, RenderPosition} from './utils/render.js';
 import SiteMenuComponent from './components/site-menu.js';
@@ -11,6 +12,7 @@ import PointsModel from './models/points-model.js';
 import FilterController from './controllers/filter-controller.js';
 
 const api = new API(END_POINT, AUTHORIZATION);
+const store = new Store();
 const pointsModel = new PointsModel();
 // pointsModel.setPoints(cards);
 
@@ -36,6 +38,15 @@ api.getPoints()
     pointsModel.setPoints(points);
     tripController.render();
   });
+
+api.getDestinations()
+  .then((data) => store.setDestinations(data));
+
+api.getOffers()
+  .then((data) => store.setOffers(data));  
+
+// pointsModel.getPointsAll()
+console.log('pointsModel.getPointsAll()', pointsModel.getPointsAll())
 
 
 // const tripInfoSection = document.querySelector(`.trip-info`);

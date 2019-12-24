@@ -192,30 +192,6 @@ export default class EventEditForm extends AbstractSmartComponent {
     const form = this.getElement();
 
     return new FormData(form);
-    // const formData = new FormData(element);
-    // const offersChecked = [...element.querySelectorAll(`.event__offer-checkbox`)]
-    //   // .filter((input) => input.checked)
-    //   .map((input) => {
-    //     return {
-    //       type: input.name.slice(12),
-    //       title: input.parentElement.querySelector(`.event__offer-title`).textContent,
-    //       price: input.parentElement.querySelector(`.event__offer-price`).textContent,
-    //       isChecked: input.checked
-    //     };
-    //   });
-
-    // return {
-    //   type: formData.get(`event-type`),
-    //   destination: formData.get(`event-destination`),
-    //   description: element.querySelector(`.event__destination-description`)
-    //     ? element.querySelector(`.event__destination-description`).textContent : ``,
-    //   photosUrls: [...element.querySelectorAll(`.event__photo`)].map((el) => el.src),
-    //   offers: offersChecked,
-    //   startDate: parseDate(formData.get(`event-start-time`)),
-    //   endDate: parseDate(formData.get(`event-end-time`)),
-    //   price: formData.get(`event-price`),
-    //   isFavorite: false
-    // };
   }
 
   setMode(mode) {
