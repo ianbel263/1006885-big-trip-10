@@ -18,16 +18,16 @@ export default class Point {
   }
 
   toRAW() {
-    // return {
-    //   'id': this.id,
-    //   'description': this.description,
-    //   'due_date': this.dueDate ? this.dueDate.toISOString() : null,
-    //   'tags': Array.from(this.tags),
-    //   'repeating_days': this.repeatingDays,
-    //   'color': this.color,
-    //   'is_favorite': this.isFavorite,
-    //   'is_archived': this.isArchive,
-    // };
+    return {
+      'id': this.id,
+      'destination': this.destination,
+      'date_from': this.startDate, // ? this.dueDate.toISOString() : null,
+      'date_to': this.endDate,
+      'offers': this.offers,
+      'type': this.type,
+      'is_favorite': this.isFavorite,
+      'base_price': this.price
+    };
   }
 
   static parsePoint(data) {

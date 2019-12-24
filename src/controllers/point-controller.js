@@ -1,8 +1,35 @@
 import {ESC_KEYCODE} from '../const.js';
+import PointModel from '../models/point-model';
 import EventItemComponent from '../components/event-item.js';
 import EventEditFormComponent from '../components/event-edit.js';
 import {renderElement, replaceComponents, removeComponent} from '../utils/render.js';
 import {ViewMode, EmptyCard} from '../utils/common.js';
+
+const parseFormData = (formData) => {
+  const offersChecked = [...element.querySelectorAll(`.event__offer-checkbox`)]
+    // .filter((input) => input.checked)
+    .map((input) => {
+      return {
+        type: input.name.slice(12),
+        title: input.parentElement.querySelector(`.event__offer-title`).textContent,
+        price: input.parentElement.querySelector(`.event__offer-price`).textContent,
+        isChecked: input.checked
+      };
+    });
+
+  return {
+    type: formData.get(`event-type`),
+    destination: formData.get(`event-destination`),
+    description: element.querySelector(`.event__destination-description`)
+      ? element.querySelector(`.event__destination-description`).textContent : ``,
+    photosUrls: [...element.querySelectorAll(`.event__photo`)].map((el) => el.src),
+    offers: offersChecked,
+    startDate: parseDate(formData.get(`event-start-time`)),
+    endDate: parseDate(formData.get(`event-end-time`)),
+    price: formData.get(`event-price`),
+    isFavorite: false
+  };
+}
 
 export default class PointController {
   constructor(container, onDataChange, onViewChange) {
@@ -35,7 +62,10 @@ export default class PointController {
     this._eventEditFormComponent.setOnFormSubmit((evt) => { // исправить потом обратно
       evt.preventDefault();
 
-      const newData = this._eventEditFormComponent.getData();
+      // const newData = this._eventEditFormComponent.getData();
+      const formData = this._eventEditFormComponent.getData();
+      const newData = parseFormData(formData);
+
       this._onDataChange(this, event, newData);
     });
     this._eventEditFormComponent.setOnDeleteButtonClick(() => {
@@ -51,9 +81,14 @@ export default class PointController {
         });
 
         this._eventEditFormComponent.setOnFavoriteButtonClick(() => {
-          this._onDataChange(this, event, Object.assign({}, event, {
-            isFavorite: !event.isFavorite,
-          }));
+          // this._onDataChange(this, event, Object.assign({}, event, {
+          //   isFavorite: !event.isFavorite,
+          // }));
+          const newPoint = PointModel.clone(event);
+          newPoint.isFavorite = !newPoint.isFavorite;
+
+          this._onDataChange(this, event, newPoint);
+
         });
 
         if (oldEventItemComponent && oldEventEditFormComponent) {
