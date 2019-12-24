@@ -1,3 +1,13 @@
+export const AUTHORIZATION = `Basic dXedNlckBwYejiejiXNzd29yZAo=`;
+export const END_POINT = `https://htmlacademy-es-10.appspot.com/big-trip`;
+
+export const RequestMethod = {
+  GET: `GET`,
+  POST: `POST`,
+  PUT: `PUT`,
+  DELETE: `DELETE`
+};
+
 export const ESC_KEYCODE = 27;
 
 export const MONTHS = [`JAN`, `FEB`, `MAR`, `APR`, `MAY`, `JUN`, `JUL`, `AUG`, `SEP`, `OCT`, `NOV`, `DEC`]; // убрать потом
