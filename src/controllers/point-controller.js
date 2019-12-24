@@ -32,7 +32,7 @@ export default class PointController {
     });
 
     this._eventEditFormComponent = new EventEditFormComponent(event);
-    this._eventEditFormComponent.setOnFormSubmit((evt) => {
+    this._eventEditFormComponent.setOnFormSubmit((evt) => { // исправить потом обратно
       evt.preventDefault();
 
       const newData = this._eventEditFormComponent.getData();
