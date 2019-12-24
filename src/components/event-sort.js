@@ -1,11 +1,11 @@
-import {SortTypes} from '../const.js';
+import {SortType} from '../const.js';
 import AbstractComponent from './abstract-component.js';
 
 export default class EventSort extends AbstractComponent {
   constructor(eventSortFilters) {
     super();
     this._eventSortFilters = eventSortFilters;
-    this._currentSortType = SortTypes.EVENT;
+    this._currentSortType = SortType.EVENT;
   }
 
   getTemplate() {
@@ -32,7 +32,7 @@ export default class EventSort extends AbstractComponent {
     );
   }
 
-  setOnSortChangeClick(handler) {
+  setOnSortChange(handler) {
     this.getElement().addEventListener(`click`, (evt) => {
       if (evt.target.tagName !== `INPUT`) {
         return;

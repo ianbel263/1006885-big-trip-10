@@ -33,7 +33,7 @@ export const replaceComponents = (newComponent, oldComponent) => {
   }
 };
 
-// export const removeComponent = (component) => {
-//   component.getElement().remove();
-//   component.removeElement();
-// };
+export const removeComponent = (component) => {
+  component.getElement().remove();
+  component.removeElement();
+};

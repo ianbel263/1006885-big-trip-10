@@ -12,7 +12,7 @@ export default class SiteFilter extends AbstractComponent {
       <div class="trip-filters__filter">
       ${this._filters.map(({name, isChecked}) => {
         return (
-          `<input id="filter-${name}" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="${name}" ${isChecked ? `checked` : ``}>
+          `<input id="filter-${name}" data-filter="${name}" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="${name}" ${isChecked ? `checked` : ``}>
           <label class="trip-filters__filter-label" for="filter-${name}">${name}</label>`
         );
       }).join(`\n`)}
@@ -20,5 +20,11 @@ export default class SiteFilter extends AbstractComponent {
       <button class="visually-hidden" type="submit">Accept filter</button>
     </form>`
     );
+  }
+
+  setOnFilterChange(handler) {
+    this.getElement().addEventListener(`change`, (evt) => {
+      handler(evt.target.dataset.filter);
+    });
   }
 }

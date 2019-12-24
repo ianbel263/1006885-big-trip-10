@@ -1,4 +1,4 @@
-import {timeFormat, dateFormat, calculateTimeInterval, formatTripType} from '../utils/common.js';
+import {formatTime, formatDateForDatetimeAttr, calculateTimeInterval, formatTripType} from '../utils/common.js';
 import AbstractComponent from './abstract-component.js';
 
 export default class EventItem extends AbstractComponent {
@@ -19,9 +19,9 @@ export default class EventItem extends AbstractComponent {
           <h3 class="event__title">${formatTripType(type)} ${destination}</h3>
           <div class="event__schedule">
             <p class="event__time">
-              <time class="event__start-time" datetime="${dateFormat(startDate)}">${timeFormat(startDate)}</time>
+              <time class="event__start-time" datetime="${formatDateForDatetimeAttr(startDate)}">${formatTime(startDate)}</time>
               &mdash;
-              <time class="event__end-time" datetime="${dateFormat(endDate)}">${timeFormat(endDate)}</time>
+              <time class="event__end-time" datetime="${formatDateForDatetimeAttr(endDate)}">${formatTime(endDate)}</time>
             </p>
             <p class="event__duration">${calculateTimeInterval(startDate, endDate)}</p>
           </div>
@@ -30,15 +30,17 @@ export default class EventItem extends AbstractComponent {
           </p>
           <h4 class="visually-hidden">Offers:</h4>
           <ul class="event__selected-offers">
-      ${offers.map(({title, price: offerPrice}) => {
-        return (
-          `<li class="event__offer">
-            <span class="event__offer-title">${title}</span>
-            &plus;
-            &euro;&nbsp;<span class="event__offer-price">${offerPrice}</span>
-          </li>`
-        );
-      }).join(`\n`)}
+      ${offers
+        .filter(({isChecked}) => isChecked)
+        .map(({title, price: offerPrice}) => {
+          return (
+            `<li class="event__offer">
+              <span class="event__offer-title">${title}</span>
+              &plus;
+              &euro;&nbsp;<span class="event__offer-price">${offerPrice}</span>
+            </li>`
+          );
+        }).slice(0, 2).join(`\n`)}
           </ul>
           <button class="event__rollup-btn" type="button">
             <span class="visually-hidden">Open event</span>
