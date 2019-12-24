@@ -1,4 +1,5 @@
-import {destinations} from '../mock/card.js';
+// import {destinations} from '../mock/card.js';
+import Store from '../store.js';
 import {ViewMode} from '../utils/common.js';
 import flatpickr from 'flatpickr';
 import {TripType} from '../const.js';
@@ -26,6 +27,7 @@ export default class EventEditForm extends AbstractSmartComponent {
 
   getTemplate() {
     const {type, startDate, endDate, price, description, photosUrls, isFavorite} = this._event;
+    const offers = 
 
     return (`<form class="${this._mode === ViewMode.ADD ? `trip-events__item` : ``}  event  event--edit" action="#" method="post">
         <header class="event__header">

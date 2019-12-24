@@ -1,4 +1,4 @@
-// import {cards} from './mock/card.js';
+import {cards} from './mock/card.js';
 import {AUTHORIZATION, END_POINT} from './const.js';
 import API from './api.js';
 import Store from './store.js';
@@ -14,7 +14,7 @@ import FilterController from './controllers/filter-controller.js';
 const api = new API(END_POINT, AUTHORIZATION);
 const store = new Store();
 const pointsModel = new PointsModel();
-// pointsModel.setPoints(cards);
+pointsModel.setPoints(cards);
 
 const tripControlDiv = document.querySelector(`.trip-controls`);
 renderElement(tripControlDiv, new SiteMenuComponent(siteMenu));
@@ -24,29 +24,29 @@ const filterController = new FilterController(tripControlDiv, pointsModel);
 const daysList = tripEventsSection.querySelector(`.trip-days`);
 const tripController = new TripController(daysList, pointsModel);
 
-// tripController.render();
 filterController.render();
+// tripController.render();
 
-document.querySelector(`.trip-main__event-add-btn`)
-  .addEventListener(`click`, () => {
-    // console.log(`NEW`);
-    tripController.createPoint(); // поставить потом обработчик по esc, а также _onViewChange
-  });
+// document.querySelector(`.trip-main__event-add-btn`)
+//   .addEventListener(`click`, () => {
+//     // console.log(`NEW`);
+//     tripController.createPoint(); // поставить потом обработчик по esc, а также _onViewChange
+//   });
 
-api.getPoints()
-  .then((points) => {
-    pointsModel.setPoints(points);
-    tripController.render();
-  });
+// api.getPoints()
+//   .then((points) => {
+//     pointsModel.setPoints(points);
+//     tripController.render();
+//   });
 
 api.getDestinations()
   .then((data) => store.setDestinations(data));
 
 api.getOffers()
-  .then((data) => store.setOffers(data));  
-
-// pointsModel.getPointsAll()
-console.log('pointsModel.getPointsAll()', pointsModel.getPointsAll())
+  .then((data) => {
+    store.setOffers(data);
+    tripController.render();
+  });
 
 
 // const tripInfoSection = document.querySelector(`.trip-info`);

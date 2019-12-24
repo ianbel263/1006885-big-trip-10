@@ -51,6 +51,17 @@ const generateOffers = (offers) => {
   // .slice(MIN_OFFERS, MAX_OFFERS);
 };
 
+const destinations111 = {
+  "description": "Chamonix, is a beautiful city, a true asian pearl, with crowded streets.",
+  "name": "Chamonix",
+  "pictures": [
+    {
+      "src": "http://picsum.photos/300/200?r=0.0762563005163317",
+      "description": "Chamonix parliament building"
+    }
+  ]
+};
+
 const generateCard = () => {
   const startDate = getRandomDate();
   const endDate = getRandomDate();
@@ -58,8 +69,8 @@ const generateCard = () => {
     id: Math.random(),
     type: getRandomArrayItem(Math.random() > 0.5 ? TripType.TRANSFER : TripType.ACTIVITY),
     destination: getRandomArrayItem(eventPointCities),
-    description: getRandomArrayItem(eventPointDescriptions),
-    photosUrls: getEventPhotosUrls(),
+    // description: getRandomArrayItem(eventPointDescriptions),
+    // photosUrls: getEventPhotosUrls(),
     offers: generateOffers(eventPointOffers),
     startDate: Math.min(startDate, endDate),
     endDate: Math.max(startDate, endDate),
