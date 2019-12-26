@@ -13,6 +13,7 @@ const store = new Store();
 const appController = new APP(tripInfoSection, pointsModel, api, store);
 
 api.getPoints()
+  // поставить компонент LOADING
   .then((points) => pointsModel.setPoints(points))
   .then(() => api.getData({url: `destinations`}))
   .then((destinations) => store.setDestinations(destinations))

@@ -87,7 +87,12 @@ export default class PointController {
           this._onDataChange(this, EmptyCard, null);
         });
 
-        document.querySelector(`.trip-sort`).after(this._eventEditFormComponent.getElement());
+        const tripSortElement = document.querySelector(`.trip-sort`);
+        if (tripSortElement) {
+          document.querySelector(`.trip-sort`).after(this._eventEditFormComponent.getElement())
+        } else {
+          renderElement(this._container, this._eventEditFormComponent);
+        }
         break;
     }
   }
@@ -114,7 +119,7 @@ export default class PointController {
 
   _replaceEditToEvent() {
     document.removeEventListener(`keydown`, this._onEscPress);
-
+// debugger;
     this._eventEditFormComponent.reset();
 
     if (this._mode === ViewMode.ADD) {

@@ -5,22 +5,22 @@ import PointModel from '../models/point-model.js';
 import {TripType, DefaultButtonsText} from '../const.js';
 import {doFirstLetterUppercase, formatTripType} from '../utils/common.js';
 import AbstractSmartComponent from './abstract-smart-component.js';
+import {addCheckToOffers} from '../utils/common';
 
 export default class EventEditForm extends AbstractSmartComponent {
   constructor(event, mode, store) {
     super();
     this._event = event;
-
     this._mode = mode;
 
-    this._destinations = store.getDestinations();
-    this._offers = store.getOffers();
+    this._destinationsAll = store.getDestinations();
+    this._offersAll = store.getOffers();
     this._destinationList = store.getDestinationNames();
 
     this._currentStartDate = event.startDate;
     this._currentEndDate = event.endDate;
     this._currentDestination = event.destination;
-    this._currentOffers = this._mode !== ViewMode.ADD ? event.offers : this._offers.get(`flight`);
+    this._currentOffers = this._mode !== ViewMode.ADD ? addCheckToOffers(event.offers) : addCheckToOffers(this._offersAll.get(`flight`));
     this._currentEventType = this._mode !== ViewMode.ADD ? event.type : `flight`;
     this._currentPrice = event.price;
 
@@ -138,10 +138,10 @@ export default class EventEditForm extends AbstractSmartComponent {
 
         <div class="event__available-offers">
             
-      ${this._currentOffers.map(({price: offerPrice, title}) => {
+      ${this._currentOffers.map(({price: offerPrice, title, isChecked}) => {
         return (
           `<div class="event__offer-selector">
-            <input class="event__offer-checkbox  visually-hidden" id="event-offer-${title}-1" type="checkbox" name="event-offer-${title}" ${title && `checked`}>
+            <input class="event__offer-checkbox  visually-hidden" id="event-offer-${title}-1" type="checkbox" name="event-offer-${title}" ${isChecked ? `checked` : ``}>
             <label class="event__offer-label" for="event-offer-${title}-1">
               <span class="event__offer-title">${title}</span>
               &plus;
@@ -242,7 +242,7 @@ export default class EventEditForm extends AbstractSmartComponent {
     this._currentEndDate = event.endDate;
     this._currentDestination = event.destination;
     this._currentEventType = event.type;
-    this._currentOffers = event.offers;
+    this._currentOffers = addCheckToOffers(event.offers);
     this._currentPrice = event.price;
 
     this.rerender();
@@ -293,9 +293,10 @@ export default class EventEditForm extends AbstractSmartComponent {
 
     element.querySelector(`.event__type-list`)
       .addEventListener(`click`, (evt) => {
+        
         if (evt.target.tagName === `INPUT`) {
           this._currentEventType = evt.target.value;
-          this._currentOffers = this._offers.get(evt.target.value);
+          this._currentOffers = addCheckToOffers(this._offersAll.get(evt.target.value));
 
           this.rerender();
         }
@@ -303,7 +304,7 @@ export default class EventEditForm extends AbstractSmartComponent {
 
     element.querySelector(`.event__input--destination`)
       .addEventListener(`change`, (evt) => {
-        this._currentDestination = this._destinations.find((el) => el.name === evt.target.value);
+        this._currentDestination = this._destinationsAll.find((el) => el.name === evt.target.value);
 
         let optionsFound = false;
         [...evt.target.list.options].forEach((option) => {
@@ -340,6 +341,14 @@ export default class EventEditForm extends AbstractSmartComponent {
       .addEventListener(`change`, (evt) => {
         this._currentPrice = evt.target.value;
       });
+
+    if (element.querySelectorAll(`event__offer-checkbox`)) {
+      element.querySelectorAll(`.event__offer-checkbox`).forEach((el, index) => {
+        el.addEventListener(`change`, (evt) => {
+          this._currentOffers[index].isChecked = evt.target.checked;
+        });
+      });
+    }
   }
 
   _deleteFlatpickrs() {

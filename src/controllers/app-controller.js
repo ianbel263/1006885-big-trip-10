@@ -15,10 +15,13 @@ export default class APP {
     this._api = api;
     this._store = store;
 
-    this._tripInfoComponent = null;
+    this._tripInfoComponent = new TripInfoComponent();
     this._tripDaysContainerComponent = new TripDaysContainerComponent();
-
     this._tripController = null;
+
+    this._updateTotalInfo = this._updateTotalInfo.bind(this);
+
+    this._pointsModel.setOnDataChange(this._updateTotalInfo);
   }
 
   render() {
@@ -31,26 +34,23 @@ export default class APP {
     const daysList = tripEventsSection.querySelector(`.trip-days`);
     this._tripController = new TripController(daysList, this._pointsModel, this._api, this._store);
 
-    const cards = this._pointsModel.getPoints();
-
-    // this._tripInfoComponent = new TripInfoComponent();
-    // renderElement(this._container, new TripInfoComponent(cards), RenderPosition.AFTERBEGIN);
-
+    // this._tripInfoComponent = new TripInfoComponent(this._pointsModel.getPointsAll());
+    
+    filterController.render();
+    this._tripController.render();
+  }
+  
+  _updateTotalInfo() {
+    this._tripInfoComponent.setPoints(this._pointsModel.getPointsAll());
+    
     const tripTotalPrice = document.querySelector(`.trip-info__cost-value`);
-    tripTotalPrice.textContent = cards.reduce((totalPrice, it) => {
+    tripTotalPrice.textContent = this._pointsModel.getPointsAll().reduce((totalPrice, it) => {
       return totalPrice + it.price + it.offers.reduce((totalOfferPrice, offer) => {
         return totalOfferPrice + offer.price;
       }, 0);
     }, 0);
-
-    // document.querySelector(`.trip-main__event-add-btn`)
-    //   .addEventListener(`click`, (evt) => {
-    //     evt.target.disabled = true;
-    //     this._tripController.createPoint(evt); // поставить потом обработчик по esc, а также _onViewChange
-    //   });
-
-    filterController.render();
-    this._tripController.render();
+    
+    renderElement(this._container, this._tripInfoComponent, RenderPosition.AFTERBEGIN);
   }
 
   //  подписаться на изменения модели, делать перерендер
