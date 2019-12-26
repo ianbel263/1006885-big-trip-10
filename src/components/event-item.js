@@ -34,7 +34,6 @@ export default class EventItem extends AbstractComponent {
           <h4 class="visually-hidden">Offers:</h4>
           <ul class="event__selected-offers">
       ${offers
-        .filter(({isChecked}) => isChecked)
         .map(({title, price: offerPrice}) => {
           return (
             `<li class="event__offer">

@@ -184,22 +184,22 @@ export default class EventEditForm extends AbstractSmartComponent {
           price: parseInt(input.parentElement.querySelector(`.event__offer-price`).textContent, 10),
         };
       });
-    const dest = {
+    const destination = {
       name: formData.get(`event-destination`),
       description: form.querySelector(`.event__destination-description`).textContent,
       pictures: [...form.querySelectorAll(`.event__photo`)].map((el) => {
-        return {src: el.src, description: el.alt}
+        return {src: el.src, description: el.alt};
       })
     };
 
     return new PointModel({
       'type': formData.get(`event-type`),
-      'destination': dest,
+      'destination': destination,
       'offers': offersChecked,
       'date_from': moment(formData.get(`event-start-time`), `DD/MM/YY HH:mm`).valueOf(),
       'date_to': moment(formData.get(`event-end-time`), `DD/MM/YY HH:mm`).valueOf(),
       'base_price': parseInt(formData.get(`event-price`), 10),
-      'is_favorite': false
+      'is_favorite': form.querySelector(`.event__favorite-checkbox`).checked
     });
   }
 
