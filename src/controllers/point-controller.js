@@ -1,11 +1,12 @@
 import {ESC_KEYCODE} from '../const.js';
+import PointModel from '../models/point-model';
 import EventItemComponent from '../components/event-item.js';
 import EventEditFormComponent from '../components/event-edit.js';
 import {renderElement, replaceComponents, removeComponent} from '../utils/render.js';
 import {ViewMode, EmptyCard} from '../utils/common.js';
 
 export default class PointController {
-  constructor(container, onDataChange, onViewChange) {
+  constructor(container, onDataChange, onViewChange, store) {
     this._container = container;
 
     this._mode = ViewMode.DEFAULT;
@@ -13,47 +14,55 @@ export default class PointController {
     this._onDataChange = onDataChange;
     this._onViewChange = onViewChange;
 
+    this._store = store;
+
     this._eventItemComponent = null;
     this._eventEditFormComponent = null;
 
     this._onEscPress = this._onEscPress.bind(this);
   }
 
-  render(event, viewMode) {
-    this._mode = viewMode;
+  render(event, mode) {
+    this._mode = mode;
 
     const oldEventItemComponent = this._eventItemComponent;
     const oldEventEditFormComponent = this._eventEditFormComponent;
 
-    this._eventItemComponent = new EventItemComponent(event);
+    this._eventItemComponent = new EventItemComponent(event, this._mode);
     this._eventItemComponent.setOnEditButtonClick(() => {
+
       this._replaceEventToEdit();
       document.addEventListener(`keydown`, this._onEscPress);
     });
 
-    this._eventEditFormComponent = new EventEditFormComponent(event);
-    this._eventEditFormComponent.setOnFormSubmit((evt) => {
-      evt.preventDefault();
-
-      const newData = this._eventEditFormComponent.getData();
-      this._onDataChange(this, event, newData);
-    });
-    this._eventEditFormComponent.setOnDeleteButtonClick(() => {
-      this._onDataChange(this, event, null);
-    });
-
-    switch (viewMode) {
+    switch (this._mode) {
       case ViewMode.DEFAULT:
-        this._eventEditFormComponent.setMode(viewMode);
+        this._eventEditFormComponent = new EventEditFormComponent(event, this._mode, this._store);
+
+        this._eventEditFormComponent.setOnFormSubmit((evt) => {
+          evt.preventDefault();
+
+          const newData = this._eventEditFormComponent.getData();
+          this._onDataChange(this, event, newData);
+        });
+
+        this._eventEditFormComponent.setOnDeleteButtonClick(() => {
+          this._onDataChange(this, event, null);
+        });
 
         this._eventEditFormComponent.setOnCancelButtonClick(() => {
           this._replaceEditToEvent();
         });
 
         this._eventEditFormComponent.setOnFavoriteButtonClick(() => {
-          this._onDataChange(this, event, Object.assign({}, event, {
-            isFavorite: !event.isFavorite,
-          }));
+          // this._onDataChange(this, event, Object.assign({}, event, {
+          //   isFavorite: !event.isFavorite,
+          // }));
+          const newPoint = PointModel.clone(event);
+          newPoint.isFavorite = !newPoint.isFavorite;
+
+          this._onDataChange(this, event, newPoint);
+
         });
 
         if (oldEventItemComponent && oldEventEditFormComponent) {
@@ -65,7 +74,18 @@ export default class PointController {
         }
         break;
       case ViewMode.ADD:
-        this._eventEditFormComponent.setMode(viewMode);
+        this._eventEditFormComponent = new EventEditFormComponent(event, this._mode, this._store);
+
+        this._eventEditFormComponent.setOnFormSubmit((evt) => {
+          evt.preventDefault();
+
+          const newData = this._eventEditFormComponent.getData();
+          this._onDataChange(this, EmptyCard, newData);
+        });
+
+        this._eventEditFormComponent.setOnDeleteButtonClick(() => {
+          this._onDataChange(this, EmptyCard, null);
+        });
 
         if (oldEventItemComponent && oldEventEditFormComponent) {
           removeComponent(oldEventItemComponent);
@@ -79,6 +99,7 @@ export default class PointController {
   }
 
   setDefaultView() {
+    // console.log(`setDefaultView`, this._mode)
     if (this._mode !== ViewMode.DEFAULT) {
       this._replaceEditToEvent();
     }
@@ -99,7 +120,14 @@ export default class PointController {
   }
 
   _replaceEditToEvent() {
-    replaceComponents(this._eventItemComponent, this._eventEditFormComponent);
+    document.removeEventListener(`keydown`, this._onEscPress);
+
+    this._eventEditFormComponent.reset();
+
+    if (document.contains(this._eventEditFormComponent.getElement())) {
+      replaceComponents(this._eventItemComponent, this._eventEditFormComponent);
+    }
+
     this._mode = ViewMode.DEFAULT;
   }
 
@@ -111,7 +139,6 @@ export default class PointController {
       //   this._onDataChange(this, EmptyCard, null);
       // }
       this._replaceEditToEvent();
-      document.removeEventListener(`keydown`, this._onEscPress);
     }
   }
 }

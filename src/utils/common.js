@@ -28,8 +28,6 @@ export const doFirstLetterUppercase = (string) => {
 
 export const parseDateWithoutTime = (dateString) => moment(dateString, `YYYY MMM DD`).valueOf();
 
-export const parseDate = (dateString) => moment(dateString, `DD/MM/YY HH:mm`).valueOf();
-
 export const formatTripType = (tripType) => {
   let formattedTripType = ``;
   Object.keys(TripType).forEach((el) => {
@@ -55,12 +53,16 @@ export const ViewMode = {
 };
 
 export const EmptyCard = {
-  id: 0,
-  type: `flight`,
-  destination: ``,
-  description: ``,
-  photosUrls: [],
-  offers: [{}],
+  type: ``,
+  destination: {
+    name: ``,
+    description: ``,
+    pictures: [{
+      src: ``,
+      description: ``
+    }]
+  },
+  offers: [],
   startDate: Date.now(),
   endDate: Date.now(),
   price: 0,
