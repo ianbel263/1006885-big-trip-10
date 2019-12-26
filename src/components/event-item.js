@@ -16,7 +16,7 @@ export default class EventItem extends AbstractComponent {
           <div class="event__type">
             <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
           </div>
-          <h3 class="event__title">${formatTripType(type)} ${destination}</h3>
+          <h3 class="event__title">${formatTripType(type)} ${destination.name}</h3>
           <div class="event__schedule">
             <p class="event__time">
               <time class="event__start-time" datetime="${formatDateForDatetimeAttr(startDate)}">${formatTime(startDate)}</time>

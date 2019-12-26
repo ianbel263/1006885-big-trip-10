@@ -55,12 +55,16 @@ export const ViewMode = {
 };
 
 export const EmptyCard = {
-  id: 0,
-  type: `flight`,
-  destination: ``,
-  description: ``,
-  photosUrls: [],
-  offers: [{}],
+  type: ``,
+  destination: {
+    name: ``,
+    description: ``,
+    pictures: [{
+      src: ``,
+      description: ``
+    }]
+  },
+  offers: [],
   startDate: Date.now(),
   endDate: Date.now(),
   price: 0,

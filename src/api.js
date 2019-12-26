@@ -1,5 +1,5 @@
 import {RequestMethod} from './const.js';
-import Point from './models/point-model.js';
+import PointModel from './models/point-model.js';
 
 
 const checkStatus = (response) => {
@@ -16,14 +16,28 @@ export default class API {
     this._authorization = authorization;
   }
 
+  getData({url}) {
+    return this._load({url})
+      .then((response) => response.json());
+  }
+
   getPoints() {
     return this._load({url: `points`})
     .then((response) => response.json())
-    .then(Point.parsePoints);
+    .then(PointModel.parsePoints);
   }
 
-  // createPoint(point) {
-  // }
+  createPoint(point) {
+    return this._load({
+      url: `points`,
+      method: RequestMethod.POST,
+      body: JSON.stringify(point.toRAW()),
+      headers: new Headers({'Content-Type': `application/json`})
+    })
+      .then((response) => response.json())
+      .then(PointModel.parsePoint);
+
+  }
 
   updatePoint(id, data) {
     return this._load({
@@ -33,21 +47,22 @@ export default class API {
       headers: new Headers({'Content-Type': `application/json`})
     })
       .then((response) => response.json())
-      .then(Point.parsePoint);
+      .then(PointModel.parsePoint);
   }
 
-  // deletePoint(id) {
+  deletePoint(id) {
+    return this._load({url: `points/${id}`, method: RequestMethod.DELETE});
+  }
+
+  // getDestinations() {
+  //   return this._load({url: `destinations`})
+  //   .then((response) => response.json())
   // }
 
-  getDestinations() {
-    return this._load({url: `destinations`})
-    .then((response) => response.json())
-  }
-
-  getOffers() {
-    return this._load({url: `offers`})
-    .then((response) => response.json());
-  }
+  // getOffers() {
+  //   return this._load({url: `offers`})
+  //   .then((response) => response.json());
+  // }
 
   _load({url, method = RequestMethod.GET, body = null, headers = new Headers()}) {
     headers.append(`Authorization`, this._authorization);

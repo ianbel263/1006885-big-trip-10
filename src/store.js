@@ -8,8 +8,14 @@ export default class Store {
     return this._destinations;
   }
 
+  getDestinationNames() {
+    return [...new Set(this._destinations.map(({name}) => name))];
+  }
+
   getOffers() {
-    return this._offers;
+    const mapOffers = new Map(this._offers.map((el) => [el.type, el.offers]));
+    mapOffers.set(`trip`, []);
+    return mapOffers;
   }
 
   setDestinations(data) {
@@ -18,6 +24,5 @@ export default class Store {
 
   setOffers(data) {
     this._offers = data;
-    console.log('this._offers', this._offers)
   }
 }

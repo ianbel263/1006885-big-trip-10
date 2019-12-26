@@ -6,7 +6,7 @@ import TripDayItemComponent from '../components/trip-day-item.js';
 import PointController from './point-controller.js';
 import {ViewMode as PointControllerMode, EmptyCard, formatDateWithoutTime, parseDateWithoutTime} from '../utils/common.js';
 
-const renderCards = (cards, container, onDataChange, onViewChange, isSortedByDefault = true) => {
+const renderCards = (cards, container, onDataChange, onViewChange, store, isSortedByDefault = true) => {
   const pointControllers = [];
 
   const dates = isSortedByDefault
@@ -24,7 +24,8 @@ const renderCards = (cards, container, onDataChange, onViewChange, isSortedByDef
         const pointController = new PointController(
             day.getElement().querySelector(`.trip-events__list`),
             onDataChange,
-            onViewChange
+            onViewChange,
+            store
         );
 
         pointController.render(_event, PointControllerMode.DEFAULT);
@@ -38,10 +39,11 @@ const renderCards = (cards, container, onDataChange, onViewChange, isSortedByDef
 };
 
 export default class TripController {
-  constructor(container, pointsModel, api) {
+  constructor(container, pointsModel, api, store) {
     this._container = container;
     this._pointsModel = pointsModel;
     this._api = api;
+    this._store = store;
 
     this._pointControllers = [];
     this._creatingPoint = null;
@@ -55,10 +57,11 @@ export default class TripController {
     this._onSortTypeChange = this._onSortTypeChange.bind(this);
     this._onDataChange = this._onDataChange.bind(this);
     this._onViewChange = this._onViewChange.bind(this);
-    this._updatePoints = this._updatePoints.bind(this);
+    // this._updatePoints = this._updatePoints.bind(this);
+    this._onFilterChange = this._onFilterChange.bind(this);
 
-    this._pointsModel.setOnDataChange(this._updatePoints);
-    this._pointsModel.setOnFilterChange(this._updatePoints);
+    // this._pointsModel.setOnDataChange(this._updatePoints);
+    this._pointsModel.setOnFilterChange(this._onFilterChange);
   }
 
   render() {
@@ -85,15 +88,14 @@ export default class TripController {
       this._eventSortComponent.setOnSortChange(this._onSortTypeChange);
     }
 
-    this._pointControllers = renderCards(cards, this._container, this._onDataChange, this._onViewChange, this._isSortedByDefault);
+    this._pointControllers = renderCards(cards, this._container, this._onDataChange, this._onViewChange, this._store, this._isSortedByDefault);
   }
 
   createPoint() {
     if (this._creatingPoint) {
       return;
     }
-
-    this._creatingPoint = new PointController(null, this._onDataChange, this._onViewChange);
+    this._creatingPoint = new PointController(null, this._onDataChange, this._onViewChange, this._store);
     this._creatingPoint.render(EmptyCard, PointControllerMode.ADD);
   }
 
@@ -117,7 +119,7 @@ export default class TripController {
     }
 
     this._container.innerHTML = ``;
-    this._pointControllers = renderCards(sortedEvents, this._container, this._onDataChange, this._onViewChange, this._isSortedByDefault);
+    this._pointControllers = renderCards(sortedEvents, this._container, this._onDataChange, this._onViewChange, this._store, this._isSortedByDefault);
   }
 
   _removePoints() {
@@ -139,14 +141,25 @@ export default class TripController {
       this._creatingPoint = null;
       if (newData === null) {
         pointController.destroy();
+        this._updatePoints();
       } else {
         // console.log(`ADD NEW DATA`);
+        this._api.createPoint(newData)
+        .then((pointModel) => {
+          this._pointsModel.addPoint(pointModel);
+          pointController.render(pointModel, PointControllerMode.DEFAULT);
+        });
+
         this._pointsModel.addPoint(newData);
         pointController.render(newData, PointControllerMode.ADD);
       }
     }
     if (newData === null) {
-      this._pointsModel.removePoint(oldData.id);
+      this._api.deletePoint(oldData.id)
+        .then(() => {
+          this._pointsModel.removePoint(oldData.id);
+          this._updatePoints();
+        });
     } else {
       // const isSuccess = this._pointsModel.updatePoint(oldData.id, newData);
       this._api.updatePoint(oldData.id, newData)
@@ -160,6 +173,10 @@ export default class TripController {
       });
 
     }
+  }
+
+  _onFilterChange() {
+    this._updatePoints();
   }
 
   _onViewChange() {

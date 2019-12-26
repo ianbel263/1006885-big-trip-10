@@ -1,4 +1,4 @@
-export const AUTHORIZATION = `Basic dXedNlckBwYejiejiXNzd29yZAo=`;
+export const AUTHORIZATION = `Basic kdnskKNCKjkj-j`;
 export const END_POINT = `https://htmlacademy-es-10.appspot.com/big-trip`;
 
 export const RequestMethod = {
@@ -17,14 +17,20 @@ export const TripType = {
   ACTIVITY: [`check-in`, `restaurant`, `sightseeing`]
 };
 
-export const SortType = {
-  EVENT: `event`,
-  TIME: `time`,
-  PRICE: `price`
-};
+export const MenuItem = {
+  TABLE: `table`,
+  STATS: `stats`
+}
 
 export const FilterType = {
   EVERYTHING: `everything`,
   FUTURE: `future`,
   PAST: `past`
 };
+
+export const SortType = {
+  EVENT: `event`,
+  TIME: `time`,
+  PRICE: `price`
+};
+

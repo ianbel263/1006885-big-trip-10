@@ -39,12 +39,12 @@ export default class EventSort extends AbstractComponent {
       }
       const sortType = evt.target.dataset.sort;
 
-      if (this._currenSortType === sortType) {
+      if (this._currentSortType === sortType) {
         return;
       }
 
-      this._currenSortType = sortType;
-      handler(this._currenSortType);
+      this._currentSortType = sortType;
+      handler(this._currentSortType);
     });
   }
 }

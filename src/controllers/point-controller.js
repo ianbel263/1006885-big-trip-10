@@ -5,34 +5,8 @@ import EventEditFormComponent from '../components/event-edit.js';
 import {renderElement, replaceComponents, removeComponent} from '../utils/render.js';
 import {ViewMode, EmptyCard} from '../utils/common.js';
 
-const parseFormData = (formData) => {
-  const offersChecked = [...element.querySelectorAll(`.event__offer-checkbox`)]
-    // .filter((input) => input.checked)
-    .map((input) => {
-      return {
-        type: input.name.slice(12),
-        title: input.parentElement.querySelector(`.event__offer-title`).textContent,
-        price: input.parentElement.querySelector(`.event__offer-price`).textContent,
-        isChecked: input.checked
-      };
-    });
-
-  return {
-    type: formData.get(`event-type`),
-    destination: formData.get(`event-destination`),
-    description: element.querySelector(`.event__destination-description`)
-      ? element.querySelector(`.event__destination-description`).textContent : ``,
-    photosUrls: [...element.querySelectorAll(`.event__photo`)].map((el) => el.src),
-    offers: offersChecked,
-    startDate: parseDate(formData.get(`event-start-time`)),
-    endDate: parseDate(formData.get(`event-end-time`)),
-    price: formData.get(`event-price`),
-    isFavorite: false
-  };
-}
-
 export default class PointController {
-  constructor(container, onDataChange, onViewChange) {
+  constructor(container, onDataChange, onViewChange, store) {
     this._container = container;
 
     this._mode = ViewMode.DEFAULT;
@@ -40,42 +14,42 @@ export default class PointController {
     this._onDataChange = onDataChange;
     this._onViewChange = onViewChange;
 
+    this._store = store;
+
     this._eventItemComponent = null;
     this._eventEditFormComponent = null;
 
     this._onEscPress = this._onEscPress.bind(this);
   }
 
-  render(event, viewMode) {
-    this._mode = viewMode;
+  render(event, mode) {
+    this._mode = mode;
 
     const oldEventItemComponent = this._eventItemComponent;
     const oldEventEditFormComponent = this._eventEditFormComponent;
 
     this._eventItemComponent = new EventItemComponent(event);
     this._eventItemComponent.setOnEditButtonClick(() => {
+      // this._mode = ViewMode.EDIT;
       this._replaceEventToEdit();
       document.addEventListener(`keydown`, this._onEscPress);
     });
 
-    this._eventEditFormComponent = new EventEditFormComponent(event);
-    this._eventEditFormComponent.setOnFormSubmit((evt) => { // исправить потом обратно
-      evt.preventDefault();
-
-      // const newData = this._eventEditFormComponent.getData();
-      const formData = this._eventEditFormComponent.getData();
-      const newData = parseFormData(formData);
-
-      this._onDataChange(this, event, newData);
-    });
-    this._eventEditFormComponent.setOnDeleteButtonClick(() => {
-      this._onDataChange(this, event, null);
-    });
-
-    switch (viewMode) {
+    switch (this._mode) {
       case ViewMode.DEFAULT:
-        this._eventEditFormComponent.setMode(viewMode);
+        this._eventEditFormComponent = new EventEditFormComponent(event, this._mode, this._store);
+        // this._eventEditFormComponent.setMode(this._mode);
+        // this._eventEditFormComponent.setOptions(this._store);
 
+        this._eventEditFormComponent.setOnFormSubmit((evt) => { // исправить потом обратно EmptyCard
+          evt.preventDefault();
+
+          const newData = this._eventEditFormComponent.getData();
+          this._onDataChange(this, event, newData);
+        });
+        this._eventEditFormComponent.setOnDeleteButtonClick(() => {
+          this._onDataChange(this, event, null);
+        });
         this._eventEditFormComponent.setOnCancelButtonClick(() => {
           this._replaceEditToEvent();
         });
@@ -100,7 +74,19 @@ export default class PointController {
         }
         break;
       case ViewMode.ADD:
-        this._eventEditFormComponent.setMode(viewMode);
+        this._eventEditFormComponent = new EventEditFormComponent(event, this._mode, this._store);
+        // this._eventEditFormComponent.setMode(this._mode);
+        // this._eventEditFormComponent.setOptions(this._store);
+
+        this._eventEditFormComponent.setOnFormSubmit((evt) => { // исправить потом обратно EmptyCard
+          evt.preventDefault();
+
+          const newData = this._eventEditFormComponent.getData();
+          this._onDataChange(this, EmptyCard, newData);
+        });
+        this._eventEditFormComponent.setOnDeleteButtonClick(() => {
+          this._onDataChange(this, event, null);
+        });
 
         if (oldEventItemComponent && oldEventEditFormComponent) {
           removeComponent(oldEventItemComponent);
@@ -114,6 +100,7 @@ export default class PointController {
   }
 
   setDefaultView() {
+    // console.log(`setDefaultView`, this._mode)
     if (this._mode !== ViewMode.DEFAULT) {
       this._replaceEditToEvent();
     }
@@ -127,26 +114,34 @@ export default class PointController {
   }
 
   _replaceEventToEdit() {
+    
     this._onViewChange();
-
+    
     replaceComponents(this._eventEditFormComponent, this._eventItemComponent);
     this._mode = ViewMode.EDIT;
+    // console.log(`setDefaultView`, this._mode)
   }
 
   _replaceEditToEvent() {
-    replaceComponents(this._eventItemComponent, this._eventEditFormComponent);
+    document.removeEventListener(`keydown`, this._onEscPress);
+
+    this._eventEditFormComponent.reset();
+
+    if (document.contains(this._eventEditFormComponent.getElement())) {
+      replaceComponents(this._eventItemComponent, this._eventEditFormComponent);
+    }
+
     this._mode = ViewMode.DEFAULT;
   }
 
   _onEscPress(evt) {
     if (evt.keyCode === ESC_KEYCODE) {
-      // console.log('ESC_KEYCODE', ESC_KEYCODE);
+      console.log('ESC_KEYCODE', ESC_KEYCODE);
 
       // if (this._mode === ViewMode.ADD) {
       //   this._onDataChange(this, EmptyCard, null);
       // }
       this._replaceEditToEvent();
-      document.removeEventListener(`keydown`, this._onEscPress);
     }
   }
 }
