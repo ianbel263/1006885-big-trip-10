@@ -34,22 +34,20 @@ export default class APP {
     const daysList = tripEventsSection.querySelector(`.trip-days`);
     this._tripController = new TripController(daysList, this._pointsModel, this._api, this._store);
 
-    // this._tripInfoComponent = new TripInfoComponent(this._pointsModel.getPointsAll());
-    
     filterController.render();
     this._tripController.render();
   }
-  
+
   _updateTotalInfo() {
     this._tripInfoComponent.setPoints(this._pointsModel.getPointsAll());
-    
+
     const tripTotalPrice = document.querySelector(`.trip-info__cost-value`);
     tripTotalPrice.textContent = this._pointsModel.getPointsAll().reduce((totalPrice, it) => {
       return totalPrice + it.price + it.offers.reduce((totalOfferPrice, offer) => {
         return totalOfferPrice + offer.price;
       }, 0);
     }, 0);
-    
+
     renderElement(this._container, this._tripInfoComponent, RenderPosition.AFTERBEGIN);
   }
 

@@ -89,7 +89,7 @@ export default class PointController {
 
         const tripSortElement = document.querySelector(`.trip-sort`);
         if (tripSortElement) {
-          document.querySelector(`.trip-sort`).after(this._eventEditFormComponent.getElement())
+          document.querySelector(`.trip-sort`).after(this._eventEditFormComponent.getElement());
         } else {
           renderElement(this._container, this._eventEditFormComponent);
         }
@@ -119,7 +119,6 @@ export default class PointController {
 
   _replaceEditToEvent() {
     document.removeEventListener(`keydown`, this._onEscPress);
-// debugger;
     this._eventEditFormComponent.reset();
 
     if (this._mode === ViewMode.ADD) {
@@ -135,7 +134,7 @@ export default class PointController {
 
   _onEscPress(evt) {
     if (evt.keyCode === ESC_KEYCODE) {
-      console.log('ESC_KEYCODE', ESC_KEYCODE);
+      // console.log('ESC_KEYCODE', ESC_KEYCODE);
 
       // if (this._mode === ViewMode.ADD) {
       //   this._onDataChange(this, EmptyCard, null);

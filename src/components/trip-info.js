@@ -38,4 +38,4 @@ export default class TripInfo extends AbstractSmartComponent {
   }
 }
 
-  // добавить moment
+// добавить moment

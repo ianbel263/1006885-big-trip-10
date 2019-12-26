@@ -293,7 +293,7 @@ export default class EventEditForm extends AbstractSmartComponent {
 
     element.querySelector(`.event__type-list`)
       .addEventListener(`click`, (evt) => {
-        
+
         if (evt.target.tagName === `INPUT`) {
           this._currentEventType = evt.target.value;
           this._currentOffers = addCheckToOffers(this._offersAll.get(evt.target.value));

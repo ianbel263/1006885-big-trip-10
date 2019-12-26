@@ -66,7 +66,6 @@ export default class TripController {
   }
 
   render() {
-    const points = this._pointsModel.getPoints();
     const pointsAll = this._pointsModel.getPointsAll();
 
     this._newEventButton.addEventListener(`click`, () => {
@@ -106,8 +105,7 @@ export default class TripController {
       renderElement(this._container.parentElement, this._eventSortComponent, RenderPosition.AFTERBEGIN);
       this._eventSortComponent.setOnSortChange(this._onSortTypeChange);
     }
-// debugger;
-    // this._pointControllers = renderpoints(points, this._container, this._onDataChange, this._onViewChange, this._store, this._isSortedByDefault);
+
     this._onSortTypeChange(this._activeSortType);
   }
 
