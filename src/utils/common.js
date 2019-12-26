@@ -28,8 +28,6 @@ export const doFirstLetterUppercase = (string) => {
 
 export const parseDateWithoutTime = (dateString) => moment(dateString, `YYYY MMM DD`).valueOf();
 
-export const parseDate = (dateString) => moment(dateString, `DD/MM/YY HH:mm`).valueOf();
-
 export const formatTripType = (tripType) => {
   let formattedTripType = ``;
   Object.keys(TripType).forEach((el) => {

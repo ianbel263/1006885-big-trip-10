@@ -28,9 +28,9 @@ export default class PointController {
     const oldEventItemComponent = this._eventItemComponent;
     const oldEventEditFormComponent = this._eventEditFormComponent;
 
-    this._eventItemComponent = new EventItemComponent(event);
+    this._eventItemComponent = new EventItemComponent(event, this._mode);
     this._eventItemComponent.setOnEditButtonClick(() => {
-      // this._mode = ViewMode.EDIT;
+
       this._replaceEventToEdit();
       document.addEventListener(`keydown`, this._onEscPress);
     });
@@ -38,18 +38,18 @@ export default class PointController {
     switch (this._mode) {
       case ViewMode.DEFAULT:
         this._eventEditFormComponent = new EventEditFormComponent(event, this._mode, this._store);
-        // this._eventEditFormComponent.setMode(this._mode);
-        // this._eventEditFormComponent.setOptions(this._store);
 
-        this._eventEditFormComponent.setOnFormSubmit((evt) => { // исправить потом обратно EmptyCard
+        this._eventEditFormComponent.setOnFormSubmit((evt) => {
           evt.preventDefault();
 
           const newData = this._eventEditFormComponent.getData();
           this._onDataChange(this, event, newData);
         });
+
         this._eventEditFormComponent.setOnDeleteButtonClick(() => {
           this._onDataChange(this, event, null);
         });
+
         this._eventEditFormComponent.setOnCancelButtonClick(() => {
           this._replaceEditToEvent();
         });
@@ -75,17 +75,16 @@ export default class PointController {
         break;
       case ViewMode.ADD:
         this._eventEditFormComponent = new EventEditFormComponent(event, this._mode, this._store);
-        // this._eventEditFormComponent.setMode(this._mode);
-        // this._eventEditFormComponent.setOptions(this._store);
 
-        this._eventEditFormComponent.setOnFormSubmit((evt) => { // исправить потом обратно EmptyCard
+        this._eventEditFormComponent.setOnFormSubmit((evt) => {
           evt.preventDefault();
 
           const newData = this._eventEditFormComponent.getData();
           this._onDataChange(this, EmptyCard, newData);
         });
+
         this._eventEditFormComponent.setOnDeleteButtonClick(() => {
-          this._onDataChange(this, event, null);
+          this._onDataChange(this, EmptyCard, null);
         });
 
         if (oldEventItemComponent && oldEventEditFormComponent) {

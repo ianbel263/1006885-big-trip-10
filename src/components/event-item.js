@@ -1,14 +1,17 @@
-import {formatTime, formatDateForDatetimeAttr, calculateTimeInterval, formatTripType} from '../utils/common.js';
 import AbstractComponent from './abstract-component.js';
+import {ViewMode} from '../utils/common.js';
+import {formatTime, formatDateForDatetimeAttr, calculateTimeInterval, formatTripType} from '../utils/common.js';
 
 export default class EventItem extends AbstractComponent {
-  constructor(event) {
+  constructor(event, mode) {
     super();
     this._event = event;
+    this._mode = mode;
   }
 
   getTemplate() {
-    const {type, destination, startDate, endDate, price, offers} = this._event;
+    const {destination, startDate, endDate, price, offers} = this._event;
+    const type = this._mode !== ViewMode.ADD ? this._event.type : `flight`;
 
     return (
       `<li class="trip-events__item">

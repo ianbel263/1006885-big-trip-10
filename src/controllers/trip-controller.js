@@ -129,49 +129,42 @@ export default class TripController {
   }
 
   _updatePoints() {
-    // console.log('_updatePoints');
     this._removePoints();
     this.render();
   }
 
   _onDataChange(pointController, oldData, newData) {
-    // console.log('oldData', oldData)
-    // console.log('newData', newData)
     if (oldData === EmptyCard) {
       this._creatingPoint = null;
       if (newData === null) {
         pointController.destroy();
         this._updatePoints();
       } else {
-        // console.log(`ADD NEW DATA`);
         this._api.createPoint(newData)
         .then((pointModel) => {
           this._pointsModel.addPoint(pointModel);
           pointController.render(pointModel, PointControllerMode.DEFAULT);
-        });
+        }); // довавить catch после каждого then
 
         this._pointsModel.addPoint(newData);
         pointController.render(newData, PointControllerMode.ADD);
       }
-    }
-    if (newData === null) {
+    } else if (newData === null) {
       this._api.deletePoint(oldData.id)
         .then(() => {
           this._pointsModel.removePoint(oldData.id);
           this._updatePoints();
         });
     } else {
-      // const isSuccess = this._pointsModel.updatePoint(oldData.id, newData);
       this._api.updatePoint(oldData.id, newData)
       .then((pointModel) => {
         const isSuccess = this._pointsModel.updatePoint(oldData.id, pointModel);
 
         if (isSuccess) {
           pointController.render(pointModel, PointControllerMode.DEFAULT);
-          this._updatePoints(this._showingPointsCount);
+          this._updatePoints();
         }
       });
-
     }
   }
 

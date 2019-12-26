@@ -1,9 +1,9 @@
-// import {destinations} from '../mock/card.js';
+import moment from 'moment';
 import {ViewMode} from '../utils/common.js';
 import flatpickr from 'flatpickr';
 import PointModel from '../models/point-model.js';
 import {TripType} from '../const.js';
-import {doFirstLetterUppercase, formatTripType, parseDate} from '../utils/common.js';
+import {doFirstLetterUppercase, formatTripType} from '../utils/common.js';
 import AbstractSmartComponent from './abstract-smart-component.js';
 
 export default class EventEditForm extends AbstractSmartComponent {
@@ -17,6 +17,8 @@ export default class EventEditForm extends AbstractSmartComponent {
     this._offers = store.getOffers();
     this._destinationList = store.getDestinationNames();
 
+    this._currentStartDate = event.startDate;
+    this._currentEndDate = event.endDate;
     this._currentDestination = event.destination;
     this._currentOffers = this._mode !== ViewMode.ADD ? event.offers : this._offers.get(`flight`);
     this._currentEventType = this._mode !== ViewMode.ADD ? event.type : `flight`;
@@ -33,7 +35,7 @@ export default class EventEditForm extends AbstractSmartComponent {
   }
 
   getTemplate() {
-    const {startDate, endDate, price, isFavorite} = this._event;
+    const {price, isFavorite} = this._event;
     const {name, description, pictures} = this._currentDestination;
 
     return (`<form class="${this._mode === ViewMode.ADD ? `trip-events__item` : ``}  event  event--edit" action="#" method="post">
@@ -86,12 +88,12 @@ export default class EventEditForm extends AbstractSmartComponent {
             <label class="visually-hidden" for="event-start-time-1">
               From
             </label>
-            <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${startDate}">
+            <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${moment(this._currentStartDate).format(`DD/MM/YY HH:mm`)}">
             &mdash;
             <label class="visually-hidden" for="event-end-time-1">
               To
             </label>
-            <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${endDate}">
+            <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${moment(this.__currentEndDate).format(`DD/MM/YY HH:mm`)}">
           </div>
 
           <div class="event__field-group  event__field-group--price">
@@ -126,10 +128,12 @@ export default class EventEditForm extends AbstractSmartComponent {
         ? ``
         : `<section class="event__details">
 
-          <section class="event__section  event__section--offers">
-          <h3 class="event__section-title  event__section-title--offers">Offers</h3>
-  
-          <div class="event__available-offers">
+      ${this._currentOffers.length === 0
+        ? ``
+        : `<section class="event__section  event__section--offers">
+        <h3 class="event__section-title  event__section-title--offers">Offers</h3>
+
+        <div class="event__available-offers">
             
       ${this._currentOffers.map(({price: offerPrice, title}) => {
         return (
@@ -145,7 +149,9 @@ export default class EventEditForm extends AbstractSmartComponent {
       }).join(`\n`)}    
 
           </div>
-        </section>
+        </section>`
+      }
+          
   
             <section class="event__section  event__section--destination">
               <h3 class="event__section-title  event__section-title--destination">Destination</h3>
@@ -190,8 +196,8 @@ export default class EventEditForm extends AbstractSmartComponent {
       'type': formData.get(`event-type`),
       'destination': dest,
       'offers': offersChecked,
-      'date_from': parseDate(formData.get(`event-start-time`)),
-      'date_to': parseDate(formData.get(`event-end-time`)),
+      'date_from': moment(formData.get(`event-start-time`), `DD/MM/YY HH:mm`).valueOf(),
+      'date_to': moment(formData.get(`event-end-time`), `DD/MM/YY HH:mm`).valueOf(),
       'base_price': parseInt(formData.get(`event-price`), 10),
       'is_favorite': false
     });
@@ -211,6 +217,8 @@ export default class EventEditForm extends AbstractSmartComponent {
   reset() {
     const event = this._event;
 
+    this._currentStartDate = event.startDate;
+    this._currentEndDate = event.endDate;
     this._currentDestination = event.destination;
     this._currentEventType = event.type;
     this._currentOffers = event.offers;
@@ -293,11 +301,10 @@ export default class EventEditForm extends AbstractSmartComponent {
 
     element.querySelector(`#event-start-time-1`)
       .addEventListener(`change`, (evt) => {
-        this._event.startDate = parseDate(evt.target.value);
-        this._event.endDate = this._event.startDate > this._event.endDate
-          ? this._event.startDate
-          : this._event.endDate;
-
+        this._currentStartDate = moment(evt.target.value, `DD/MM/YY HH:mm`).valueOf();
+        this._currentEndDate = this._currentStartDate > this._currentEndDate
+          ? this._currentStartDate
+          : this._currentEndDate;
 
         this.rerender();
       });
@@ -315,15 +322,15 @@ export default class EventEditForm extends AbstractSmartComponent {
   _applyFlatpickr() {
     this._deleteFlatpickrs();
 
-    this._flatpickrStartDate = this._setFlatpickr(this.getElement().querySelector(`#event-start-time-1`), this._event.startDate);
-    this._flatpickrEndDate = this._setFlatpickr(this.getElement().querySelector(`#event-end-time-1`), this._event.endDate, this._event.startDate);
+    this._flatpickrStartDate = this._setFlatpickr(this.getElement().querySelector(`#event-start-time-1`), this._currentStartDate);
+    this._flatpickrEndDate = this._setFlatpickr(this.getElement().querySelector(`#event-end-time-1`), this._currentEndDate, this._currentStartDate);
   }
 
   _setFlatpickr(input, defaultTime, dateMin = `today`) {
     return flatpickr(input, {
       enableTime: true,
       dateFormat: `d/m/y H:i`,
-      // minDate: dateMin,
+      minDate: dateMin,
       defaultDate: defaultTime,
       allowInput: true,
     });

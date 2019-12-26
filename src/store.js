@@ -13,9 +13,7 @@ export default class Store {
   }
 
   getOffers() {
-    const mapOffers = new Map(this._offers.map((el) => [el.type, el.offers]));
-    mapOffers.set(`trip`, []);
-    return mapOffers;
+    return new Map(this._offers.map((el) => [el.type, el.offers]));
   }
 
   setDestinations(data) {
