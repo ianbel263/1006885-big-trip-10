@@ -72,6 +72,7 @@ export default class Points {
   setOnDataChange(handler) {
     this._dataChangeHandlers.push(handler);
   }
+
   setOnFilterChange(handler) {
     this._filterChangeHandlers.push(handler);
   }

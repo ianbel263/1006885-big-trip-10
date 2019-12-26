@@ -89,6 +89,7 @@ export default class TripController {
     }
 
     this._pointControllers = renderCards(cards, this._container, this._onDataChange, this._onViewChange, this._store, this._isSortedByDefault);
+    this._onSortTypeChange(this._activeSortType);
   }
 
   createPoint() {
@@ -100,26 +101,28 @@ export default class TripController {
   }
 
   _onSortTypeChange(sortType) {
-    let sortedEvents = [];
+    this._activeSortType = sortType;
+
+    let sortedPoints = [];
     const points = this._pointsModel.getPoints();
 
     switch (sortType) {
       case SortType.EVENT:
         this._isSortedByDefault = true;
-        sortedEvents = points.slice();
+        sortedPoints = points.slice();
         break;
       case SortType.TIME:
         this._isSortedByDefault = false;
-        sortedEvents = points.slice().sort((a, b) => (b.endDate - b.startDate) - (a.endDate - a.startDate));
+        sortedPoints = points.slice().sort((a, b) => (b.endDate - b.startDate) - (a.endDate - a.startDate));
         break;
       case SortType.PRICE:
         this._isSortedByDefault = false;
-        sortedEvents = points.slice().sort((a, b) => b.price - a.price);
+        sortedPoints = points.slice().sort((a, b) => b.price - a.price);
         break;
     }
 
     this._container.innerHTML = ``;
-    this._pointControllers = renderCards(sortedEvents, this._container, this._onDataChange, this._onViewChange, this._store, this._isSortedByDefault);
+    this._pointControllers = renderCards(sortedPoints, this._container, this._onDataChange, this._onViewChange, this._store, this._isSortedByDefault);
   }
 
   _removePoints() {
