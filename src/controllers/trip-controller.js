@@ -47,6 +47,7 @@ export default class TripController {
 
     this._pointControllers = [];
     this._creatingPoint = null;
+    this._newEventButton = document.querySelector(`.trip-main__event-add-btn`);
 
     this._activeSortType = SortType.EVENT;
     this._isSortedByDefault = true;
@@ -67,6 +68,18 @@ export default class TripController {
   render() {
     const cards = this._pointsModel.getPoints();
     const cardsAll = this._pointsModel.getPointsAll();
+
+    this._newEventButton.addEventListener(`click`, () => {
+      if (this._creatingPoint) {
+        return;
+      }
+
+      this._newEventButton.disabled = true;
+      this._onViewChange();
+      this._creatingPoint = new PointController(null, this._onDataChange, this._onViewChange, this._store);
+      this._creatingPoint.render(EmptyCard, PointControllerMode.ADD);
+      this._pointControllers.push(this._creatingPoint);
+    });
 
     if (cardsAll.length === 0) {
       renderElement(this._container, this._noEventsComponent);
@@ -92,13 +105,6 @@ export default class TripController {
     this._onSortTypeChange(this._activeSortType);
   }
 
-  createPoint() {
-    if (this._creatingPoint) {
-      return;
-    }
-    this._creatingPoint = new PointController(null, this._onDataChange, this._onViewChange, this._store);
-    this._creatingPoint.render(EmptyCard, PointControllerMode.ADD);
-  }
 
   _onSortTypeChange(sortType) {
     this._activeSortType = sortType;
@@ -141,14 +147,14 @@ export default class TripController {
       this._creatingPoint = null;
       if (newData === null) {
         pointController.destroy();
-        this._updatePoints();
+        this._pointControllers.pop();
+        this._newEventButton.disabled = false;
       } else {
         this._api.createPoint(newData)
         .then((pointModel) => {
           this._pointsModel.addPoint(pointModel);
           pointController.render(pointModel, PointControllerMode.DEFAULT);
-          this._pointsModel.addPoint(newData);
-          pointController.render(newData, PointControllerMode.ADD);
+          this._updatePoints();
         })
         .catch(() => {
           pointController.shake();

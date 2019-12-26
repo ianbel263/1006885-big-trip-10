@@ -31,6 +31,7 @@ export default class PointController {
     const oldEventEditFormComponent = this._eventEditFormComponent;
 
     this._eventItemComponent = new EventItemComponent(event, this._mode);
+
     this._eventItemComponent.setOnEditButtonClick(() => {
 
       this._replaceEventToEdit();
@@ -43,7 +44,6 @@ export default class PointController {
 
         this._eventEditFormComponent.setOnFormSubmit((evt) => {
           evt.preventDefault();
-
           this._eventEditFormComponent.setButtonsText(`save`, ConnectingButtonsText.SAVE);
           const newData = this._eventEditFormComponent.getData();
           this._onDataChange(this, event, newData);
@@ -51,7 +51,6 @@ export default class PointController {
 
         this._eventEditFormComponent.setOnDeleteButtonClick(() => {
           this._eventEditFormComponent.setButtonsText(`delete`, ConnectingButtonsText.DELETE);
-
           this._onDataChange(this, event, null);
         });
 
@@ -60,12 +59,8 @@ export default class PointController {
         });
 
         this._eventEditFormComponent.setOnFavoriteButtonClick(() => {
-          // this._onDataChange(this, event, Object.assign({}, event, {
-          //   isFavorite: !event.isFavorite,
-          // }));
           const newPoint = PointModel.clone(event);
           newPoint.isFavorite = !newPoint.isFavorite;
-
           this._onDataChange(this, event, newPoint);
 
         });
@@ -83,7 +78,6 @@ export default class PointController {
 
         this._eventEditFormComponent.setOnFormSubmit((evt) => {
           evt.preventDefault();
-
           this._eventEditFormComponent.setButtonsText(`save`, ConnectingButtonsText.SAVE);
           const newData = this._eventEditFormComponent.getData();
           this._onDataChange(this, EmptyCard, newData);
@@ -93,19 +87,12 @@ export default class PointController {
           this._onDataChange(this, EmptyCard, null);
         });
 
-        if (oldEventItemComponent && oldEventEditFormComponent) {
-          removeComponent(oldEventItemComponent);
-          removeComponent(oldEventEditFormComponent);
-          // this._replaceEditToEvent();
-        } else {
-          document.querySelector(`.trip-sort`).after(this._eventEditFormComponent.getElement());
-        }
+        document.querySelector(`.trip-sort`).after(this._eventEditFormComponent.getElement());
         break;
     }
   }
 
   setDefaultView() {
-    // console.log(`setDefaultView`, this._mode)
     if (this._mode !== ViewMode.DEFAULT) {
       this._replaceEditToEvent();
     }
@@ -130,6 +117,10 @@ export default class PointController {
 
     this._eventEditFormComponent.reset();
 
+    if (this._mode === ViewMode.ADD) {
+      this._onDataChange(this, EmptyCard, null);
+    }
+
     if (document.contains(this._eventEditFormComponent.getElement())) {
       replaceComponents(this._eventItemComponent, this._eventEditFormComponent);
     }
@@ -139,7 +130,7 @@ export default class PointController {
 
   _onEscPress(evt) {
     if (evt.keyCode === ESC_KEYCODE) {
-      // console.log('ESC_KEYCODE', ESC_KEYCODE);
+      console.log('ESC_KEYCODE', ESC_KEYCODE);
 
       // if (this._mode === ViewMode.ADD) {
       //   this._onDataChange(this, EmptyCard, null);

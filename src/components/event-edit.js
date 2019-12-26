@@ -22,6 +22,7 @@ export default class EventEditForm extends AbstractSmartComponent {
     this._currentDestination = event.destination;
     this._currentOffers = this._mode !== ViewMode.ADD ? event.offers : this._offers.get(`flight`);
     this._currentEventType = this._mode !== ViewMode.ADD ? event.type : `flight`;
+    this._currentPrice = event.price;
 
     this._buttonSaveText = DefaultButtonsText.SAVE;
     this._buttonDeleteText = DefaultButtonsText.DELETE;
@@ -38,7 +39,6 @@ export default class EventEditForm extends AbstractSmartComponent {
   }
 
   getTemplate() {
-    const {price, isFavorite} = this._event;
     const {name, description, pictures} = this._currentDestination;
 
     return (`<form class="${this._mode === ViewMode.ADD ? `trip-events__item` : ``}  event  event--edit" action="#" method="post">
@@ -104,7 +104,7 @@ export default class EventEditForm extends AbstractSmartComponent {
               <span class="visually-hidden">price</span>
               &euro;
             </label>
-            <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${price}">
+            <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${this._currentPrice}">
           </div>
 
           <button class="event__save-btn  btn  btn--blue" type="submit">${this._buttonSaveText}</button>
@@ -113,7 +113,7 @@ export default class EventEditForm extends AbstractSmartComponent {
 
       ${this._mode === ViewMode.ADD
         ? ``
-        : `<input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" ${isFavorite ? `checked` : ``}>
+        : `<input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" ${this._event.isFavorite ? `checked` : ``}>
           <label class="event__favorite-btn" for="event-favorite-1">
             <span class="visually-hidden">Add to favorite</span>
             <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
@@ -243,6 +243,7 @@ export default class EventEditForm extends AbstractSmartComponent {
     this._currentDestination = event.destination;
     this._currentEventType = event.type;
     this._currentOffers = event.offers;
+    this._currentPrice = event.price;
 
     this.rerender();
   }
@@ -328,6 +329,16 @@ export default class EventEditForm extends AbstractSmartComponent {
           : this._currentEndDate;
 
         this.rerender();
+      });
+
+    element.querySelector(`#event-end-time-1`)
+      .addEventListener(`change`, (evt) => {
+        this._currentEndDate = moment(evt.target.value, `DD/MM/YY HH:mm`).valueOf();
+      });
+
+    element.querySelector(`.event__input--price`)
+      .addEventListener(`change`, (evt) => {
+        this._currentPrice = evt.target.value;
       });
   }
 

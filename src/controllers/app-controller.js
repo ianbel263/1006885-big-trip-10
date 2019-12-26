@@ -1,3 +1,8 @@
+import {siteMenu} from '../mock/menu.js';
+
+import SiteMenuComponent from '../components/site-menu.js';
+import FilterController from '../controllers/filter-controller.js';
+
 import {renderElement, RenderPosition} from '../utils/render.js';
 import TripInfoComponent from '../components/trip-info.js';
 import TripDaysContainerComponent from '../components/trip-days-container.js';
@@ -17,6 +22,10 @@ export default class APP {
   }
 
   render() {
+    const tripControlDiv = document.querySelector(`.trip-controls`);
+    renderElement(tripControlDiv, new SiteMenuComponent(siteMenu));
+    const filterController = new FilterController(tripControlDiv, this._pointsModel);
+
     const tripEventsSection = document.querySelector(`.trip-events`);
     renderElement(tripEventsSection, this._tripDaysContainerComponent);
     const daysList = tripEventsSection.querySelector(`.trip-days`);
@@ -24,8 +33,8 @@ export default class APP {
 
     const cards = this._pointsModel.getPoints();
 
-    this._tripInfoComponent = new TripInfoComponent();
-    renderElement(this._container, new TripInfoComponent(cards), RenderPosition.AFTERBEGIN);
+    // this._tripInfoComponent = new TripInfoComponent();
+    // renderElement(this._container, new TripInfoComponent(cards), RenderPosition.AFTERBEGIN);
 
     const tripTotalPrice = document.querySelector(`.trip-info__cost-value`);
     tripTotalPrice.textContent = cards.reduce((totalPrice, it) => {
@@ -34,15 +43,14 @@ export default class APP {
       }, 0);
     }, 0);
 
-    document.querySelector(`.trip-main__event-add-btn`)
-      .addEventListener(`click`, () => {
-        // console.log(`NEW`);
+    // document.querySelector(`.trip-main__event-add-btn`)
+    //   .addEventListener(`click`, (evt) => {
+    //     evt.target.disabled = true;
+    //     this._tripController.createPoint(evt); // поставить потом обработчик по esc, а также _onViewChange
+    //   });
 
-        this._tripController.createPoint(); // поставить потом обработчик по esc, а также _onViewChange
-      });
-
+    filterController.render();
     this._tripController.render();
-
   }
 
   //  подписаться на изменения модели, делать перерендер
