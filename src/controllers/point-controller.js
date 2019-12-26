@@ -113,12 +113,10 @@ export default class PointController {
   }
 
   _replaceEventToEdit() {
-    
     this._onViewChange();
-    
+
     replaceComponents(this._eventEditFormComponent, this._eventItemComponent);
     this._mode = ViewMode.EDIT;
-    // console.log(`setDefaultView`, this._mode)
   }
 
   _replaceEditToEvent() {
@@ -135,7 +133,7 @@ export default class PointController {
 
   _onEscPress(evt) {
     if (evt.keyCode === ESC_KEYCODE) {
-      console.log('ESC_KEYCODE', ESC_KEYCODE);
+      // console.log('ESC_KEYCODE', ESC_KEYCODE);
 
       // if (this._mode === ViewMode.ADD) {
       //   this._onDataChange(this, EmptyCard, null);

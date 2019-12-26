@@ -21,7 +21,7 @@ export default class APP {
     renderElement(tripEventsSection, this._tripDaysContainerComponent);
     const daysList = tripEventsSection.querySelector(`.trip-days`);
     this._tripController = new TripController(daysList, this._pointsModel, this._api, this._store);
-    
+
     const cards = this._pointsModel.getPoints();
 
     this._tripInfoComponent = new TripInfoComponent();
@@ -37,15 +37,13 @@ export default class APP {
     document.querySelector(`.trip-main__event-add-btn`)
       .addEventListener(`click`, () => {
         // console.log(`NEW`);
-    
+
         this._tripController.createPoint(); // поставить потом обработчик по esc, а также _onViewChange
       });
 
     this._tripController.render();
-    
+
   }
 
   //  подписаться на изменения модели, делать перерендер
-
-  
 }
