@@ -2,7 +2,7 @@ import moment from 'moment';
 import {ViewMode} from '../utils/common.js';
 import flatpickr from 'flatpickr';
 import PointModel from '../models/point-model.js';
-import {TripType} from '../const.js';
+import {TripType, DefaultButtonsText} from '../const.js';
 import {doFirstLetterUppercase, formatTripType} from '../utils/common.js';
 import AbstractSmartComponent from './abstract-smart-component.js';
 
@@ -22,6 +22,9 @@ export default class EventEditForm extends AbstractSmartComponent {
     this._currentDestination = event.destination;
     this._currentOffers = this._mode !== ViewMode.ADD ? event.offers : this._offers.get(`flight`);
     this._currentEventType = this._mode !== ViewMode.ADD ? event.type : `flight`;
+
+    this._buttonSaveText = DefaultButtonsText.SAVE;
+    this._buttonDeleteText = DefaultButtonsText.DELETE;
 
     this._submitHandler = null;
     this._deleteHandler = null;
@@ -104,8 +107,8 @@ export default class EventEditForm extends AbstractSmartComponent {
             <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${price}">
           </div>
 
-          <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-          <button class="event__reset-btn" type="reset">${this._mode === ViewMode.ADD ? `Cancel` : `Delete`}</button>
+          <button class="event__save-btn  btn  btn--blue" type="submit">${this._buttonSaveText}</button>
+          <button class="event__reset-btn" type="reset">${this._mode === ViewMode.ADD ? `Cancel` : `${this._buttonDeleteText}`}</button>
           
 
       ${this._mode === ViewMode.ADD
@@ -199,8 +202,26 @@ export default class EventEditForm extends AbstractSmartComponent {
       'date_from': moment(formData.get(`event-start-time`), `DD/MM/YY HH:mm`).valueOf(),
       'date_to': moment(formData.get(`event-end-time`), `DD/MM/YY HH:mm`).valueOf(),
       'base_price': parseInt(formData.get(`event-price`), 10),
-      'is_favorite': form.querySelector(`.event__favorite-checkbox`).checked
+      'is_favorite': form.querySelector(`.event__favorite-checkbox`) ? form.querySelector(`.event__favorite-checkbox`).checked : false
     });
+  }
+
+  setButtonsText(action, text) {
+    if (action === `save`) {
+      this._buttonSaveText = text;
+    }
+    if (action === `delete`) {
+      this._buttonDeleteText = text;
+    }
+
+    this.rerender();
+  }
+
+  setDefaultButtonsText() {
+    this._buttonSaveText = DefaultButtonsText.SAVE;
+    this._buttonDeleteText = DefaultButtonsText.DELETE;
+
+    this.rerender();
   }
 
   removeElement() {

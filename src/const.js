@@ -8,6 +8,16 @@ export const RequestMethod = {
   DELETE: `DELETE`
 };
 
+export const DefaultButtonsText = {
+  SAVE: `Save`,
+  DELETE: `Delete`
+};
+
+export const ConnectingButtonsText = {
+  SAVE: `Saving...`,
+  DELETE: `Deleting...`
+};
+
 export const ESC_KEYCODE = 27;
 
 export const MONTHS = [`JAN`, `FEB`, `MAR`, `APR`, `MAY`, `JUN`, `JUL`, `AUG`, `SEP`, `OCT`, `NOV`, `DEC`]; // убрать потом
@@ -20,7 +30,7 @@ export const TripType = {
 export const MenuItem = {
   TABLE: `table`,
   STATS: `stats`
-}
+};
 
 export const FilterType = {
   EVERYTHING: `everything`,
@@ -33,4 +43,3 @@ export const SortType = {
   TIME: `time`,
   PRICE: `price`
 };
-

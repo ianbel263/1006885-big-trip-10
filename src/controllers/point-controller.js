@@ -1,9 +1,11 @@
-import {ESC_KEYCODE} from '../const.js';
+import {ESC_KEYCODE, ConnectingButtonsText} from '../const.js';
 import PointModel from '../models/point-model';
 import EventItemComponent from '../components/event-item.js';
 import EventEditFormComponent from '../components/event-edit.js';
 import {renderElement, replaceComponents, removeComponent} from '../utils/render.js';
 import {ViewMode, EmptyCard} from '../utils/common.js';
+
+const SHAKE_ANIMATION_TIMEOUT = 600;
 
 export default class PointController {
   constructor(container, onDataChange, onViewChange, store) {
@@ -42,11 +44,14 @@ export default class PointController {
         this._eventEditFormComponent.setOnFormSubmit((evt) => {
           evt.preventDefault();
 
+          this._eventEditFormComponent.setButtonsText(`save`, ConnectingButtonsText.SAVE);
           const newData = this._eventEditFormComponent.getData();
           this._onDataChange(this, event, newData);
         });
 
         this._eventEditFormComponent.setOnDeleteButtonClick(() => {
+          this._eventEditFormComponent.setButtonsText(`delete`, ConnectingButtonsText.DELETE);
+
           this._onDataChange(this, event, null);
         });
 
@@ -79,6 +84,7 @@ export default class PointController {
         this._eventEditFormComponent.setOnFormSubmit((evt) => {
           evt.preventDefault();
 
+          this._eventEditFormComponent.setButtonsText(`save`, ConnectingButtonsText.SAVE);
           const newData = this._eventEditFormComponent.getData();
           this._onDataChange(this, EmptyCard, newData);
         });
@@ -140,5 +146,16 @@ export default class PointController {
       // }
       this._replaceEditToEvent();
     }
+  }
+
+  shake() {
+    this._eventEditFormComponent.getElement().style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
+    this._eventItemComponent.getElement().style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
+
+    setTimeout(() => {
+      this._eventEditFormComponent.getElement().style.animation = ``;
+      this._eventItemComponent.getElement().style.animation = ``;
+      this._eventEditFormComponent.setDefaultButtonsText();
+    }, SHAKE_ANIMATION_TIMEOUT);
   }
 }

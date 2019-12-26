@@ -147,16 +147,21 @@ export default class TripController {
         .then((pointModel) => {
           this._pointsModel.addPoint(pointModel);
           pointController.render(pointModel, PointControllerMode.DEFAULT);
-        }); // довавить catch после каждого then
-
-        this._pointsModel.addPoint(newData);
-        pointController.render(newData, PointControllerMode.ADD);
+          this._pointsModel.addPoint(newData);
+          pointController.render(newData, PointControllerMode.ADD);
+        })
+        .catch(() => {
+          pointController.shake();
+        });
       }
     } else if (newData === null) {
       this._api.deletePoint(oldData.id)
         .then(() => {
           this._pointsModel.removePoint(oldData.id);
           this._updatePoints();
+        })
+        .catch(() => {
+          pointController.shake();
         });
     } else {
       this._api.updatePoint(oldData.id, newData)
@@ -167,6 +172,9 @@ export default class TripController {
           pointController.render(pointModel, PointControllerMode.DEFAULT);
           this._updatePoints();
         }
+      })
+      .catch(() => {
+        pointController.shake();
       });
     }
   }
