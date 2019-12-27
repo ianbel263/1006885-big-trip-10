@@ -6,7 +6,7 @@ html {
     100% {
       transform: translateX(0);
     }
-  
+
     10%,
     30%,
     50%,
@@ -14,14 +14,14 @@ html {
     90% {
       transform: translateX(-5px);
     }
-  
+
     20%,
     40%,
     60%,
     80% {
       transform: translateX(5px);
     }
-  }  
+  }
 
 body {
   padding: 0;
@@ -551,6 +551,9 @@ main {
     border-radius: 18px;
     -webkit-box-shadow: 0 11px 20px rgba(0, 0, 0, 0.043);
             box-shadow: 0 11px 20px rgba(0, 0, 0, 0.043); }
+  .event--disabled {
+    opacity: 0.3;
+  }
 
 .event__header {
   display: -ms-flexbox;
