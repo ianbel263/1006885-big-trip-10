@@ -44,7 +44,6 @@ export default class TripController {
     this._pointsModel = pointsModel;
     this._api = api;
     this._store = store;
-    console.log('this._store', this._store)
 
     this._pointControllers = [];
     this._creatingPoint = null;
@@ -93,6 +92,11 @@ export default class TripController {
     this._onSortTypeChange(this._activeSortType);
   }
 
+  updatePoints() {
+    this._removePoints();
+    this.render();
+  }
+
   _createNewPoint() {
     if (this._creatingPoint) {
       return;
@@ -137,11 +141,6 @@ export default class TripController {
     this._container.innerHTML = ``;
     this._pointControllers.forEach((_pointcontroller) => _pointcontroller.destroy());
     this._pointcontrollers = [];
-  }
-
-  updatePoints() {
-    this._removePoints();
-    this.render();
   }
 
   _onDataChange(pointController, oldData, newData) {
