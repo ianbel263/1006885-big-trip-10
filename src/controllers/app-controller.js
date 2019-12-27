@@ -16,7 +16,6 @@ export default class APP {
     this._store = store;
 
     this._tripInfoComponent = new TripInfoComponent();
-
     this._tripController = null;
 
     this._updatePoints = this._updatePoints.bind(this);

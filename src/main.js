@@ -30,3 +30,5 @@ api.getPoints()
     removeComponent(loadingPointComponent);
     renderElement(document.querySelector(`.trip-events`), new LoadErrorComponent());
   });
+
+// Исправить поведение кнопки Favorite, выбор типов в карточке редактирования, расставить обработчики по ESC

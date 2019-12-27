@@ -9,58 +9,52 @@ export default class PointController {
   constructor(container, onDataChange, onViewChange, store) {
     this._container = container;
 
+    this._point = {};
     this._mode = ViewMode.DEFAULT;
 
+    this._store = store;
     this._onDataChange = onDataChange;
     this._onViewChange = onViewChange;
-
-    this._store = store;
 
     this._pointItemComponent = null;
     this._pointEditComponent = null;
 
+    this._onFormSubmit = this._onFormSubmit.bind(this);
+    this._onDeleteButtonClick = this._onDeleteButtonClick.bind(this);
     this._onEscPress = this._onEscPress.bind(this);
   }
 
   render(point, mode) {
+    this._point = point;
     this._mode = mode;
 
     const oldPointItemComponent = this._pointItemComponent;
     const oldPointEditComponent = this._pointEditComponent;
 
     this._pointItemComponent = new PointItemComponent(point, this._mode);
+    this._pointEditComponent = new PointEditComponent(point, this._mode, this._store);
 
     this._pointItemComponent.setOnEditButtonClick(() => {
-
       this._replaceItemToEdit();
       document.addEventListener(`keydown`, this._onEscPress);
     });
 
+    this._pointEditComponent.setOnFormSubmit((evt) => {
+      this._onFormSubmit(evt, this._mode);
+    });
+
+    this._pointEditComponent.setOnDeleteButtonClick(() => {
+      this._onDeleteButtonClick(this._mode);
+    });
+
     switch (this._mode) {
       case ViewMode.DEFAULT:
-        this._pointEditComponent = new PointEditComponent(point, this._mode, this._store);
-
-        this._pointEditComponent.setOnFormSubmit((evt) => {
-          evt.preventDefault();
-          this._pointEditComponent.setButtonsText(`save`, ConnectingButtonsText.SAVE);
-          const newData = this._pointEditComponent.getData();
-          this._onDataChange(this, point, newData);
-        });
-
-        this._pointEditComponent.setOnDeleteButtonClick(() => {
-          this._pointEditComponent.setButtonsText(`delete`, ConnectingButtonsText.DELETE);
-          this._onDataChange(this, point, null);
-        });
-
-        this._pointEditComponent.setOnCancelButtonClick(() => {
-          this._replaceEditToItem();
-        });
+        this._pointEditComponent.setOnCancelButtonClick(() => this._replaceEditToItem());
 
         this._pointEditComponent.setOnFavoriteButtonClick(() => {
           const newPoint = PointModel.clone(point);
           newPoint.isFavorite = !newPoint.isFavorite;
           this._onDataChange(this, point, newPoint);
-
         });
 
         if (oldPointItemComponent && oldPointEditComponent) {
@@ -71,20 +65,9 @@ export default class PointController {
           renderElement(this._container, this._pointItemComponent);
         }
         break;
+
       case ViewMode.ADD:
-        this._pointEditComponent = new PointEditComponent(point, this._mode, this._store);
-
-        this._pointEditComponent.setOnFormSubmit((evt) => {
-          evt.preventDefault();
-          this._pointEditComponent.setButtonsText(`save`, ConnectingButtonsText.SAVE);
-          const newData = this._pointEditComponent.getData();
-          this._onDataChange(this, EmptyCard, newData);
-        });
-
-        this._pointEditComponent.setOnDeleteButtonClick(() => {
-          this._onDataChange(this, EmptyCard, null);
-        });
-
+        document.addEventListener(`keydown`, this._onEscPress);
         const tripSortElement = document.querySelector(`.trip-sort`);
         if (tripSortElement) {
           document.querySelector(`.trip-sort`).after(this._pointEditComponent.getElement());
@@ -104,8 +87,27 @@ export default class PointController {
   destroy() {
     removeComponent(this._pointItemComponent);
     removeComponent(this._pointEditComponent);
-
     document.removeEventListener(`keydown`, this._onEscKeyDown);
+  }
+
+  _onFormSubmit(evt, mode) {
+    evt.preventDefault();
+    this._pointEditComponent.setButtonsText(`save`, ConnectingButtonsText.SAVE);
+    const newData = this._pointEditComponent.getData();
+    if (mode === ViewMode.ADD) {
+      this._onDataChange(this, EmptyCard, newData);
+    } else {
+      this._onDataChange(this, this._point, newData);
+    }
+  }
+
+  _onDeleteButtonClick(mode) {
+    if (mode === ViewMode.ADD) {
+      this._onDataChange(this, EmptyCard, null);
+    } else {
+      this._pointEditComponent.setButtonsText(`delete`, ConnectingButtonsText.DELETE);
+      this._onDataChange(this, this._point, null);
+    }
   }
 
   _replaceItemToEdit() {
@@ -118,25 +120,16 @@ export default class PointController {
   _replaceEditToItem() {
     document.removeEventListener(`keydown`, this._onEscPress);
     this._pointEditComponent.reset();
-
     if (this._mode === ViewMode.ADD) {
       this._onDataChange(this, EmptyCard, null);
-    }
-
-    if (document.contains(this._pointEditComponent.getElement())) {
+    } else if (document.contains(this._pointEditComponent.getElement())) {
       replaceComponents(this._pointItemComponent, this._pointEditComponent);
     }
-
     this._mode = ViewMode.DEFAULT;
   }
 
   _onEscPress(evt) {
     if (evt.keyCode === ESC_KEYCODE) {
-      // console.log('ESC_KEYCODE', ESC_KEYCODE);
-
-      // if (this._mode === ViewMode.ADD) {
-      //   this._onDataChange(this, EmptyCard, null);
-      // }
       this._replaceEditToItem();
     }
   }
