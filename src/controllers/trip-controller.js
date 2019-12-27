@@ -44,6 +44,7 @@ export default class TripController {
     this._pointsModel = pointsModel;
     this._api = api;
     this._store = store;
+    console.log('this._store', this._store)
 
     this._pointControllers = [];
     this._creatingPoint = null;
@@ -151,6 +152,7 @@ export default class TripController {
         this._pointControllers.pop();
         this._newPointButton.disabled = false;
       } else {
+        pointController.blockOnSave();
         this._api.createPoint(newData)
         .then((pointModel) => {
           this._pointsModel.addPoint(pointModel);
@@ -161,6 +163,7 @@ export default class TripController {
         });
       }
     } else if (newData === null) {
+      pointController.blockOnSave();
       this._api.deletePoint(oldData.id)
         .then(() => {
           this._pointsModel.removePoint(oldData.id);
@@ -169,6 +172,7 @@ export default class TripController {
           pointController.shake();
         });
     } else {
+      pointController.blockOnSave();
       this._api.updatePoint(oldData.id, newData)
       .then((pointModel) => {
         const isSuccess = this._pointsModel.updatePoint(oldData.id, pointModel);

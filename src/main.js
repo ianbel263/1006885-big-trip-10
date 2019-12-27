@@ -15,20 +15,23 @@ const store = new Store();
 const appController = new APP(tripInfoElement, pointsModel, api, store);
 
 const loadingPointComponent = new LoadingPointsComponent();
+const newPointButton = document.querySelector(`.trip-main__event-add-btn`);
+newPointButton.disabled = true;
 renderElement(document.querySelector(`.trip-events`), loadingPointComponent);
 
 appController.init();
 
-api.getPoints()
-  .then((points) => pointsModel.setPoints(points))
-  .then(() => removeComponent(loadingPointComponent))
+api.getData({url: `offers`})
+  .then((offers) => store.setOffers(offers))
   .then(() => api.getData({url: `destinations`}))
   .then((destinations) => store.setDestinations(destinations))
-  .then(() => api.getData({url: `offers`}))
-  .then((offers) => store.setOffers(offers))
+  .then(() => api.getPoints())
+  .then((points) => {
+    pointsModel.setPoints(points);
+    removeComponent(loadingPointComponent);
+    newPointButton.disabled = false;
+  })
   .catch(() => {
     removeComponent(loadingPointComponent);
     renderElement(document.querySelector(`.trip-events`), new LoadErrorComponent());
   });
-
-// Исправить поведение кнопки Favorite, выбор типов в карточке редактирования, расставить обработчики по ESC

@@ -21,6 +21,7 @@ export default class PointEdit extends AbstractSmartComponent {
     this._currentOffers = this._mode !== ViewMode.ADD ? addCheckFieldToOffers(point.offers) : addCheckFieldToOffers(this._offersAll.get(`flight`));
     this._currentPointType = this._mode !== ViewMode.ADD ? point.type : `flight`;
     this._currentPrice = point.price;
+    this._isFavorite = point.isFavorite;
 
     this._buttonSaveText = DefaultButtonsText.SAVE;
     this._buttonDeleteText = DefaultButtonsText.DELETE;
@@ -28,6 +29,7 @@ export default class PointEdit extends AbstractSmartComponent {
     this._submitHandler = null;
     this._deleteHandler = null;
     this._cancelHandler = null;
+    this._favoriteHandler = null;
 
     this._flatpickrStartDate = null;
     this._flatpickrEndDate = null;
@@ -104,7 +106,7 @@ export default class PointEdit extends AbstractSmartComponent {
               <span class="visually-hidden">price</span>
               &euro;
             </label>
-            <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${this._currentPrice}">
+            <input class="event__input  event__input--price" id="event-price-1" type="number" name="event-price" value="${this._currentPrice}">
           </div>
 
           <button class="event__save-btn  btn  btn--blue" type="submit">${this._buttonSaveText}</button>
@@ -113,7 +115,7 @@ export default class PointEdit extends AbstractSmartComponent {
 
       ${this._mode === ViewMode.ADD
         ? ``
-        : `<input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" ${this._point.isFavorite ? `checked` : ``}>
+        : `<input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" ${this._isFavorite ? `checked` : ``}>
           <label class="event__favorite-btn" for="event-favorite-1">
             <span class="visually-hidden">Add to favorite</span>
             <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
@@ -244,6 +246,7 @@ export default class PointEdit extends AbstractSmartComponent {
     this._currentPointType = point.type;
     this._currentOffers = addCheckFieldToOffers(point.offers);
     this._currentPrice = point.price;
+    this._isFavorite = point.isFavorite;
 
     this.rerender();
   }
@@ -271,6 +274,8 @@ export default class PointEdit extends AbstractSmartComponent {
   setOnFavoriteButtonClick(handler) {
     this.getElement().querySelector(`.event__favorite-btn`)
       .addEventListener(`click`, handler);
+
+    this._favoriteHandler = handler;
   }
 
   recoveryListeners() {
@@ -280,14 +285,17 @@ export default class PointEdit extends AbstractSmartComponent {
 
     if (this._mode === ViewMode.DEFAULT) {
       this.setOnCancelButtonClick(this._cancelHandler);
+      this.setOnFavoriteButtonClick(this._favoriteHandler);
     }
   }
 
-  blockElement() {
+  blockElement(onError = false) {
     const form = this.getElement();
-    form.style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
+    if (onError) {
+      form.style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
+      form.style.outline = `2px solid red`;
+    }
     form.classList.add(`event--disabled`);
-    form.style.outline = `2px solid red`;
     form.querySelectorAll(`input`).forEach((input) => (input.disabled = true));
     form.querySelectorAll(`button`).forEach((button) => (button.disabled = true));
   }
@@ -307,6 +315,7 @@ export default class PointEdit extends AbstractSmartComponent {
           this._currentPointType = evt.target.value;
           this._currentOffers = addCheckFieldToOffers(this._offersAll.get(evt.target.value));
 
+          this._favoriteHandler = null;
           this.rerender();
         }
       });
@@ -328,6 +337,7 @@ export default class PointEdit extends AbstractSmartComponent {
           evt.target.setCustomValidity(``);
         }
 
+        this._favoriteHandler = null;
         this.rerender();
       });
 
@@ -338,23 +348,38 @@ export default class PointEdit extends AbstractSmartComponent {
           ? this._currentStartDate
           : this._currentEndDate;
 
+        this._favoriteHandler = null;
         this.rerender();
       });
 
     element.querySelector(`#event-end-time-1`)
       .addEventListener(`change`, (evt) => {
         this._currentEndDate = moment(evt.target.value, `DD/MM/YY HH:mm`).valueOf();
+
+        this._favoriteHandler = null;
+        this.rerender();
       });
 
     element.querySelector(`.event__input--price`)
       .addEventListener(`change`, (evt) => {
         this._currentPrice = evt.target.value;
+
+        this._favoriteHandler = null;
+        this.rerender();
+      });
+
+    element.querySelector(`.event__favorite-checkbox`)
+      .addEventListener(`change`, (evt) => {
+        this._isFavorite = evt.target.checked;
       });
 
     if (element.querySelectorAll(`event__offer-checkbox`)) {
       element.querySelectorAll(`.event__offer-checkbox`).forEach((el, index) => {
         el.addEventListener(`change`, (evt) => {
           this._currentOffers[index].isChecked = evt.target.checked;
+
+          this._favoriteHandler = null;
+          this.rerender();
         });
       });
     }

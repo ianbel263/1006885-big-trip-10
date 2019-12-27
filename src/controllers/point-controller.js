@@ -90,6 +90,18 @@ export default class PointController {
     document.removeEventListener(`keydown`, this._onEscKeyDown);
   }
 
+  blockOnSave() {
+    this._pointEditComponent.blockElement();
+  }
+
+  shake() {
+    this._pointEditComponent.blockElement(true);
+
+    setTimeout(() => {
+      this._pointEditComponent.setDefaultButtonsText();
+    }, SHAKE_ANIMATION_TIMEOUT);
+  }
+
   _onFormSubmit(evt, mode) {
     evt.preventDefault();
     this._pointEditComponent.setButtonsText(`save`, ConnectingButtonsText.SAVE);
@@ -132,13 +144,5 @@ export default class PointController {
     if (evt.keyCode === ESC_KEYCODE) {
       this._replaceEditToItem();
     }
-  }
-
-  shake() {
-    this._pointEditComponent.blockElement();
-
-    setTimeout(() => {
-      this._pointEditComponent.setDefaultButtonsText();
-    }, SHAKE_ANIMATION_TIMEOUT);
   }
 }
