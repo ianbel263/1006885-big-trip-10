@@ -1,6 +1,6 @@
 import {siteMenu} from '../mock/menu.js';
 
-import SiteMenuComponent from '../components/site-menu.js';
+import AppMenuComponent from '../components/app-menu.js';
 import FilterController from '../controllers/filter-controller.js';
 
 import {renderElement, RenderPosition} from '../utils/render.js';
@@ -29,7 +29,7 @@ export default class APP {
 
   init() {
     const tripControlElement = document.querySelector(`.trip-controls`);
-    renderElement(tripControlElement, new SiteMenuComponent(siteMenu));
+    renderElement(tripControlElement, new AppMenuComponent(siteMenu));
     const filterController = new FilterController(tripControlElement, this._pointsModel);
     const tripPointsElement = document.querySelector(`.trip-events`);
     renderElement(tripPointsElement, new TripDaysContainerComponent());

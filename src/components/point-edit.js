@@ -5,22 +5,22 @@ import flatpickr from 'flatpickr';
 import {ViewMode, addCheckFieldToOffers, doFirstLetterUppercase, formatTripType} from '../utils/common.js';
 import PointModel from '../models/point-model.js';
 
-export default class EventEditForm extends AbstractSmartComponent {
-  constructor(event, mode, store) {
+export default class PointEdit extends AbstractSmartComponent {
+  constructor(point, mode, store) {
     super();
-    this._event = event;
+    this._point = point;
     this._mode = mode;
 
     this._destinationsAll = store.getDestinations();
     this._offersAll = store.getOffers();
     this._destinationList = store.getDestinationNames();
 
-    this._currentStartDate = event.startDate;
-    this._currentEndDate = event.endDate;
-    this._currentDestination = event.destination;
-    this._currentOffers = this._mode !== ViewMode.ADD ? addCheckFieldToOffers(event.offers) : addCheckFieldToOffers(this._offersAll.get(`flight`));
-    this._currentEventType = this._mode !== ViewMode.ADD ? event.type : `flight`;
-    this._currentPrice = event.price;
+    this._currentStartDate = point.startDate;
+    this._currentEndDate = point.endDate;
+    this._currentDestination = point.destination;
+    this._currentOffers = this._mode !== ViewMode.ADD ? addCheckFieldToOffers(point.offers) : addCheckFieldToOffers(this._offersAll.get(`flight`));
+    this._currentPointType = this._mode !== ViewMode.ADD ? point.type : `flight`;
+    this._currentPrice = point.price;
 
     this._buttonSaveText = DefaultButtonsText.SAVE;
     this._buttonDeleteText = DefaultButtonsText.DELETE;
@@ -46,7 +46,7 @@ export default class EventEditForm extends AbstractSmartComponent {
           <div class="event__type-wrapper">
             <label class="event__type  event__type-btn" for="event-type-toggle-1">
               <span class="visually-hidden">Choose event type</span>
-              <img class="event__type-icon" width="17" height="17" src="img/icons/${this._currentEventType}.png" alt="Event type icon">
+              <img class="event__type-icon" width="17" height="17" src="img/icons/${this._currentPointType}.png" alt="Event type icon">
             </label>
             <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
 
@@ -60,7 +60,7 @@ export default class EventEditForm extends AbstractSmartComponent {
           ${TripType[group].map((el) => {
             return (
               `<div class="event__type-item">
-                <input id="event-type-${el}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${el}" ${this._currentEventType === el && `checked`}>
+                <input id="event-type-${el}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${el}" ${this._currentPointType === el && `checked`}>
                 <label class="event__type-label  event__type-label--${el}" for="event-type-${el}-1">${doFirstLetterUppercase(el)}</label>
               </div>`
             );
@@ -75,7 +75,7 @@ export default class EventEditForm extends AbstractSmartComponent {
 
           <div class="event__field-group  event__field-group--destination">
             <label class="event__label  event__type-output" for="event-destination-1">
-            ${formatTripType(this._currentEventType)}
+            ${formatTripType(this._currentPointType)}
             </label>
             <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${name}" list="destination-list-1">
             <datalist id="destination-list-1">
@@ -113,7 +113,7 @@ export default class EventEditForm extends AbstractSmartComponent {
 
       ${this._mode === ViewMode.ADD
         ? ``
-        : `<input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" ${this._event.isFavorite ? `checked` : ``}>
+        : `<input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" ${this._point.isFavorite ? `checked` : ``}>
           <label class="event__favorite-btn" for="event-favorite-1">
             <span class="visually-hidden">Add to favorite</span>
             <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
@@ -236,14 +236,14 @@ export default class EventEditForm extends AbstractSmartComponent {
   }
 
   reset() {
-    const event = this._event;
+    const point = this._point;
 
-    this._currentStartDate = event.startDate;
-    this._currentEndDate = event.endDate;
-    this._currentDestination = event.destination;
-    this._currentEventType = event.type;
-    this._currentOffers = addCheckFieldToOffers(event.offers);
-    this._currentPrice = event.price;
+    this._currentStartDate = point.startDate;
+    this._currentEndDate = point.endDate;
+    this._currentDestination = point.destination;
+    this._currentPointType = point.type;
+    this._currentOffers = addCheckFieldToOffers(point.offers);
+    this._currentPrice = point.price;
 
     this.rerender();
   }
@@ -304,7 +304,7 @@ export default class EventEditForm extends AbstractSmartComponent {
       .addEventListener(`click`, (evt) => {
 
         if (evt.target.tagName === `INPUT`) {
-          this._currentEventType = evt.target.value;
+          this._currentPointType = evt.target.value;
           this._currentOffers = addCheckFieldToOffers(this._offersAll.get(evt.target.value));
 
           this.rerender();

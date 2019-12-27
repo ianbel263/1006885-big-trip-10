@@ -1,7 +1,7 @@
 import {SortType} from '../const.js';
 import {renderElement, RenderPosition, removeComponent} from '../utils/render.js';
-import NoEventsComponent from '../components/no-events.js';
-import EventSortComponent from '../components/event-sort.js';
+import NoPointsComponent from '../components/no-points.js';
+import PointSortComponent from '../components/point-sort.js';
 import TripDayItemComponent from '../components/trip-day-item.js';
 import PointController from './point-controller.js';
 import {ViewMode as PointControllerMode, EmptyCard, formatDateWithoutTime, parseDateWithoutTime} from '../utils/common.js';
@@ -47,13 +47,13 @@ export default class TripController {
 
     this._pointControllers = [];
     this._creatingPoint = null;
-    this._newEventButton = document.querySelector(`.trip-main__event-add-btn`);
+    this._newPointButton = document.querySelector(`.trip-main__event-add-btn`);
 
     this._activeSortType = SortType.EVENT;
     this._isSortedByDefault = true;
 
-    this._noEventsComponent = new NoEventsComponent();
-    this._eventSortComponent = null;
+    this._noPointsComponent = new NoPointsComponent();
+    this._pointSortComponent = null;
 
     this._onSortTypeChange = this._onSortTypeChange.bind(this);
     this._onDataChange = this._onDataChange.bind(this);
@@ -63,30 +63,30 @@ export default class TripController {
   render() {
     const pointsAll = this._pointsModel.getPointsAll();
 
-    this._newEventButton.addEventListener(`click`, () => this._createNewPoint());
+    this._newPointButton.addEventListener(`click`, () => this._createNewPoint());
 
     if (pointsAll.length === 0) {
-      if (this._eventSortComponent) {
-        removeComponent(this._eventSortComponent);
-        this._eventSortComponent = null;
+      if (this._pointSortComponent) {
+        removeComponent(this._pointSortComponent);
+        this._pointSortComponent = null;
       }
-      renderElement(this._container, this._noEventsComponent);
+      renderElement(this._container, this._noPointsComponent);
       return;
     } else {
-      removeComponent(this._noEventsComponent);
+      removeComponent(this._noPointsComponent);
     }
 
-    if (!this._eventSortComponent) {
-      const eventSortFilters = Object.values(SortType)
+    if (!this._pointSortComponent) {
+      const pointSortFilters = Object.values(SortType)
         .map((sortType) => {
           return {
             name: sortType,
             isChecked: sortType === this._activeSortType
           };
         });
-      this._eventSortComponent = new EventSortComponent(eventSortFilters);
-      renderElement(this._container.parentElement, this._eventSortComponent, RenderPosition.AFTERBEGIN);
-      this._eventSortComponent.setOnSortChange(this._onSortTypeChange);
+      this._pointSortComponent = new PointSortComponent(pointSortFilters);
+      renderElement(this._container.parentElement, this._pointSortComponent, RenderPosition.AFTERBEGIN);
+      this._pointSortComponent.setOnSortChange(this._onSortTypeChange);
     }
 
     this._onSortTypeChange(this._activeSortType);
@@ -97,11 +97,11 @@ export default class TripController {
       return;
     }
 
-    this._newEventButton.disabled = true;
+    this._newPointButton.disabled = true;
     this._onViewChange();
     this._creatingPoint = new PointController(this._container.parentElement, this._onDataChange, this._onViewChange, this._store);
-    if (this._noEventsComponent) {
-      removeComponent(this._noEventsComponent);
+    if (this._noPointsComponent) {
+      removeComponent(this._noPointsComponent);
     }
     this._creatingPoint.render(EmptyCard, PointControllerMode.ADD);
     this._pointControllers.push(this._creatingPoint);
@@ -149,12 +149,12 @@ export default class TripController {
       if (newData === null) {
         pointController.destroy();
         this._pointControllers.pop();
-        this._newEventButton.disabled = false;
+        this._newPointButton.disabled = false;
       } else {
         this._api.createPoint(newData)
         .then((pointModel) => {
           this._pointsModel.addPoint(pointModel);
-          this._newEventButton.disabled = false;
+          this._newPointButton.disabled = false;
         })
         .catch(() => {
           pointController.shake();
