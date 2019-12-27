@@ -1,4 +1,4 @@
-import {formatDateForDatetimeAttr, formatDateForDayItems} from '../utils/common.js';
+import {formatDateForDatetimeAttr, formatDateForInfo} from '../utils/common.js';
 import AbstractComponent from './abstract-component.js';
 
 export default class TripDayItem extends AbstractComponent {
@@ -11,7 +11,7 @@ export default class TripDayItem extends AbstractComponent {
 
   getTemplate() {
     const count = this._dayCount ? this._dayCount : ``;
-    const date = this._day ? formatDateForDayItems(this._day) : ``;
+    const date = this._day ? formatDateForInfo(this._day) : ``;
 
     return (
       `<li class="trip-days__item  day">

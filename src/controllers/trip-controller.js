@@ -58,34 +58,17 @@ export default class TripController {
     this._onSortTypeChange = this._onSortTypeChange.bind(this);
     this._onDataChange = this._onDataChange.bind(this);
     this._onViewChange = this._onViewChange.bind(this);
-    // this._updatePoints = this._updatePoints.bind(this);
-    this._onFilterChange = this._onFilterChange.bind(this);
-
-    // this._pointsModel.setOnDataChange(this._updatePoints);
-    this._pointsModel.setOnFilterChange(this._onFilterChange);
   }
 
   render() {
     const pointsAll = this._pointsModel.getPointsAll();
 
-    this._newEventButton.addEventListener(`click`, () => {
-      if (this._creatingPoint) {
-        return;
-      }
-
-      this._newEventButton.disabled = true;
-      this._onViewChange();
-      this._creatingPoint = new PointController(this._container.parentElement, this._onDataChange, this._onViewChange, this._store);
-      if (this._noEventsComponent) {
-        removeComponent(this._noEventsComponent);
-      }
-      this._creatingPoint.render(EmptyCard, PointControllerMode.ADD);
-      this._pointControllers.push(this._creatingPoint);
-    });
+    this._newEventButton.addEventListener(`click`, () => this._createNewPoint());
 
     if (pointsAll.length === 0) {
       if (this._eventSortComponent) {
         removeComponent(this._eventSortComponent);
+        this._eventSortComponent = null;
       }
       renderElement(this._container, this._noEventsComponent);
       return;
@@ -107,6 +90,21 @@ export default class TripController {
     }
 
     this._onSortTypeChange(this._activeSortType);
+  }
+
+  _createNewPoint() {
+    if (this._creatingPoint) {
+      return;
+    }
+
+    this._newEventButton.disabled = true;
+    this._onViewChange();
+    this._creatingPoint = new PointController(this._container.parentElement, this._onDataChange, this._onViewChange, this._store);
+    if (this._noEventsComponent) {
+      removeComponent(this._noEventsComponent);
+    }
+    this._creatingPoint.render(EmptyCard, PointControllerMode.ADD);
+    this._pointControllers.push(this._creatingPoint);
   }
 
   _onSortTypeChange(sortType) {
@@ -140,7 +138,7 @@ export default class TripController {
     this._pointcontrollers = [];
   }
 
-  _updatePoints() {
+  updatePoints() {
     this._removePoints();
     this.render();
   }
@@ -152,16 +150,10 @@ export default class TripController {
         pointController.destroy();
         this._pointControllers.pop();
         this._newEventButton.disabled = false;
-        if (this._pointsModel.getPointsAll().length === 0) {
-          this._updatePoints();
-        }
       } else {
         this._api.createPoint(newData)
         .then((pointModel) => {
           this._pointsModel.addPoint(pointModel);
-          // pointController.render(pointModel, PointControllerMode.DEFAULT);
-          // debugger;
-          this._updatePoints();
           this._newEventButton.disabled = false;
         })
         .catch(() => {
@@ -172,7 +164,6 @@ export default class TripController {
       this._api.deletePoint(oldData.id)
         .then(() => {
           this._pointsModel.removePoint(oldData.id);
-          this._updatePoints();
         })
         .catch(() => {
           pointController.shake();
@@ -184,17 +175,12 @@ export default class TripController {
 
         if (isSuccess) {
           pointController.render(pointModel, PointControllerMode.DEFAULT);
-          this._updatePoints();
         }
       })
       .catch(() => {
         pointController.shake();
       });
     }
-  }
-
-  _onFilterChange() {
-    this._updatePoints();
   }
 
   _onViewChange() {

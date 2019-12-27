@@ -1,5 +1,5 @@
-import {MONTHS} from '../const.js';
 import AbstractSmartComponent from './abstract-smart-component.js';
+import {formatDateForInfo} from '../utils/common';
 
 export default class TripInfo extends AbstractSmartComponent {
   constructor(points) {
@@ -12,8 +12,8 @@ export default class TripInfo extends AbstractSmartComponent {
       return `<div></div>`;
     }
 
-    const startRouteDate = new Date(this._points[0].startDate);
-    const endRouteDate = new Date(this._points[this._points.length - 1].startDate);
+    const startRouteDate = formatDateForInfo(this._points[0].startDate);
+    const endRouteDate = formatDateForInfo(this._points[this._points.length - 1].endDate);
 
     const routeTemplate = this._points.length <= 3
       ? this._points
@@ -25,7 +25,7 @@ export default class TripInfo extends AbstractSmartComponent {
 
     return `<div class="trip-info__main">
         <h1 class="trip-info__title">${routeTemplate}</h1>
-        <p class="trip-info__dates">${startRouteDate.getDate()}&nbsp;${MONTHS[startRouteDate.getMonth()]}&nbsp;&mdash;&nbsp;${endRouteDate.getDate()}&nbsp;${MONTHS[endRouteDate.getMonth()]}</p>
+        <p class="trip-info__dates">${startRouteDate}&nbsp;&mdash;&nbsp;${endRouteDate}</p>
       </div>`;
   }
 
@@ -37,5 +37,3 @@ export default class TripInfo extends AbstractSmartComponent {
     super.rerender();
   }
 }
-
-// добавить moment

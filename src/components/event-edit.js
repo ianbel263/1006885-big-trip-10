@@ -1,11 +1,9 @@
-import moment from 'moment';
-import {ViewMode} from '../utils/common.js';
-import flatpickr from 'flatpickr';
-import PointModel from '../models/point-model.js';
-import {TripType, DefaultButtonsText} from '../const.js';
-import {doFirstLetterUppercase, formatTripType} from '../utils/common.js';
+import {TripType, DefaultButtonsText, SHAKE_ANIMATION_TIMEOUT} from '../const.js';
 import AbstractSmartComponent from './abstract-smart-component.js';
-import {addCheckToOffers} from '../utils/common';
+import moment from 'moment';
+import flatpickr from 'flatpickr';
+import {ViewMode, addCheckFieldToOffers, doFirstLetterUppercase, formatTripType} from '../utils/common.js';
+import PointModel from '../models/point-model.js';
 
 export default class EventEditForm extends AbstractSmartComponent {
   constructor(event, mode, store) {
@@ -20,7 +18,7 @@ export default class EventEditForm extends AbstractSmartComponent {
     this._currentStartDate = event.startDate;
     this._currentEndDate = event.endDate;
     this._currentDestination = event.destination;
-    this._currentOffers = this._mode !== ViewMode.ADD ? addCheckToOffers(event.offers) : addCheckToOffers(this._offersAll.get(`flight`));
+    this._currentOffers = this._mode !== ViewMode.ADD ? addCheckFieldToOffers(event.offers) : addCheckFieldToOffers(this._offersAll.get(`flight`));
     this._currentEventType = this._mode !== ViewMode.ADD ? event.type : `flight`;
     this._currentPrice = event.price;
 
@@ -33,6 +31,8 @@ export default class EventEditForm extends AbstractSmartComponent {
 
     this._flatpickrStartDate = null;
     this._flatpickrEndDate = null;
+
+    this.blockElement = this.blockElement.bind(this);
 
     this._applyFlatpickr();
     this._subscribeOnEvents();
@@ -242,7 +242,7 @@ export default class EventEditForm extends AbstractSmartComponent {
     this._currentEndDate = event.endDate;
     this._currentDestination = event.destination;
     this._currentEventType = event.type;
-    this._currentOffers = addCheckToOffers(event.offers);
+    this._currentOffers = addCheckFieldToOffers(event.offers);
     this._currentPrice = event.price;
 
     this.rerender();
@@ -283,6 +283,15 @@ export default class EventEditForm extends AbstractSmartComponent {
     }
   }
 
+  blockElement() {
+    const form = this.getElement();
+    form.style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
+    form.classList.add(`event--disabled`);
+    form.style.outline = `2px solid red`;
+    form.querySelectorAll(`input`).forEach((input) => (input.disabled = true));
+    form.querySelectorAll(`button`).forEach((button) => (button.disabled = true));
+  }
+
   _subscribeOnEvents() {
     const element = this.getElement();
 
@@ -296,7 +305,7 @@ export default class EventEditForm extends AbstractSmartComponent {
 
         if (evt.target.tagName === `INPUT`) {
           this._currentEventType = evt.target.value;
-          this._currentOffers = addCheckToOffers(this._offersAll.get(evt.target.value));
+          this._currentOffers = addCheckFieldToOffers(this._offersAll.get(evt.target.value));
 
           this.rerender();
         }

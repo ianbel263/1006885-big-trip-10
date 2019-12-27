@@ -1,4 +1,4 @@
-export const AUTHORIZATION = `Basic kdnskKmmmNffCKjkj-j`;
+export const AUTHORIZATION = `Basic kdnskNffCKjkj-j`;
 export const END_POINT = `https://htmlacademy-es-10.appspot.com/big-trip`;
 
 export const RequestMethod = {
@@ -7,6 +7,8 @@ export const RequestMethod = {
   PUT: `PUT`,
   DELETE: `DELETE`
 };
+
+export const SHAKE_ANIMATION_TIMEOUT = 600;
 
 export const DefaultButtonsText = {
   SAVE: `Save`,
@@ -19,8 +21,6 @@ export const ConnectingButtonsText = {
 };
 
 export const ESC_KEYCODE = 27;
-
-export const MONTHS = [`JAN`, `FEB`, `MAR`, `APR`, `MAY`, `JUN`, `JUL`, `AUG`, `SEP`, `OCT`, `NOV`, `DEC`]; // убрать потом
 
 export const TripType = {
   TRANSFER: [`bus`, `drive`, `flight`, `ship`, `taxi`, `train`, `transport`],

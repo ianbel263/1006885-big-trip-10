@@ -16,26 +16,31 @@ export default class APP {
     this._store = store;
 
     this._tripInfoComponent = new TripInfoComponent();
-    this._tripDaysContainerComponent = new TripDaysContainerComponent();
+
     this._tripController = null;
 
+    this._updatePoints = this._updatePoints.bind(this);
     this._updateTotalInfo = this._updateTotalInfo.bind(this);
 
+    this._pointsModel.setOnDataChange(this._updatePoints);
+    this._pointsModel.setOnFilterChange(this._updatePoints);
     this._pointsModel.setOnDataChange(this._updateTotalInfo);
   }
 
-  render() {
-    const tripControlDiv = document.querySelector(`.trip-controls`);
-    renderElement(tripControlDiv, new SiteMenuComponent(siteMenu));
-    const filterController = new FilterController(tripControlDiv, this._pointsModel);
-
-    const tripEventsSection = document.querySelector(`.trip-events`);
-    renderElement(tripEventsSection, this._tripDaysContainerComponent);
-    const daysList = tripEventsSection.querySelector(`.trip-days`);
-    this._tripController = new TripController(daysList, this._pointsModel, this._api, this._store);
+  init() {
+    const tripControlElement = document.querySelector(`.trip-controls`);
+    renderElement(tripControlElement, new SiteMenuComponent(siteMenu));
+    const filterController = new FilterController(tripControlElement, this._pointsModel);
+    const tripPointsElement = document.querySelector(`.trip-events`);
+    renderElement(tripPointsElement, new TripDaysContainerComponent());
+    const daysListElement = tripPointsElement.querySelector(`.trip-days`);
+    this._tripController = new TripController(daysListElement, this._pointsModel, this._api, this._store);
 
     filterController.render();
-    this._tripController.render();
+  }
+
+  _updatePoints() {
+    this._tripController.updatePoints();
   }
 
   _updateTotalInfo() {
@@ -50,6 +55,4 @@ export default class APP {
 
     renderElement(this._container, this._tripInfoComponent, RenderPosition.AFTERBEGIN);
   }
-
-  //  подписаться на изменения модели, делать перерендер
 }
