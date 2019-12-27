@@ -1,7 +1,7 @@
-import {ESC_KEYCODE} from '../const.js';
+import {ESC_KEYCODE, ConnectingButtonsText, SHAKE_ANIMATION_TIMEOUT} from '../const.js';
 import PointModel from '../models/point-model';
-import EventItemComponent from '../components/event-item.js';
-import EventEditFormComponent from '../components/event-edit.js';
+import PointItemComponent from '../components/point-item.js';
+import PointEditComponent from '../components/point-edit.js';
 import {renderElement, replaceComponents, removeComponent} from '../utils/render.js';
 import {ViewMode, EmptyCard} from '../utils/common.js';
 
@@ -9,136 +9,140 @@ export default class PointController {
   constructor(container, onDataChange, onViewChange, store) {
     this._container = container;
 
+    this._point = {};
     this._mode = ViewMode.DEFAULT;
 
+    this._store = store;
     this._onDataChange = onDataChange;
     this._onViewChange = onViewChange;
 
-    this._store = store;
+    this._pointItemComponent = null;
+    this._pointEditComponent = null;
 
-    this._eventItemComponent = null;
-    this._eventEditFormComponent = null;
-
+    this._onFormSubmit = this._onFormSubmit.bind(this);
+    this._onDeleteButtonClick = this._onDeleteButtonClick.bind(this);
     this._onEscPress = this._onEscPress.bind(this);
   }
 
-  render(event, mode) {
+  render(point, mode) {
+    this._point = point;
     this._mode = mode;
 
-    const oldEventItemComponent = this._eventItemComponent;
-    const oldEventEditFormComponent = this._eventEditFormComponent;
+    const oldPointItemComponent = this._pointItemComponent;
+    const oldPointEditComponent = this._pointEditComponent;
 
-    this._eventItemComponent = new EventItemComponent(event, this._mode);
-    this._eventItemComponent.setOnEditButtonClick(() => {
+    this._pointItemComponent = new PointItemComponent(point, this._mode);
+    this._pointEditComponent = new PointEditComponent(point, this._mode, this._store);
 
-      this._replaceEventToEdit();
+    this._pointItemComponent.setOnEditButtonClick(() => {
+      this._replaceItemToEdit();
       document.addEventListener(`keydown`, this._onEscPress);
+    });
+
+    this._pointEditComponent.setOnFormSubmit((evt) => {
+      this._onFormSubmit(evt, this._mode);
+    });
+
+    this._pointEditComponent.setOnDeleteButtonClick(() => {
+      this._onDeleteButtonClick(this._mode);
     });
 
     switch (this._mode) {
       case ViewMode.DEFAULT:
-        this._eventEditFormComponent = new EventEditFormComponent(event, this._mode, this._store);
+        this._pointEditComponent.setOnCancelButtonClick(() => this._replaceEditToItem());
 
-        this._eventEditFormComponent.setOnFormSubmit((evt) => {
-          evt.preventDefault();
-
-          const newData = this._eventEditFormComponent.getData();
-          this._onDataChange(this, event, newData);
-        });
-
-        this._eventEditFormComponent.setOnDeleteButtonClick(() => {
-          this._onDataChange(this, event, null);
-        });
-
-        this._eventEditFormComponent.setOnCancelButtonClick(() => {
-          this._replaceEditToEvent();
-        });
-
-        this._eventEditFormComponent.setOnFavoriteButtonClick(() => {
-          // this._onDataChange(this, event, Object.assign({}, event, {
-          //   isFavorite: !event.isFavorite,
-          // }));
-          const newPoint = PointModel.clone(event);
+        this._pointEditComponent.setOnFavoriteButtonClick(() => {
+          const newPoint = PointModel.clone(point);
           newPoint.isFavorite = !newPoint.isFavorite;
-
-          this._onDataChange(this, event, newPoint);
-
+          this._onDataChange(this, point, newPoint);
         });
 
-        if (oldEventItemComponent && oldEventEditFormComponent) {
-          replaceComponents(this._eventItemComponent, oldEventItemComponent);
-          replaceComponents(this._eventEditFormComponent, oldEventEditFormComponent);
-          this._replaceEditToEvent();
+        if (oldPointItemComponent && oldPointEditComponent) {
+          replaceComponents(this._pointItemComponent, oldPointItemComponent);
+          replaceComponents(this._pointEditComponent, oldPointEditComponent);
+          this._replaceEditToItem();
         } else {
-          renderElement(this._container, this._eventItemComponent);
+          renderElement(this._container, this._pointItemComponent);
         }
         break;
+
       case ViewMode.ADD:
-        this._eventEditFormComponent = new EventEditFormComponent(event, this._mode, this._store);
-
-        this._eventEditFormComponent.setOnFormSubmit((evt) => {
-          evt.preventDefault();
-
-          const newData = this._eventEditFormComponent.getData();
-          this._onDataChange(this, EmptyCard, newData);
-        });
-
-        this._eventEditFormComponent.setOnDeleteButtonClick(() => {
-          this._onDataChange(this, EmptyCard, null);
-        });
-
-        if (oldEventItemComponent && oldEventEditFormComponent) {
-          removeComponent(oldEventItemComponent);
-          removeComponent(oldEventEditFormComponent);
-          // this._replaceEditToEvent();
+        document.addEventListener(`keydown`, this._onEscPress);
+        const tripSortElement = document.querySelector(`.trip-sort`);
+        if (tripSortElement) {
+          document.querySelector(`.trip-sort`).after(this._pointEditComponent.getElement());
         } else {
-          document.querySelector(`.trip-sort`).after(this._eventEditFormComponent.getElement());
+          renderElement(this._container, this._pointEditComponent);
         }
         break;
     }
   }
 
   setDefaultView() {
-    // console.log(`setDefaultView`, this._mode)
     if (this._mode !== ViewMode.DEFAULT) {
-      this._replaceEditToEvent();
+      this._replaceEditToItem();
     }
   }
 
   destroy() {
-    removeComponent(this._eventItemComponent);
-    removeComponent(this._eventEditFormComponent);
-
+    removeComponent(this._pointItemComponent);
+    removeComponent(this._pointEditComponent);
     document.removeEventListener(`keydown`, this._onEscKeyDown);
   }
 
-  _replaceEventToEdit() {
+  blockOnSave() {
+    this._pointEditComponent.blockElement();
+  }
+
+  shake() {
+    this._pointEditComponent.blockElement(true);
+
+    setTimeout(() => {
+      this._pointEditComponent.setDefaultButtonsText();
+    }, SHAKE_ANIMATION_TIMEOUT);
+  }
+
+  _onFormSubmit(evt, mode) {
+    evt.preventDefault();
+    this._pointEditComponent.setButtonsText(`save`, ConnectingButtonsText.SAVE);
+    const newData = this._pointEditComponent.getData();
+    if (mode === ViewMode.ADD) {
+      this._onDataChange(this, EmptyCard, newData);
+    } else {
+      this._onDataChange(this, this._point, newData);
+    }
+  }
+
+  _onDeleteButtonClick(mode) {
+    if (mode === ViewMode.ADD) {
+      this._onDataChange(this, EmptyCard, null);
+    } else {
+      this._pointEditComponent.setButtonsText(`delete`, ConnectingButtonsText.DELETE);
+      this._onDataChange(this, this._point, null);
+    }
+  }
+
+  _replaceItemToEdit() {
     this._onViewChange();
 
-    replaceComponents(this._eventEditFormComponent, this._eventItemComponent);
+    replaceComponents(this._pointEditComponent, this._pointItemComponent);
     this._mode = ViewMode.EDIT;
   }
 
-  _replaceEditToEvent() {
+  _replaceEditToItem() {
     document.removeEventListener(`keydown`, this._onEscPress);
-
-    this._eventEditFormComponent.reset();
-
-    if (document.contains(this._eventEditFormComponent.getElement())) {
-      replaceComponents(this._eventItemComponent, this._eventEditFormComponent);
+    this._pointEditComponent.reset();
+    if (this._mode === ViewMode.ADD) {
+      this._onDataChange(this, EmptyCard, null);
+    } else if (document.contains(this._pointEditComponent.getElement())) {
+      replaceComponents(this._pointItemComponent, this._pointEditComponent);
     }
-
     this._mode = ViewMode.DEFAULT;
   }
 
   _onEscPress(evt) {
     if (evt.keyCode === ESC_KEYCODE) {
-      // console.log('ESC_KEYCODE', ESC_KEYCODE);
-
-      // if (this._mode === ViewMode.ADD) {
-      //   this._onDataChange(this, EmptyCard, null);
-      // }
-      this._replaceEditToEvent();
+      this._replaceEditToItem();
     }
   }
 }

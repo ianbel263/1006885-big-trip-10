@@ -1,3 +1,8 @@
+import {siteMenu} from '../mock/menu.js';
+
+import AppMenuComponent from '../components/app-menu.js';
+import FilterController from '../controllers/filter-controller.js';
+
 import {renderElement, RenderPosition} from '../utils/render.js';
 import TripInfoComponent from '../components/trip-info.js';
 import TripDaysContainerComponent from '../components/trip-days-container.js';
@@ -10,40 +15,43 @@ export default class APP {
     this._api = api;
     this._store = store;
 
-    this._tripInfoComponent = null;
-    this._tripDaysContainerComponent = new TripDaysContainerComponent();
-
+    this._tripInfoComponent = new TripInfoComponent();
     this._tripController = null;
+
+    this._updatePoints = this._updatePoints.bind(this);
+    this._updateTotalInfo = this._updateTotalInfo.bind(this);
+
+    this._pointsModel.setOnDataChange(this._updatePoints);
+    this._pointsModel.setOnFilterChange(this._updatePoints);
+    this._pointsModel.setOnDataChange(this._updateTotalInfo);
   }
 
-  render() {
-    const tripEventsSection = document.querySelector(`.trip-events`);
-    renderElement(tripEventsSection, this._tripDaysContainerComponent);
-    const daysList = tripEventsSection.querySelector(`.trip-days`);
-    this._tripController = new TripController(daysList, this._pointsModel, this._api, this._store);
+  init() {
+    const tripControlElement = document.querySelector(`.trip-controls`);
+    renderElement(tripControlElement, new AppMenuComponent(siteMenu));
+    const filterController = new FilterController(tripControlElement, this._pointsModel);
+    const tripPointsElement = document.querySelector(`.trip-events`);
+    renderElement(tripPointsElement, new TripDaysContainerComponent());
+    const daysListElement = tripPointsElement.querySelector(`.trip-days`);
+    this._tripController = new TripController(daysListElement, this._pointsModel, this._api, this._store);
 
-    const cards = this._pointsModel.getPoints();
+    filterController.render();
+  }
 
-    this._tripInfoComponent = new TripInfoComponent();
-    renderElement(this._container, new TripInfoComponent(cards), RenderPosition.AFTERBEGIN);
+  _updatePoints() {
+    this._tripController.updatePoints();
+  }
+
+  _updateTotalInfo() {
+    this._tripInfoComponent.setPoints(this._pointsModel.getPointsAll());
 
     const tripTotalPrice = document.querySelector(`.trip-info__cost-value`);
-    tripTotalPrice.textContent = cards.reduce((totalPrice, it) => {
+    tripTotalPrice.textContent = this._pointsModel.getPointsAll().reduce((totalPrice, it) => {
       return totalPrice + it.price + it.offers.reduce((totalOfferPrice, offer) => {
         return totalOfferPrice + offer.price;
       }, 0);
     }, 0);
 
-    document.querySelector(`.trip-main__event-add-btn`)
-      .addEventListener(`click`, () => {
-        // console.log(`NEW`);
-
-        this._tripController.createPoint(); // поставить потом обработчик по esc, а также _onViewChange
-      });
-
-    this._tripController.render();
-
+    renderElement(this._container, this._tripInfoComponent, RenderPosition.AFTERBEGIN);
   }
-
-  //  подписаться на изменения модели, делать перерендер
 }

@@ -7,9 +7,7 @@ export const formatDateForDatetimeAttr = (date) => moment(date).format();
 
 export const formatDateWithoutTime = (date) => moment(date).format(`YYYY MMM DD`);
 
-// export const formatDateWithTime = (date) => moment(date).format(`DD/MM/YY HH:mm`);
-
-export const formatDateForDayItems = (date) => moment(date).format(`MMM DD`);
+export const formatDateForInfo = (date) => moment(date).format(`DD MMM`);
 
 export const calculateTimeInterval = (time1, time2) => {
   const daysInt = moment(time2).diff(moment(time1), `days`);
@@ -27,6 +25,14 @@ export const doFirstLetterUppercase = (string) => {
 };
 
 export const parseDateWithoutTime = (dateString) => moment(dateString, `YYYY MMM DD`).valueOf();
+
+export const addCheckFieldToOffers = (offers) => offers.map((offer) => {
+  return {
+    title: offer.title,
+    price: offer.price,
+    isChecked: true
+  };
+});
 
 export const formatTripType = (tripType) => {
   let formattedTripType = ``;

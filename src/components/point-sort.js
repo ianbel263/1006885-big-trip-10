@@ -1,10 +1,10 @@
 import {SortType} from '../const.js';
 import AbstractComponent from './abstract-component.js';
 
-export default class EventSort extends AbstractComponent {
-  constructor(eventSortFilters) {
+export default class PointSort extends AbstractComponent {
+  constructor(pointSortFilters) {
     super();
-    this._eventSortFilters = eventSortFilters;
+    this._pointSortFilters = pointSortFilters;
     this._currentSortType = SortType.EVENT;
   }
 
@@ -12,7 +12,7 @@ export default class EventSort extends AbstractComponent {
     return (
       `<form class="trip-events__trip-sort  trip-sort" action="#" method="get">
       <span class="trip-sort__item  trip-sort__item--day">Day</span>
-      ${this._eventSortFilters.map(({name, isChecked}) => {
+      ${this._pointSortFilters.map(({name, isChecked}) => {
         const nameFormatted = name.toLowerCase();
 
         return (

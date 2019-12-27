@@ -1,4 +1,4 @@
-import SiteFilterComponent from '../components/site-filter.js';
+import AppFilterComponent from '../components/app-filter.js';
 import {renderElement, replaceComponents} from '../utils/render.js';
 import {FilterType} from '../const.js';
 
@@ -26,7 +26,7 @@ export default class FilterController {
 
     const oldComponent = this._siteFilterComponent;
 
-    this._siteFilterComponent = new SiteFilterComponent(siteFilters);
+    this._siteFilterComponent = new AppFilterComponent(siteFilters);
     this._siteFilterComponent.setOnFilterChange(this._onFilterChange);
 
     if (oldComponent) {

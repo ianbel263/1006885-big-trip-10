@@ -1,26 +1,39 @@
-import {MONTHS} from '../const.js';
-import AbstractComponent from './abstract-component.js';
+import AbstractSmartComponent from './abstract-smart-component.js';
+import {formatDateForInfo} from '../utils/common';
 
-export default class TripInfo extends AbstractComponent {
-  constructor(cards) {
+export default class TripInfo extends AbstractSmartComponent {
+  constructor(points) {
     super();
-    this._cards = cards;
+    this._points = points;
   }
 
   getTemplate() {
-    const startRouteDate = new Date(this._cards[0].startDate);
-    const endRouteDate = new Date(this._cards[this._cards.length - 1].startDate);
+    if (this._points.length === 0) {
+      return `<div></div>`;
+    }
 
-    const routeTemplate = this._cards.length <= 3 ? this._cards
-      .map((card) => {
-        const {destination} = card;
-        return destination;
-      })
-      .join(` &mdash; `) : `${this._cards[0].destination} &mdash; ... &mdash; ${this._cards[this._cards.length - 1].destination}`;
+    const startRouteDate = formatDateForInfo(this._points[0].startDate);
+    const endRouteDate = formatDateForInfo(this._points[this._points.length - 1].endDate);
+
+    const routeTemplate = this._points.length <= 3
+      ? this._points
+        .map(({destination}) => {
+          return destination.name;
+        })
+        .join(` &mdash; `)
+      : `${this._points[0].destination.name} &mdash; ... &mdash; ${this._points[this._points.length - 1].destination.name}`;
 
     return `<div class="trip-info__main">
         <h1 class="trip-info__title">${routeTemplate}</h1>
-        <p class="trip-info__dates">${startRouteDate.getDate()}&nbsp;${MONTHS[startRouteDate.getMonth()]}&nbsp;&mdash;&nbsp;${endRouteDate.getDate()}&nbsp;${MONTHS[endRouteDate.getMonth()]}</p>
+        <p class="trip-info__dates">${startRouteDate}&nbsp;&mdash;&nbsp;${endRouteDate}</p>
       </div>`;
+  }
+
+  recoveryListeners() {}
+
+  setPoints(points) {
+    this._points = points.slice().sort((a, b) => a.startDate - b.startDate);
+
+    super.rerender();
   }
 }

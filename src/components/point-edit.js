@@ -1,41 +1,46 @@
-import moment from 'moment';
-import {ViewMode} from '../utils/common.js';
-import flatpickr from 'flatpickr';
-import PointModel from '../models/point-model.js';
-import {TripType} from '../const.js';
-import {doFirstLetterUppercase, formatTripType} from '../utils/common.js';
+import {TripType, DefaultButtonsText, SHAKE_ANIMATION_TIMEOUT} from '../const.js';
 import AbstractSmartComponent from './abstract-smart-component.js';
+import moment from 'moment';
+import flatpickr from 'flatpickr';
+import {ViewMode, addCheckFieldToOffers, doFirstLetterUppercase, formatTripType} from '../utils/common.js';
+import PointModel from '../models/point-model.js';
 
-export default class EventEditForm extends AbstractSmartComponent {
-  constructor(event, mode, store) {
+export default class PointEdit extends AbstractSmartComponent {
+  constructor(point, mode, store) {
     super();
-    this._event = event;
-
+    this._point = point;
     this._mode = mode;
 
-    this._destinations = store.getDestinations();
-    this._offers = store.getOffers();
+    this._destinationsAll = store.getDestinations();
+    this._offersAll = store.getOffers();
     this._destinationList = store.getDestinationNames();
 
-    this._currentStartDate = event.startDate;
-    this._currentEndDate = event.endDate;
-    this._currentDestination = event.destination;
-    this._currentOffers = this._mode !== ViewMode.ADD ? event.offers : this._offers.get(`flight`);
-    this._currentEventType = this._mode !== ViewMode.ADD ? event.type : `flight`;
+    this._currentStartDate = point.startDate;
+    this._currentEndDate = point.endDate;
+    this._currentDestination = point.destination;
+    this._currentOffers = this._mode !== ViewMode.ADD ? addCheckFieldToOffers(point.offers) : addCheckFieldToOffers(this._offersAll.get(`flight`));
+    this._currentPointType = this._mode !== ViewMode.ADD ? point.type : `flight`;
+    this._currentPrice = point.price;
+    this._isFavorite = point.isFavorite;
+
+    this._buttonSaveText = DefaultButtonsText.SAVE;
+    this._buttonDeleteText = DefaultButtonsText.DELETE;
 
     this._submitHandler = null;
     this._deleteHandler = null;
     this._cancelHandler = null;
+    this._favoriteHandler = null;
 
     this._flatpickrStartDate = null;
     this._flatpickrEndDate = null;
+
+    this.blockElement = this.blockElement.bind(this);
 
     this._applyFlatpickr();
     this._subscribeOnEvents();
   }
 
   getTemplate() {
-    const {price, isFavorite} = this._event;
     const {name, description, pictures} = this._currentDestination;
 
     return (`<form class="${this._mode === ViewMode.ADD ? `trip-events__item` : ``}  event  event--edit" action="#" method="post">
@@ -43,7 +48,7 @@ export default class EventEditForm extends AbstractSmartComponent {
           <div class="event__type-wrapper">
             <label class="event__type  event__type-btn" for="event-type-toggle-1">
               <span class="visually-hidden">Choose event type</span>
-              <img class="event__type-icon" width="17" height="17" src="img/icons/${this._currentEventType}.png" alt="Event type icon">
+              <img class="event__type-icon" width="17" height="17" src="img/icons/${this._currentPointType}.png" alt="Event type icon">
             </label>
             <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
 
@@ -57,7 +62,7 @@ export default class EventEditForm extends AbstractSmartComponent {
           ${TripType[group].map((el) => {
             return (
               `<div class="event__type-item">
-                <input id="event-type-${el}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${el}" ${this._currentEventType === el && `checked`}>
+                <input id="event-type-${el}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${el}" ${this._currentPointType === el && `checked`}>
                 <label class="event__type-label  event__type-label--${el}" for="event-type-${el}-1">${doFirstLetterUppercase(el)}</label>
               </div>`
             );
@@ -72,7 +77,7 @@ export default class EventEditForm extends AbstractSmartComponent {
 
           <div class="event__field-group  event__field-group--destination">
             <label class="event__label  event__type-output" for="event-destination-1">
-            ${formatTripType(this._currentEventType)}
+            ${formatTripType(this._currentPointType)}
             </label>
             <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${name}" list="destination-list-1">
             <datalist id="destination-list-1">
@@ -101,16 +106,16 @@ export default class EventEditForm extends AbstractSmartComponent {
               <span class="visually-hidden">price</span>
               &euro;
             </label>
-            <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${price}">
+            <input class="event__input  event__input--price" id="event-price-1" type="number" name="event-price" value="${this._currentPrice}">
           </div>
 
-          <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-          <button class="event__reset-btn" type="reset">${this._mode === ViewMode.ADD ? `Cancel` : `Delete`}</button>
+          <button class="event__save-btn  btn  btn--blue" type="submit">${this._buttonSaveText}</button>
+          <button class="event__reset-btn" type="reset">${this._mode === ViewMode.ADD ? `Cancel` : `${this._buttonDeleteText}`}</button>
           
 
       ${this._mode === ViewMode.ADD
         ? ``
-        : `<input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" ${isFavorite ? `checked` : ``}>
+        : `<input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" ${this._isFavorite ? `checked` : ``}>
           <label class="event__favorite-btn" for="event-favorite-1">
             <span class="visually-hidden">Add to favorite</span>
             <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
@@ -135,10 +140,10 @@ export default class EventEditForm extends AbstractSmartComponent {
 
         <div class="event__available-offers">
             
-      ${this._currentOffers.map(({price: offerPrice, title}) => {
+      ${this._currentOffers.map(({price: offerPrice, title, isChecked}) => {
         return (
           `<div class="event__offer-selector">
-            <input class="event__offer-checkbox  visually-hidden" id="event-offer-${title}-1" type="checkbox" name="event-offer-${title}" ${title && `checked`}>
+            <input class="event__offer-checkbox  visually-hidden" id="event-offer-${title}-1" type="checkbox" name="event-offer-${title}" ${isChecked ? `checked` : ``}>
             <label class="event__offer-label" for="event-offer-${title}-1">
               <span class="event__offer-title">${title}</span>
               &plus;
@@ -199,8 +204,26 @@ export default class EventEditForm extends AbstractSmartComponent {
       'date_from': moment(formData.get(`event-start-time`), `DD/MM/YY HH:mm`).valueOf(),
       'date_to': moment(formData.get(`event-end-time`), `DD/MM/YY HH:mm`).valueOf(),
       'base_price': parseInt(formData.get(`event-price`), 10),
-      'is_favorite': form.querySelector(`.event__favorite-checkbox`).checked
+      'is_favorite': form.querySelector(`.event__favorite-checkbox`) ? form.querySelector(`.event__favorite-checkbox`).checked : false
     });
+  }
+
+  setButtonsText(action, text) {
+    if (action === `save`) {
+      this._buttonSaveText = text;
+    }
+    if (action === `delete`) {
+      this._buttonDeleteText = text;
+    }
+
+    this.rerender();
+  }
+
+  setDefaultButtonsText() {
+    this._buttonSaveText = DefaultButtonsText.SAVE;
+    this._buttonDeleteText = DefaultButtonsText.DELETE;
+
+    this.rerender();
   }
 
   removeElement() {
@@ -215,13 +238,15 @@ export default class EventEditForm extends AbstractSmartComponent {
   }
 
   reset() {
-    const event = this._event;
+    const point = this._point;
 
-    this._currentStartDate = event.startDate;
-    this._currentEndDate = event.endDate;
-    this._currentDestination = event.destination;
-    this._currentEventType = event.type;
-    this._currentOffers = event.offers;
+    this._currentStartDate = point.startDate;
+    this._currentEndDate = point.endDate;
+    this._currentDestination = point.destination;
+    this._currentPointType = point.type;
+    this._currentOffers = addCheckFieldToOffers(point.offers);
+    this._currentPrice = point.price;
+    this._isFavorite = point.isFavorite;
 
     this.rerender();
   }
@@ -249,6 +274,8 @@ export default class EventEditForm extends AbstractSmartComponent {
   setOnFavoriteButtonClick(handler) {
     this.getElement().querySelector(`.event__favorite-btn`)
       .addEventListener(`click`, handler);
+
+    this._favoriteHandler = handler;
   }
 
   recoveryListeners() {
@@ -258,7 +285,19 @@ export default class EventEditForm extends AbstractSmartComponent {
 
     if (this._mode === ViewMode.DEFAULT) {
       this.setOnCancelButtonClick(this._cancelHandler);
+      this.setOnFavoriteButtonClick(this._favoriteHandler);
     }
+  }
+
+  blockElement(onError = false) {
+    const form = this.getElement();
+    if (onError) {
+      form.style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
+      form.style.outline = `2px solid red`;
+    }
+    form.classList.add(`event--disabled`);
+    form.querySelectorAll(`input`).forEach((input) => (input.disabled = true));
+    form.querySelectorAll(`button`).forEach((button) => (button.disabled = true));
   }
 
   _subscribeOnEvents() {
@@ -271,17 +310,19 @@ export default class EventEditForm extends AbstractSmartComponent {
 
     element.querySelector(`.event__type-list`)
       .addEventListener(`click`, (evt) => {
-        if (evt.target.tagName === `INPUT`) {
-          this._currentEventType = evt.target.value;
-          this._currentOffers = this._offers.get(evt.target.value);
 
+        if (evt.target.tagName === `INPUT`) {
+          this._currentPointType = evt.target.value;
+          this._currentOffers = addCheckFieldToOffers(this._offersAll.get(evt.target.value));
+
+          this._favoriteHandler = null;
           this.rerender();
         }
       });
 
     element.querySelector(`.event__input--destination`)
       .addEventListener(`change`, (evt) => {
-        this._currentDestination = this._destinations.find((el) => el.name === evt.target.value);
+        this._currentDestination = this._destinationsAll.find((el) => el.name === evt.target.value);
 
         let optionsFound = false;
         [...evt.target.list.options].forEach((option) => {
@@ -296,6 +337,7 @@ export default class EventEditForm extends AbstractSmartComponent {
           evt.target.setCustomValidity(``);
         }
 
+        this._favoriteHandler = null;
         this.rerender();
       });
 
@@ -306,8 +348,41 @@ export default class EventEditForm extends AbstractSmartComponent {
           ? this._currentStartDate
           : this._currentEndDate;
 
+        this._favoriteHandler = null;
         this.rerender();
       });
+
+    element.querySelector(`#event-end-time-1`)
+      .addEventListener(`change`, (evt) => {
+        this._currentEndDate = moment(evt.target.value, `DD/MM/YY HH:mm`).valueOf();
+
+        this._favoriteHandler = null;
+        this.rerender();
+      });
+
+    element.querySelector(`.event__input--price`)
+      .addEventListener(`change`, (evt) => {
+        this._currentPrice = evt.target.value;
+
+        this._favoriteHandler = null;
+        this.rerender();
+      });
+
+    element.querySelector(`.event__favorite-checkbox`)
+      .addEventListener(`change`, (evt) => {
+        this._isFavorite = evt.target.checked;
+      });
+
+    if (element.querySelectorAll(`event__offer-checkbox`)) {
+      element.querySelectorAll(`.event__offer-checkbox`).forEach((el, index) => {
+        el.addEventListener(`change`, (evt) => {
+          this._currentOffers[index].isChecked = evt.target.checked;
+
+          this._favoriteHandler = null;
+          this.rerender();
+        });
+      });
+    }
   }
 
   _deleteFlatpickrs() {

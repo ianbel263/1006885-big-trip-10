@@ -1,6 +1,6 @@
 import AbstractComponent from './abstract-component.js';
 
-export default class SiteMenu extends AbstractComponent {
+export default class AppMenu extends AbstractComponent {
   constructor(menuList) {
     super();
     this._menuList = menuList;
