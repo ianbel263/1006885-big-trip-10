@@ -97,6 +97,14 @@ export default class TripController {
     this.render();
   }
 
+  hide() {
+    this._container.hide();
+  }
+
+  show() {
+    this._container.show();
+  }
+
   _createNewPoint() {
     if (this._creatingPoint) {
       return;

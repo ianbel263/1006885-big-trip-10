@@ -30,7 +30,7 @@ export default class Points {
   }
 
   addPoint(point) {
-    this._points = [].concat(point, this._points);
+    this._points = [...this._points, point];
     this._callHandlers(this._dataChangeHandlers);
   }
 

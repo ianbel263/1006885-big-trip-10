@@ -26,13 +26,15 @@ export const doFirstLetterUppercase = (string) => {
 
 export const parseDateWithoutTime = (dateString) => moment(dateString, `YYYY MMM DD`).valueOf();
 
-export const addCheckFieldToOffers = (offers) => offers.map((offer) => {
-  return {
-    title: offer.title,
-    price: offer.price,
-    isChecked: true
-  };
-});
+export const convertPoint = (point, offersAll) => {
+  return Object.assign({}, point, {offers: offersAll.get(point.type).map((offer) => {
+    return {
+      title: offer.title,
+      price: offer.price,
+      isChecked: point.offers.some((el) => offer.title === el.title)
+    };
+  })});
+};
 
 export const formatTripType = (tripType) => {
   let formattedTripType = ``;

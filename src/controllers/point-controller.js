@@ -134,7 +134,8 @@ export default class PointController {
     this._pointEditComponent.reset();
     if (this._mode === ViewMode.ADD) {
       this._onDataChange(this, EmptyCard, null);
-    } else if (document.contains(this._pointEditComponent.getElement())) {
+    }
+    if (document.contains(this._pointEditComponent.getElement())) {
       replaceComponents(this._pointItemComponent, this._pointEditComponent);
     }
     this._mode = ViewMode.DEFAULT;

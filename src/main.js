@@ -31,7 +31,7 @@ api.getData({url: `offers`})
     removeComponent(loadingPointComponent);
     newPointButton.disabled = false;
   })
-  .catch(() => {
-    removeComponent(loadingPointComponent);
-    renderElement(document.querySelector(`.trip-events`), new LoadErrorComponent());
-  });
+  // .catch(() => {
+  //   removeComponent(loadingPointComponent);
+  //   renderElement(document.querySelector(`.trip-events`), new LoadErrorComponent());
+  // });
