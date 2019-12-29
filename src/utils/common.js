@@ -61,7 +61,7 @@ export const ViewMode = {
 };
 
 export const EmptyCard = {
-  type: ``,
+  type: `flight`,
   destination: {
     name: ``,
     description: ``,

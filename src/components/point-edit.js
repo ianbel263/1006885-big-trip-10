@@ -16,7 +16,6 @@ export default class PointEdit extends AbstractSmartComponent {
     this._destinationList = store.getDestinationNames();
 
     this._currentPoint = convertPoint(this._point, this._offersAll);
-    this._currentPoint.type = this._mode !== ViewMode.ADD ? this._currentPoint.type : `flight`;
 
     this._buttonSaveText = DefaultButtonsText.SAVE;
     this._buttonDeleteText = DefaultButtonsText.DELETE;
@@ -228,8 +227,6 @@ export default class PointEdit extends AbstractSmartComponent {
 
   reset() {
     this._currentPoint = convertPoint(this._point, this._offersAll);
-    // this._currentOffers = addCheckFieldToOffers(this._point.offers);
-
     this.rerender();
   }
 
@@ -337,7 +334,7 @@ export default class PointEdit extends AbstractSmartComponent {
     element.querySelector(`#event-start-time-1`)
       .addEventListener(`change`, (evt) => {
         this._currentPoint.startDate = moment(evt.target.value, `DD/MM/YY HH:mm`).valueOf();
-        this._currentPoint.endDate = this._currentStartDate > this._currentEndDate
+        this._currentPoint.endDate = this._currentPoint.startDate > this._currentPoint.endDate
           ? this._currentPoint.startDate
           : this._currentPoint.endDate;
 
@@ -354,11 +351,13 @@ export default class PointEdit extends AbstractSmartComponent {
       });
 
     element.querySelector(`.event__input--price`)
-      .addEventListener(`change`, (evt) => {
+      .addEventListener(`input`, (evt) => {
         this._currentPoint.price = evt.target.value;
 
-        // this._favoriteHandler = null;
-        // this.rerender();
+        this._favoriteHandler = null;
+        this.rerender();
+        this.getElement().querySelector(`.event__input--price`).focus();
+
       });
 
     if (element.querySelector(`.event__favorite-checkbox`)) {
