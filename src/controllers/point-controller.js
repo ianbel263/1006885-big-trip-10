@@ -126,7 +126,6 @@ export default class PointController {
     this._onViewChange();
 
     replaceComponents(this._pointEditComponent, this._pointItemComponent);
-    // this._pointEditComponent.getElement().querySelector(`.event__input--price`).focus();
     this._mode = ViewMode.EDIT;
   }
 

@@ -1,4 +1,5 @@
 import {MenuItem} from '../const.js';
+import {getStatistics} from '../utils/common';
 
 import AppMenuComponent from '../components/app-menu.js';
 import FilterController from '../controllers/filter-controller.js';
@@ -19,6 +20,8 @@ export default class APP {
     this._activeMenuItem = MenuItem.TABLE;
 
     this._tripInfoComponent = new TripInfoComponent();
+    this._statisticsComponent = new StatistiscComponent();
+
     this._tripController = null;
 
     this._updatePoints = this._updatePoints.bind(this);
@@ -47,19 +50,20 @@ export default class APP {
     const filterController = new FilterController(tripControlElement, this._pointsModel);
 
     const pageBodyMainElement = document.querySelector(`.page-main .page-body__container`);
-    const statisticsComponent = new StatistiscComponent();
-    renderElement(pageBodyMainElement, statisticsComponent, RenderPosition.BEFOREEND);
+    renderElement(pageBodyMainElement, this._statisticsComponent, RenderPosition.BEFOREEND);
 
     const tripPointsElement = document.querySelector(`.trip-events`);
     renderElement(tripPointsElement, new TripDaysContainerComponent());
     const daysListElement = tripPointsElement.querySelector(`.trip-days`);
     this._tripController = new TripController(daysListElement, this._pointsModel, this._api, this._store);
 
+    this._statisticsComponent.hide();
     filterController.render();
   }
 
   _updatePoints() {
     this._tripController.updatePoints();
+    this._statisticsComponent.rerender(getStatistics(this._pointsModel.getPointsAll(), this._store.getOffers()));
   }
 
   _updateTotalInfo() {
@@ -79,7 +83,16 @@ export default class APP {
     if (this._activeMenuItem === activeMenuItem) {
       return;
     }
-    console.log('activeMenuItem', activeMenuItem)
     this._activeMenuItem = activeMenuItem;
+    switch (this._activeMenuItem) {
+      case MenuItem.TABLE:
+        this._statisticsComponent.hide();
+        this._tripController.show();
+        break;
+      case MenuItem.STATS:
+        this._statisticsComponent.show();
+        this._tripController.hide();
+        break;
+    }
   }
 }

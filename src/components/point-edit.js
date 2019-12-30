@@ -351,12 +351,12 @@ export default class PointEdit extends AbstractSmartComponent {
       });
 
     element.querySelector(`.event__input--price`)
-      .addEventListener(`input`, (evt) => {
+      .addEventListener(`change`, (evt) => {
         this._currentPoint.price = evt.target.value;
 
-        this._favoriteHandler = null;
-        this.rerender();
-        this.getElement().querySelector(`.event__input--price`).focus();
+        // this._favoriteHandler = null;
+        // this.rerender();
+        // this.getElement().querySelector(`.event__input--price`).focus();
 
       });
 

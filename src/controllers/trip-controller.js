@@ -1,4 +1,4 @@
-import {SortType} from '../const.js';
+import {SortType, HIDDEN_CLASS} from '../const.js';
 import {renderElement, RenderPosition, removeComponent} from '../utils/render.js';
 import NoPointsComponent from '../components/no-points.js';
 import PointSortComponent from '../components/point-sort.js';
@@ -98,11 +98,11 @@ export default class TripController {
   }
 
   hide() {
-    this._container.hide();
+    this._container.parentElement.classList.add(HIDDEN_CLASS);
   }
 
   show() {
-    this._container.show();
+    this._container.parentElement.classList.remove(HIDDEN_CLASS);
   }
 
   _createNewPoint() {
