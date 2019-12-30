@@ -955,10 +955,12 @@ main {
   padding-top: 47px;
   padding-left: 37px; }
 
+.statistics__item {
+  background-color: #ecebeb; }
+
 .statistics__item:not(:last-child) {
   margin-bottom: 78px; }
 
   .shake {
-    animation: shake 0.6s;
-  }
+    animation: shake 0.6s; }
   

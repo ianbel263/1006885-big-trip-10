@@ -7,7 +7,7 @@ export default class FilterController {
     this._container = container;
     this._pointsModel = pointsModel;
 
-    this._siteFilterComponent = null;
+    this._appFilterComponent = null;
     this._activeFilterType = FilterType.EVERYTHING;
 
     this._onDataChange = this._onDataChange.bind(this);
@@ -17,31 +17,31 @@ export default class FilterController {
   }
 
   render() {
-    const siteFilters = Object.values(FilterType).map((filterType) => {
+    const appFilters = Object.values(FilterType).map((filterType) => {
       return {
         name: filterType,
         isChecked: filterType === this._activeFilterType
       };
     });
 
-    const oldComponent = this._siteFilterComponent;
+    const oldComponent = this._appFilterComponent;
 
-    this._siteFilterComponent = new AppFilterComponent(siteFilters);
-    this._siteFilterComponent.setOnFilterChange(this._onFilterChange);
+    this._appFilterComponent = new AppFilterComponent(appFilters);
+    this._appFilterComponent.setOnFilterChange(this._onFilterChange);
 
     if (oldComponent) {
-      replaceComponents(this._siteFilterComponent, oldComponent);
+      replaceComponents(this._appFilterComponent, oldComponent);
     } else {
-      renderElement(this._container, this._siteFilterComponent);
+      renderElement(this._container, this._appFilterComponent);
     }
-  }
-
-  _onDataChange() {
-    this.render();
   }
 
   _onFilterChange(filterType) {
     this._pointsModel.setFilter(filterType);
     this._activeFilterType = filterType;
+  }
+
+  _onDataChange() {
+    this.render();
   }
 }

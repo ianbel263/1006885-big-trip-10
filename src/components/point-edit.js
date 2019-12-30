@@ -2,7 +2,7 @@ import {TripType, DefaultButtonsText, SHAKE_ANIMATION_TIMEOUT} from '../const.js
 import AbstractSmartComponent from './abstract-smart-component.js';
 import moment from 'moment';
 import flatpickr from 'flatpickr';
-import {ViewMode, addCheckFieldToOffers, doFirstLetterUppercase, formatTripType} from '../utils/common.js';
+import {ViewMode, doFirstLetterUppercase, formatTripType, convertPoint} from '../utils/common.js';
 import PointModel from '../models/point-model.js';
 
 export default class PointEdit extends AbstractSmartComponent {
@@ -15,13 +15,7 @@ export default class PointEdit extends AbstractSmartComponent {
     this._offersAll = store.getOffers();
     this._destinationList = store.getDestinationNames();
 
-    this._currentStartDate = point.startDate;
-    this._currentEndDate = point.endDate;
-    this._currentDestination = point.destination;
-    this._currentOffers = this._mode !== ViewMode.ADD ? addCheckFieldToOffers(point.offers) : addCheckFieldToOffers(this._offersAll.get(`flight`));
-    this._currentPointType = this._mode !== ViewMode.ADD ? point.type : `flight`;
-    this._currentPrice = point.price;
-    this._isFavorite = point.isFavorite;
+    this._currentPoint = convertPoint(this._point, this._offersAll);
 
     this._buttonSaveText = DefaultButtonsText.SAVE;
     this._buttonDeleteText = DefaultButtonsText.DELETE;
@@ -36,19 +30,21 @@ export default class PointEdit extends AbstractSmartComponent {
 
     this.blockElement = this.blockElement.bind(this);
 
+    this._isValidity();
     this._applyFlatpickr();
     this._subscribeOnEvents();
   }
 
   getTemplate() {
-    const {name, description, pictures} = this._currentDestination;
+    const {type, startDate, endDate, price, isFavorite} = this._currentPoint;
+    const {name, description, pictures} = this._currentPoint.destination;
 
     return (`<form class="${this._mode === ViewMode.ADD ? `trip-events__item` : ``}  event  event--edit" action="#" method="post">
         <header class="event__header">
           <div class="event__type-wrapper">
             <label class="event__type  event__type-btn" for="event-type-toggle-1">
               <span class="visually-hidden">Choose event type</span>
-              <img class="event__type-icon" width="17" height="17" src="img/icons/${this._currentPointType}.png" alt="Event type icon">
+              <img class="event__type-icon" width="17" height="17" ${type ? `src="img/icons/${type}.png` : ``} " alt="Event type icon">
             </label>
             <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
 
@@ -62,7 +58,7 @@ export default class PointEdit extends AbstractSmartComponent {
           ${TripType[group].map((el) => {
             return (
               `<div class="event__type-item">
-                <input id="event-type-${el}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${el}" ${this._currentPointType === el && `checked`}>
+                <input id="event-type-${el}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${el}" ${type === el && `checked`}>
                 <label class="event__type-label  event__type-label--${el}" for="event-type-${el}-1">${doFirstLetterUppercase(el)}</label>
               </div>`
             );
@@ -77,7 +73,7 @@ export default class PointEdit extends AbstractSmartComponent {
 
           <div class="event__field-group  event__field-group--destination">
             <label class="event__label  event__type-output" for="event-destination-1">
-            ${formatTripType(this._currentPointType)}
+            ${formatTripType(type)}
             </label>
             <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${name}" list="destination-list-1">
             <datalist id="destination-list-1">
@@ -93,12 +89,12 @@ export default class PointEdit extends AbstractSmartComponent {
             <label class="visually-hidden" for="event-start-time-1">
               From
             </label>
-            <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${moment(this._currentStartDate).format(`DD/MM/YY HH:mm`)}">
+            <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${moment(startDate).format(`DD/MM/YY HH:mm`)}">
             &mdash;
             <label class="visually-hidden" for="event-end-time-1">
               To
             </label>
-            <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${moment(this.__currentEndDate).format(`DD/MM/YY HH:mm`)}">
+            <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${moment(endDate).format(`DD/MM/YY HH:mm`)}">
           </div>
 
           <div class="event__field-group  event__field-group--price">
@@ -106,7 +102,7 @@ export default class PointEdit extends AbstractSmartComponent {
               <span class="visually-hidden">price</span>
               &euro;
             </label>
-            <input class="event__input  event__input--price" id="event-price-1" type="number" name="event-price" value="${this._currentPrice}">
+            <input class="event__input  event__input--price" id="event-price-1" type="number" name="event-price" value="${price}">
           </div>
 
           <button class="event__save-btn  btn  btn--blue" type="submit">${this._buttonSaveText}</button>
@@ -115,7 +111,7 @@ export default class PointEdit extends AbstractSmartComponent {
 
       ${this._mode === ViewMode.ADD
         ? ``
-        : `<input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" ${this._isFavorite ? `checked` : ``}>
+        : `<input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" ${isFavorite ? `checked` : ``}>
           <label class="event__favorite-btn" for="event-favorite-1">
             <span class="visually-hidden">Add to favorite</span>
             <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
@@ -129,18 +125,18 @@ export default class PointEdit extends AbstractSmartComponent {
       }
         </header>
 
-      ${this._currentDestination.name === `` && this._mode === ViewMode.ADD
+      ${name === `` && this._mode === ViewMode.ADD
         ? ``
         : `<section class="event__details">
 
-      ${this._currentOffers.length === 0
+      ${this._currentPoint.offers.length === 0
         ? ``
         : `<section class="event__section  event__section--offers">
         <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
         <div class="event__available-offers">
             
-      ${this._currentOffers.map(({price: offerPrice, title, isChecked}) => {
+      ${this._currentPoint.offers.map(({price: offerPrice, title, isChecked}) => {
         return (
           `<div class="event__offer-selector">
             <input class="event__offer-checkbox  visually-hidden" id="event-offer-${title}-1" type="checkbox" name="event-offer-${title}" ${isChecked ? `checked` : ``}>
@@ -156,23 +152,21 @@ export default class PointEdit extends AbstractSmartComponent {
           </div>
         </section>`
       }
-          
-  
-            <section class="event__section  event__section--destination">
-              <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-              <p class="event__destination-description">${description}</p>
-  
-              <div class="event__photos-container">
-                <div class="event__photos-tape">
+        <section class="event__section  event__section--destination">
+          <h3 class="event__section-title  event__section-title--destination">Destination</h3>
+          <p class="event__destination-description">${description}</p>
+
+          <div class="event__photos-container">
+            <div class="event__photos-tape">
 
       ${pictures.map(({src, description: alt}) => {
         return `<img class="event__photo" src="${src}" alt="${alt}">`;
       }).join(`\n`)}
       
-                </div>
               </div>
-            </section>
-          </section>`
+            </div>
+          </section>
+        </section>`
       }
       </form>`
     );
@@ -208,6 +202,34 @@ export default class PointEdit extends AbstractSmartComponent {
     });
   }
 
+  recoveryListeners() {
+    this.setOnFormSubmit(this._submitHandler);
+    this.setOnDeleteButtonClick(this._deleteHandler);
+    this._subscribeOnEvents();
+
+    if (this._mode === ViewMode.DEFAULT) {
+      this.setOnCancelButtonClick(this._cancelHandler);
+      this.setOnFavoriteButtonClick(this._favoriteHandler);
+    }
+  }
+
+  removeElement() {
+    this._deleteFlatpickrs();
+    super.removeElement();
+  }
+
+  rerender() {
+    super.rerender();
+
+    this._isValidity();
+    this._applyFlatpickr();
+  }
+
+  reset() {
+    this._currentPoint = convertPoint(this._point, this._offersAll);
+    this.rerender();
+  }
+
   setButtonsText(action, text) {
     if (action === `save`) {
       this._buttonSaveText = text;
@@ -222,31 +244,6 @@ export default class PointEdit extends AbstractSmartComponent {
   setDefaultButtonsText() {
     this._buttonSaveText = DefaultButtonsText.SAVE;
     this._buttonDeleteText = DefaultButtonsText.DELETE;
-
-    this.rerender();
-  }
-
-  removeElement() {
-    this._deleteFlatpickrs();
-    super.removeElement();
-  }
-
-  rerender() {
-    super.rerender();
-
-    this._applyFlatpickr();
-  }
-
-  reset() {
-    const point = this._point;
-
-    this._currentStartDate = point.startDate;
-    this._currentEndDate = point.endDate;
-    this._currentDestination = point.destination;
-    this._currentPointType = point.type;
-    this._currentOffers = addCheckFieldToOffers(point.offers);
-    this._currentPrice = point.price;
-    this._isFavorite = point.isFavorite;
 
     this.rerender();
   }
@@ -278,17 +275,6 @@ export default class PointEdit extends AbstractSmartComponent {
     this._favoriteHandler = handler;
   }
 
-  recoveryListeners() {
-    this.setOnFormSubmit(this._submitHandler);
-    this.setOnDeleteButtonClick(this._deleteHandler);
-    this._subscribeOnEvents();
-
-    if (this._mode === ViewMode.DEFAULT) {
-      this.setOnCancelButtonClick(this._cancelHandler);
-      this.setOnFavoriteButtonClick(this._favoriteHandler);
-    }
-  }
-
   blockElement(onError = false) {
     const form = this.getElement();
     if (onError) {
@@ -300,20 +286,27 @@ export default class PointEdit extends AbstractSmartComponent {
     form.querySelectorAll(`button`).forEach((button) => (button.disabled = true));
   }
 
+  _isValidity(value = ``) {
+    const destinationInput = this.getElement().querySelector(`.event__input--destination`);
+
+    if (destinationInput.value === value || value === false) {
+      destinationInput.setCustomValidity(`Please select a valid value from list.`);
+      return false;
+    } else {
+      destinationInput.setCustomValidity(``);
+      return true;
+    }
+  }
+
   _subscribeOnEvents() {
     const element = this.getElement();
-
-    const destinationInput = element.querySelector(`.event__input--destination`);
-    if (destinationInput.value === ``) {
-      destinationInput.setCustomValidity(`Please select a valid value from list.`);
-    }
 
     element.querySelector(`.event__type-list`)
       .addEventListener(`click`, (evt) => {
 
         if (evt.target.tagName === `INPUT`) {
-          this._currentPointType = evt.target.value;
-          this._currentOffers = addCheckFieldToOffers(this._offersAll.get(evt.target.value));
+          this._currentPoint.type = evt.target.value;
+          this._currentPoint.offers = this._offersAll.get(evt.target.value);
 
           this._favoriteHandler = null;
           this.rerender();
@@ -322,8 +315,6 @@ export default class PointEdit extends AbstractSmartComponent {
 
     element.querySelector(`.event__input--destination`)
       .addEventListener(`change`, (evt) => {
-        this._currentDestination = this._destinationsAll.find((el) => el.name === evt.target.value);
-
         let optionsFound = false;
         [...evt.target.list.options].forEach((option) => {
           if (option.value === evt.target.value) {
@@ -331,11 +322,10 @@ export default class PointEdit extends AbstractSmartComponent {
           }
         });
 
-        if (!optionsFound) {
-          evt.target.setCustomValidity(`Please select a valid value from list.`);
-        } else {
-          evt.target.setCustomValidity(``);
+        if (!this._isValidity(optionsFound)) {
+          return;
         }
+        this._currentPoint.destination = this._destinationsAll.find((el) => el.name === evt.target.value);
 
         this._favoriteHandler = null;
         this.rerender();
@@ -343,10 +333,10 @@ export default class PointEdit extends AbstractSmartComponent {
 
     element.querySelector(`#event-start-time-1`)
       .addEventListener(`change`, (evt) => {
-        this._currentStartDate = moment(evt.target.value, `DD/MM/YY HH:mm`).valueOf();
-        this._currentEndDate = this._currentStartDate > this._currentEndDate
-          ? this._currentStartDate
-          : this._currentEndDate;
+        this._currentPoint.startDate = moment(evt.target.value, `DD/MM/YY HH:mm`).valueOf();
+        this._currentPoint.endDate = this._currentPoint.startDate > this._currentPoint.endDate
+          ? this._currentPoint.startDate
+          : this._currentPoint.endDate;
 
         this._favoriteHandler = null;
         this.rerender();
@@ -354,7 +344,7 @@ export default class PointEdit extends AbstractSmartComponent {
 
     element.querySelector(`#event-end-time-1`)
       .addEventListener(`change`, (evt) => {
-        this._currentEndDate = moment(evt.target.value, `DD/MM/YY HH:mm`).valueOf();
+        this._currentPoint.endDate = moment(evt.target.value, `DD/MM/YY HH:mm`).valueOf();
 
         this._favoriteHandler = null;
         this.rerender();
@@ -362,21 +352,20 @@ export default class PointEdit extends AbstractSmartComponent {
 
     element.querySelector(`.event__input--price`)
       .addEventListener(`change`, (evt) => {
-        this._currentPrice = evt.target.value;
-
-        this._favoriteHandler = null;
-        this.rerender();
+        this._currentPoint.price = evt.target.value;
       });
 
-    element.querySelector(`.event__favorite-checkbox`)
-      .addEventListener(`change`, (evt) => {
-        this._isFavorite = evt.target.checked;
-      });
+    if (element.querySelector(`.event__favorite-checkbox`)) {
+      element.querySelector(`.event__favorite-checkbox`)
+        .addEventListener(`change`, (evt) => {
+          this._currentPoint.isFavorite = evt.target.checked;
+        });
+    }
 
     if (element.querySelectorAll(`event__offer-checkbox`)) {
       element.querySelectorAll(`.event__offer-checkbox`).forEach((el, index) => {
         el.addEventListener(`change`, (evt) => {
-          this._currentOffers[index].isChecked = evt.target.checked;
+          this._currentPoint.offers[index].isChecked = evt.target.checked;
 
           this._favoriteHandler = null;
           this.rerender();

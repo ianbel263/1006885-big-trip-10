@@ -9,6 +9,8 @@ export const formatDateWithoutTime = (date) => moment(date).format(`YYYY MMM DD`
 
 export const formatDateForInfo = (date) => moment(date).format(`DD MMM`);
 
+export const calculateTimeIntervalInHours = (time1, time2) => moment(time2).diff(moment(time1), `hours`);
+
 export const calculateTimeInterval = (time1, time2) => {
   const daysInt = moment(time2).diff(moment(time1), `days`);
   const hoursInt = moment(time2).diff(moment(time1), `hours`) - daysInt * 24;
@@ -26,13 +28,31 @@ export const doFirstLetterUppercase = (string) => {
 
 export const parseDateWithoutTime = (dateString) => moment(dateString, `YYYY MMM DD`).valueOf();
 
-export const addCheckFieldToOffers = (offers) => offers.map((offer) => {
-  return {
-    title: offer.title,
-    price: offer.price,
-    isChecked: true
-  };
-});
+export const convertPoint = (point, offersAll) => {
+  return Object.assign({}, point, {offers: offersAll.get(point.type).map((offer) => {
+    return {
+      title: offer.title,
+      price: offer.price,
+      isChecked: point.offers.some((el) => offer.title === el.title)
+    };
+  })});
+};
+
+export const getStatistics = (points, allTypes) => {
+  const arr = [];
+
+  for (const [key] of allTypes) {
+    const filteredPoints = points.filter((point) => point.type === key);
+
+    arr.push({
+      type: key,
+      totalPrice: filteredPoints.reduce((totalPrice, it) => totalPrice + it.price, 0),
+      count: filteredPoints.length,
+      totalTime: filteredPoints.reduce((totalTime, it) => totalTime + calculateTimeIntervalInHours(it.startDate, it.endDate), 0)
+    });
+  }
+  return arr;
+};
 
 export const formatTripType = (tripType) => {
   let formattedTripType = ``;
@@ -59,7 +79,7 @@ export const ViewMode = {
 };
 
 export const EmptyCard = {
-  type: ``,
+  type: `flight`,
   destination: {
     name: ``,
     description: ``,
