@@ -9,14 +9,17 @@ const drawChart = (ctx, statisticsData, title) => {
   let values = [];
   switch (title) {
     case `money`:
+      statisticsData = statisticsData.filter((el) => el.totalPrice !== 0);
       types = statisticsData.sort((a, b) => (b.totalPrice - a.totalPrice)).map((el) => el.type.toUpperCase());
       values = statisticsData.sort((a, b) => (b.totalPrice - a.totalPrice)).map((el) => el.totalPrice);
       break;
     case `transport`:
+      statisticsData = statisticsData.filter((el) => el.count !== 0);
       types = statisticsData.sort((a, b) => (b.count - a.count)).map((el) => el.type.toUpperCase());
       values = statisticsData.sort((a, b) => (b.count - a.count)).map((el) => el.count);
       break;
     case `time spent`:
+      statisticsData = statisticsData.filter((el) => el.totalTime !== 0);
       types = statisticsData.sort((a, b) => (b.totalTime - a.totalTime)).map((el) => el.type.toUpperCase());
       values = statisticsData.sort((a, b) => (b.totalTime - a.totalTime)).map((el) => el.totalTime);
       break;
@@ -50,14 +53,11 @@ const drawChart = (ctx, statisticsData, title) => {
             let formattedValue = ``;
             switch (title) {
               case `money`:
-                formattedValue = value ? `€ ${value}` : ``;
-                break;
+                return `€ ${value}`;
               case `transport`:
-                formattedValue = value ? `${value}x` : ``;
-                break;
+                return `${value}x`;
               case `time spent`:
-                formattedValue = value ? `${value}H` : ``;
-                break;
+                return `${value}H`;
             }
             return formattedValue;
           }

@@ -47,7 +47,6 @@ export default class TripController {
 
     this._pointControllers = [];
     this._creatingPoint = null;
-    this._newPointButton = document.querySelector(`.trip-main__event-add-btn`);
 
     this._activeSortType = SortType.EVENT;
     this._isSortedByDefault = true;
@@ -57,13 +56,11 @@ export default class TripController {
 
     this._onSortTypeChange = this._onSortTypeChange.bind(this);
     this._onDataChange = this._onDataChange.bind(this);
-    this._onViewChange = this._onViewChange.bind(this);
+    this.onViewChange = this.onViewChange.bind(this);
   }
 
   render() {
     const pointsAll = this._pointsModel.getPointsAll();
-
-    this._newPointButton.addEventListener(`click`, () => this._createNewPoint());
 
     if (pointsAll.length === 0) {
       if (this._pointSortComponent) {
@@ -92,27 +89,14 @@ export default class TripController {
     this._onSortTypeChange(this._activeSortType);
   }
 
-  updatePoints() {
-    this._removePoints();
-    this.render();
-  }
-
-  hide() {
-    this._container.parentElement.classList.add(HIDDEN_CLASS);
-  }
-
-  show() {
-    this._container.parentElement.classList.remove(HIDDEN_CLASS);
-  }
-
-  _createNewPoint() {
+  createNewPoint() {
     if (this._creatingPoint) {
+      this.onViewChange();
       return;
     }
 
-    this._newPointButton.disabled = true;
-    this._onViewChange();
-    this._creatingPoint = new PointController(this._container.parentElement, this._onDataChange, this._onViewChange, this._store);
+    this.onViewChange();
+    this._creatingPoint = new PointController(this._container.parentElement, this._onDataChange, this.onViewChange, this._store);
     if (this._noPointsComponent) {
       removeComponent(this._noPointsComponent);
     }
@@ -120,35 +104,21 @@ export default class TripController {
     this._pointControllers.push(this._creatingPoint);
   }
 
-  _onSortTypeChange(sortType) {
-    this._activeSortType = sortType;
-
-    let sortedPoints = [];
-    const points = this._pointsModel.getPoints();
-
-    switch (sortType) {
-      case SortType.EVENT:
-        this._isSortedByDefault = true;
-        sortedPoints = points.slice();
-        break;
-      case SortType.TIME:
-        this._isSortedByDefault = false;
-        sortedPoints = points.slice().sort((a, b) => (b.endDate - b.startDate) - (a.endDate - a.startDate));
-        break;
-      case SortType.PRICE:
-        this._isSortedByDefault = false;
-        sortedPoints = points.slice().sort((a, b) => b.price - a.price);
-        break;
-    }
-
-    this._container.innerHTML = ``;
-    this._pointControllers = renderpoints(sortedPoints, this._container, this._onDataChange, this._onViewChange, this._store, this._isSortedByDefault);
+  hide() {
+    this._container.parentElement.classList.add(HIDDEN_CLASS);
   }
 
-  _removePoints() {
-    this._container.innerHTML = ``;
-    this._pointControllers.forEach((_pointcontroller) => _pointcontroller.destroy());
-    this._pointcontrollers = [];
+  onViewChange() {
+    this._pointControllers.forEach((it) => it.setDefaultView());
+  }
+
+  show() {
+    this._container.parentElement.classList.remove(HIDDEN_CLASS);
+  }
+
+  updatePoints() {
+    this._removePoints();
+    this.render();
   }
 
   _onDataChange(pointController, oldData, newData) {
@@ -157,13 +127,11 @@ export default class TripController {
       if (newData === null) {
         pointController.destroy();
         this._pointControllers.pop();
-        this._newPointButton.disabled = false;
       } else {
         pointController.blockOnSave();
         this._api.createPoint(newData)
         .then((pointModel) => {
           this._pointsModel.addPoint(pointModel);
-          this._newPointButton.disabled = false;
         })
         .catch(() => {
           pointController.shake();
@@ -194,7 +162,34 @@ export default class TripController {
     }
   }
 
-  _onViewChange() {
-    this._pointControllers.forEach((it) => it.setDefaultView());
+  _onSortTypeChange(sortType) {
+    this._activeSortType = sortType;
+
+    let sortedPoints = [];
+    const points = this._pointsModel.getPoints();
+
+    switch (sortType) {
+      case SortType.EVENT:
+        this._isSortedByDefault = true;
+        sortedPoints = points.slice();
+        break;
+      case SortType.TIME:
+        this._isSortedByDefault = false;
+        sortedPoints = points.slice().sort((a, b) => (b.endDate - b.startDate) - (a.endDate - a.startDate));
+        break;
+      case SortType.PRICE:
+        this._isSortedByDefault = false;
+        sortedPoints = points.slice().sort((a, b) => b.price - a.price);
+        break;
+    }
+
+    this._container.innerHTML = ``;
+    this._pointControllers = renderpoints(sortedPoints, this._container, this._onDataChange, this.onViewChange, this._store, this._isSortedByDefault);
+  }
+
+  _removePoints() {
+    this._container.innerHTML = ``;
+    this._pointControllers.forEach((_pointcontroller) => _pointcontroller.destroy());
+    this._pointcontrollers = [];
   }
 }

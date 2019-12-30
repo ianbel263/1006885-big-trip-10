@@ -203,7 +203,6 @@ export default class PointEdit extends AbstractSmartComponent {
   }
 
   recoveryListeners() {
-    this._isValidity();
     this.setOnFormSubmit(this._submitHandler);
     this.setOnDeleteButtonClick(this._deleteHandler);
     this._subscribeOnEvents();
@@ -222,6 +221,7 @@ export default class PointEdit extends AbstractSmartComponent {
   rerender() {
     super.rerender();
 
+    this._isValidity();
     this._applyFlatpickr();
   }
 
@@ -353,11 +353,6 @@ export default class PointEdit extends AbstractSmartComponent {
     element.querySelector(`.event__input--price`)
       .addEventListener(`change`, (evt) => {
         this._currentPoint.price = evt.target.value;
-
-        // this._favoriteHandler = null;
-        // this.rerender();
-        // this.getElement().querySelector(`.event__input--price`).focus();
-
       });
 
     if (element.querySelector(`.event__favorite-checkbox`)) {

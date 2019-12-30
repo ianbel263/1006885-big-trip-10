@@ -56,9 +56,36 @@ export default class APP {
     renderElement(tripPointsElement, new TripDaysContainerComponent());
     const daysListElement = tripPointsElement.querySelector(`.trip-days`);
     this._tripController = new TripController(daysListElement, this._pointsModel, this._api, this._store);
-    
+
+    const createNewPointButton = document.querySelector(`.trip-main__event-add-btn`);
+    createNewPointButton.addEventListener(`click`, () => {
+      this._activeMenuItem = MenuItem.TABLE;
+      appMenu.setDefault();
+      this._statisticsComponent.hide();
+      this._tripController.show();
+      this._tripController.createNewPoint();
+    });
+
     this._statisticsComponent.hide();
     filterController.render();
+  }
+
+  _onAppMenuChange(activeMenuItem) {
+    if (this._activeMenuItem === activeMenuItem) {
+      return;
+    }
+    this._activeMenuItem = activeMenuItem;
+    switch (this._activeMenuItem) {
+      case MenuItem.TABLE:
+        this._statisticsComponent.hide();
+        this._tripController.show();
+        break;
+      case MenuItem.STATS:
+        this._statisticsComponent.show();
+        this._tripController.hide();
+        this._tripController.onViewChange();
+        break;
+    }
   }
 
   _updatePoints() {
@@ -78,22 +105,5 @@ export default class APP {
     }, 0);
 
     renderElement(this._container, this._tripInfoComponent, RenderPosition.AFTERBEGIN);
-  }
-
-  _onAppMenuChange(activeMenuItem) {
-    if (this._activeMenuItem === activeMenuItem) {
-      return;
-    }
-    this._activeMenuItem = activeMenuItem;
-    switch (this._activeMenuItem) {
-      case MenuItem.TABLE:
-        this._statisticsComponent.hide();
-        this._tripController.show();
-        break;
-      case MenuItem.STATS:
-        this._statisticsComponent.show();
-        this._tripController.hide();
-        break;
-    }
   }
 }

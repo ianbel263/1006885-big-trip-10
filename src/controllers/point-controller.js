@@ -78,10 +78,8 @@ export default class PointController {
     }
   }
 
-  setDefaultView() {
-    if (this._mode !== ViewMode.DEFAULT) {
-      this._replaceEditToItem();
-    }
+  blockOnSave() {
+    this._pointEditComponent.blockElement();
   }
 
   destroy() {
@@ -90,8 +88,10 @@ export default class PointController {
     document.removeEventListener(`keydown`, this._onEscKeyDown);
   }
 
-  blockOnSave() {
-    this._pointEditComponent.blockElement();
+  setDefaultView() {
+    if (this._mode !== ViewMode.DEFAULT) {
+      this._replaceEditToItem();
+    }
   }
 
   shake() {
@@ -102,6 +102,21 @@ export default class PointController {
     }, SHAKE_ANIMATION_TIMEOUT);
   }
 
+  _onDeleteButtonClick(mode) {
+    if (mode === ViewMode.ADD) {
+      this._onDataChange(this, EmptyCard, null);
+    } else {
+      this._pointEditComponent.setButtonsText(`delete`, ConnectingButtonsText.DELETE);
+      this._onDataChange(this, this._point, null);
+    }
+  }
+
+  _onEscPress(evt) {
+    if (evt.keyCode === ESC_KEYCODE) {
+      this._replaceEditToItem();
+    }
+  }
+
   _onFormSubmit(evt, mode) {
     evt.preventDefault();
     this._pointEditComponent.setButtonsText(`save`, ConnectingButtonsText.SAVE);
@@ -110,15 +125,6 @@ export default class PointController {
       this._onDataChange(this, EmptyCard, newData);
     } else {
       this._onDataChange(this, this._point, newData);
-    }
-  }
-
-  _onDeleteButtonClick(mode) {
-    if (mode === ViewMode.ADD) {
-      this._onDataChange(this, EmptyCard, null);
-    } else {
-      this._pointEditComponent.setButtonsText(`delete`, ConnectingButtonsText.DELETE);
-      this._onDataChange(this, this._point, null);
     }
   }
 
@@ -139,11 +145,5 @@ export default class PointController {
       replaceComponents(this._pointItemComponent, this._pointEditComponent);
     }
     this._mode = ViewMode.DEFAULT;
-  }
-
-  _onEscPress(evt) {
-    if (evt.keyCode === ESC_KEYCODE) {
-      this._replaceEditToItem();
-    }
   }
 }
