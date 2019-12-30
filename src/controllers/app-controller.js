@@ -56,7 +56,7 @@ export default class APP {
     renderElement(tripPointsElement, new TripDaysContainerComponent());
     const daysListElement = tripPointsElement.querySelector(`.trip-days`);
     this._tripController = new TripController(daysListElement, this._pointsModel, this._api, this._store);
-
+    
     this._statisticsComponent.hide();
     filterController.render();
   }
@@ -64,6 +64,7 @@ export default class APP {
   _updatePoints() {
     this._tripController.updatePoints();
     this._statisticsComponent.rerender(getStatistics(this._pointsModel.getPointsAll(), this._store.getOffers()));
+    this._statisticsComponent.hide();
   }
 
   _updateTotalInfo() {
