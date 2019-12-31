@@ -1,4 +1,4 @@
-export const AUTHORIZATION = `Basic kdnskNffCKjkj-j`;
+export const AUTHORIZATION = `Basic kdnwdfskNffCKjkj-j`;
 export const END_POINT = `https://htmlacademy-es-10.appspot.com/big-trip`;
 
 export const RequestMethod = {

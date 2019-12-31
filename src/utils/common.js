@@ -48,7 +48,8 @@ export const getStatistics = (points, allTypes) => {
       type: key,
       totalPrice: filteredPoints.reduce((totalPrice, it) => totalPrice + it.price, 0),
       count: filteredPoints.length,
-      totalTime: filteredPoints.reduce((totalTime, it) => totalTime + calculateTimeIntervalInHours(it.startDate, it.endDate), 0)
+      totalTime: filteredPoints.reduce((totalTime, it) => totalTime + calculateTimeIntervalInHours(it.startDate, it.endDate), 0),
+      isTransport: TripType.TRANSFER.some((it) => key === it)
     });
   }
   return arr;
