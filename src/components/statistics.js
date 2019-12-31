@@ -33,7 +33,7 @@ const drawChart = (ctx, statisticsData, title) => {
           data: values,
           backgroundColor: `#ffffff`,
           barPercentage: 0.9,
-          minBarLength: 40
+          minBarLength: 5
         }
       ],
     },
@@ -55,20 +55,20 @@ const drawChart = (ctx, statisticsData, title) => {
           anchor: `end`,
           align: `left`,
           font: {
-            size: 14
+            size: 12
           },
           color: `#000000`,
           formatter: (value) => {
             let formattedValue = ``;
             switch (title) {
               case `money`:
-                formattedValue = `€ ${value}`;
+                formattedValue = value ?`€ ${value}` : ``;
                 break;
               case `transport`:
-                formattedValue = `${value}x`;
+                formattedValue = value ?`${value}x` : ``;
                 break;
               case `time spent`:
-                formattedValue = `${value}H`;
+                formattedValue = value ?`${value}H` : ``;
                 break;
             }
             return formattedValue;
