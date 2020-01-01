@@ -1,5 +1,6 @@
 import {AUTHORIZATION, END_POINT} from './const.js';
 import {renderElement, removeComponent} from './utils/render.js';
+import 'flatpickr/dist/flatpickr.css';
 import API from './api.js';
 import Store from './store.js';
 import APP from './controllers/app-controller';
