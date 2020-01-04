@@ -22,5 +22,6 @@ export default class Store {
 
   setOffers(data) {
     this._offers = data;
+    console.log('data', data)
   }
 }

@@ -1,5 +1,5 @@
-import {RequestMethod} from './const.js';
-import PointModel from './models/point-model.js';
+import {RequestMethod} from '../const.js';
+import PointModel from '../models/point-model.js';
 
 
 const checkStatus = (response) => {
@@ -52,6 +52,16 @@ export default class API {
 
   deletePoint(id) {
     return this._load({url: `points/${id}`, method: RequestMethod.DELETE});
+  }
+
+  sync(data) {
+    return this._load({
+      url: `points/sync`,
+      method: RequestMethod.POST,
+      body: JSON.stringify(data),
+      headers: new Headers({'Content-Type': `application/json`})
+    })
+      .then((response) => response.json());
   }
 
   _load({url, method = RequestMethod.GET, body = null, headers = new Headers()}) {
