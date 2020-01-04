@@ -11,26 +11,24 @@ export default class Provider {
     this._isSynchronized = true;
   }
 
-  // getData({url}) {
-  //   if (this._isOnLine()) {
-  //     return this._api.getData({url})
-  //       .then((data) => {
-  //         this._store.setItem(url, data);
-  //         return data;
-  //       });
+  getData({url}) {
+    if (this._isOnLine()) {
+      return this._api.getData({url})
+        .then((data) => {
+          this._store.setAppStoreData(data);
+          return data;
+        });
 
-  //   }
-  //   // const storePoints = Object.values(this._store.getAll());
-  //   // console.log('storePoints', storePoints)
-
-  //   // return Promise.resolve();
-  // }
+    }
+    const appStoreData = Object.values(this._store.getAll());
+    return Promise.resolve(appStoreData);
+  }
 
   getPoints() {
     if (this._isOnLine()) {
       return this._api.getPoints()
         .then((points) => {
-          points.forEach((point) => this._store.setItem(point.id, point.toRAW()));
+          points.forEach((point) => this._store.setPoint(point.id, point.toRAW()));
           return points;
         });
     }
@@ -44,7 +42,7 @@ export default class Provider {
     if (this._isOnLine()) {
       return this._api.createPoint(point)
         .then((newPoint) => {
-          this._store.setItem(newPoint.id, newPoint.toRAW());
+          this._store.setPoint(newPoint.id, newPoint.toRAW());
           return newPoint;
         });
     }
@@ -53,7 +51,7 @@ export default class Provider {
     // Но на случай временного хранения мы должны позаботиться и о временном id
     const fakeNewPointId = nanoid();
     const fakeNewPoint = Point.parsePoint(Object.assign({}, point.toRAW(), {id: fakeNewPointId}));
-    this._store.setItem(fakeNewPoint.id, Object.assign({}, fakeNewPoint.toRAW(), {offline: true}));
+    this._store.setPoint(fakeNewPoint.id, Object.assign({}, fakeNewPoint.toRAW(), {offline: true}));
     this._isSynchronized = false;
 
     return Promise.resolve(fakeNewPoint);
@@ -63,13 +61,13 @@ export default class Provider {
     if (this._isOnLine()) {
       return this._api.updatePoint(id, point)
         .then((newPoint) => {
-          this._store.setItem(newPoint.id, newPoint.toRAW());
+          this._store.setPoint(newPoint.id, newPoint.toRAW());
           return newPoint;
         });
     }
 
     const fakeUpdatedPoint = Point.parsePoint(Object.assign({}, point.toRAW(), {id}));
-    this._store.setItem(id, Object.assign({}, fakeUpdatedPoint.toRAW(), {offline: true}));
+    this._store.setPoint(id, Object.assign({}, fakeUpdatedPoint.toRAW(), {offline: true}));
     this._isSynchronized = false;
 
     return Promise.resolve(fakeUpdatedPoint);
@@ -113,7 +111,7 @@ export default class Provider {
           // Хранилище должно быть актуальным в любой момент,
           // вдруг сеть пропадёт
           [...createdPoints, ...updatedPoints].forEach((point) => {
-            this._store.setItem(point.id, point);
+            this._store.setPoint(point.id, point);
           });
 
           // Помечаем, что всё синхронизировано

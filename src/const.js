@@ -8,6 +8,21 @@ export const RequestMethod = {
   DELETE: `DELETE`
 };
 
+export const Store = {
+  STORE_PREFIX: `big-trip-localstorage`,
+  STORE_VER: `v1`,
+
+  getStoreName(key) {
+    return `${this.STORE_PREFIX}-${this.STORE_VER}-${key}`;
+  }
+};
+
+export const StoreKey = {
+  POINTS: `points`,
+  OFFERS: `offers`,
+  DESTINATIONS: `destinations`
+};
+
 export const HIDDEN_CLASS = `visually-hidden`;
 
 export const SHAKE_ANIMATION_TIMEOUT = 600;

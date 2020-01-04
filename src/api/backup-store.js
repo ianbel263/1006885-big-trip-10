@@ -1,7 +1,7 @@
 export default class BackupStore {
-  constructor(key, storage) {
+  constructor(storage) {
     this._storage = storage;
-    this._storeKey = key;
+    this._storeKey = null;
   }
 
   getAll() {
@@ -12,7 +12,11 @@ export default class BackupStore {
     }
   }
 
-  setItem(key, value) {
+  setAppStoreData(value) {
+    this._storage.setItem(this._storeKey, JSON.stringify(Object.assign({}, value)));
+  }
+
+  setPoint(key, value) {
     const store = this.getAll();
 
     this._storage.setItem(
@@ -21,6 +25,10 @@ export default class BackupStore {
             Object.assign({}, store, {[key]: value})
         )
     );
+  }
+
+  setStoreKey(key) {
+    this._storeKey = key;
   }
 
   removeItem(key) {

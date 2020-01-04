@@ -1,4 +1,4 @@
-import {AUTHORIZATION, END_POINT} from './const.js';
+import {AUTHORIZATION, END_POINT, Store, StoreKey} from './const.js';
 import {renderElement, removeComponent} from './utils/render.js';
 import 'flatpickr/dist/flatpickr.css';
 import API from './api/api.js';
@@ -9,10 +9,6 @@ import APP from './controllers/app-controller';
 import PointsModel from './models/points-model.js';
 import LoadingPointsComponent from './components/loading-points.js';
 import LoadErrorComponent from './components/load-error.js';
-
-const STORE_PREFIX = `big-trip-localstorage`;
-const STORE_VER = `v1`;
-const STORE_NAME = `${STORE_PREFIX}-${STORE_VER}`;
 
 window.addEventListener(`load`, () => {
   navigator.serviceWorker.register(`/sw.js`)
@@ -43,7 +39,7 @@ window.addEventListener(`offline`, () => {
 const tripInfoElement = document.querySelector(`.trip-info`);
 
 const api = new API(END_POINT, AUTHORIZATION);
-const backupStore = new BackupStore(STORE_NAME, window.localStorage);
+const backupStore = new BackupStore(window.localStorage);
 const apiWithProvider = new Provider(api, backupStore);
 
 const pointsModel = new PointsModel();
@@ -57,18 +53,21 @@ renderElement(document.querySelector(`.trip-events`), loadingPointComponent);
 
 appController.init();
 
-api.getData({url: `offers`})
+backupStore.setStoreKey(Store.getStoreName(StoreKey.OFFERS));
+apiWithProvider.getData({url: StoreKey.OFFERS})
   .then((offers) => appStore.setOffers(offers))
-  .then(() => api.getData({url: `destinations`}))
+  .then(() => backupStore.setStoreKey(Store.getStoreName(StoreKey.DESTINATIONS)))
+  .then(() => apiWithProvider.getData({url: StoreKey.DESTINATIONS}))
   .then((destinations) => appStore.setDestinations(destinations))
+  .then(() => backupStore.setStoreKey(Store.getStoreName(StoreKey.POINTS)))
   .then(() => apiWithProvider.getPoints())
   .then((points) => {
     pointsModel.setPoints(points);
     removeComponent(loadingPointComponent);
     newPointButton.disabled = false;
   })
-  // .catch((error) => {
-  //   // console.log('error', error)
-  //   removeComponent(loadingPointComponent);
-  //   renderElement(document.querySelector(`.trip-events`), new LoadErrorComponent());
-  // });
+  .catch((error) => {
+    removeComponent(loadingPointComponent);
+    renderElement(document.querySelector(`.trip-events`), new LoadErrorComponent(error));
+    console.error('error', error);
+  });
