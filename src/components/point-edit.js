@@ -270,8 +270,10 @@ export default class PointEdit extends AbstractSmartComponent {
   }
 
   setOnFavoriteButtonClick(handler) {
+    const debounceHandler = handler ? debounce(handler, DEBOUNCE_TIMEOUT) : handler;
+
     this.getElement().querySelector(`.event__favorite-btn`)
-      .addEventListener(`click`, debounce(handler, DEBOUNCE_TIMEOUT));
+      .addEventListener(`click`, debounceHandler);
 
     this._favoriteHandler = handler;
   }
