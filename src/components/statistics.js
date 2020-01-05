@@ -62,13 +62,13 @@ const drawChart = (ctx, statisticsData, title) => {
             let formattedValue = ``;
             switch (title) {
               case `money`:
-                formattedValue = value ?`€ ${value}` : ``;
+                formattedValue = value ? `€ ${value}` : ``;
                 break;
               case `transport`:
-                formattedValue = value ?`${value}x` : ``;
+                formattedValue = value ? `${value}x` : ``;
                 break;
               case `time spent`:
-                formattedValue = value ?`${value}H` : ``;
+                formattedValue = value ? `${value}H` : ``;
                 break;
             }
             return formattedValue;
