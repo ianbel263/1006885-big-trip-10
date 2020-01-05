@@ -66,8 +66,7 @@ apiWithProvider.getData({url: StoreKey.OFFERS})
     removeComponent(loadingPointComponent);
     newPointButton.disabled = false;
   })
-  .catch((error) => {
-    removeComponent(loadingPointComponent);
-    renderElement(document.querySelector(`.trip-events`), new LoadErrorComponent(error));
-    console.error('error', error);
-  });
+  // .catch((error) => {
+  //   removeComponent(loadingPointComponent);
+  //   renderElement(document.querySelector(`.trip-events`), new LoadErrorComponent(error));
+  // });

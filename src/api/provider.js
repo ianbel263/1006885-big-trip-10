@@ -1,6 +1,5 @@
 import nanoid from 'nanoid';
 import Point from '../models/point-model.js';
-// import Store from '../store.js';
 
 const getSyncedPoints = (items) => items.filter(({success}) => success).map(({payload}) => payload.point);
 

@@ -3,7 +3,7 @@ export default class BackupStore {
     this._storage = storage;
     this._storeKey = null;
   }
-
+  
   getAll() {
     try {
       return JSON.parse(this._storage.getItem(this._storeKey));
