@@ -1,5 +1,5 @@
-import {RequestMethod} from './const.js';
-import PointModel from './models/point-model.js';
+import {RequestMethod, SERVER_TIMEOUT} from '../const.js';
+import PointModel from '../models/point-model.js';
 
 
 const checkStatus = (response) => {
@@ -54,14 +54,27 @@ export default class API {
     return this._load({url: `points/${id}`, method: RequestMethod.DELETE});
   }
 
+  sync(data) {
+    return this._load({
+      url: `points/sync`,
+      method: RequestMethod.POST,
+      body: JSON.stringify(data),
+      headers: new Headers({'Content-Type': `application/json`})
+    })
+      .then((response) => response.json());
+  }
+
   _load({url, method = RequestMethod.GET, body = null, headers = new Headers()}) {
     headers.append(`Authorization`, this._authorization);
 
-    return fetch(`${this._endPoint}/${url}`, {method, body, headers})
-      .then(checkStatus)
-      .catch((err) => {
-        throw err;
-      });
+    return Promise.race([
+      fetch(`${this._endPoint}/${url}`, {method, body, headers}),
+      new Promise((resolve) => setTimeout(resolve, SERVER_TIMEOUT))
+    ])
+   .then(checkStatus)
+   .catch((err) => {
+     throw err;
+   });
   }
 
 }

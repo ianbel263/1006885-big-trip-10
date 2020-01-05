@@ -1,4 +1,4 @@
-export const AUTHORIZATION = `Basic kdnskNffCKjkj-j`;
+export const AUTHORIZATION = `Basic kdnwdfskNdgffCKjkj-j`;
 export const END_POINT = `https://htmlacademy-es-10.appspot.com/big-trip`;
 
 export const RequestMethod = {
@@ -8,9 +8,26 @@ export const RequestMethod = {
   DELETE: `DELETE`
 };
 
+export const Store = {
+  STORE_PREFIX: `big-trip-localstorage`,
+  STORE_VER: `v1`,
+
+  getStoreName(key) {
+    return `${this.STORE_PREFIX}-${this.STORE_VER}-${key}`;
+  }
+};
+
+export const StoreKey = {
+  POINTS: `points`,
+  OFFERS: `offers`,
+  DESTINATIONS: `destinations`
+};
+
 export const HIDDEN_CLASS = `visually-hidden`;
 
+export const SERVER_TIMEOUT = 10000;
 export const SHAKE_ANIMATION_TIMEOUT = 600;
+export const DEBOUNCE_TIMEOUT = 500;
 
 export const DefaultButtonsText = {
   SAVE: `Save`,

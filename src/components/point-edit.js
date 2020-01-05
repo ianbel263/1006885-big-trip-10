@@ -1,7 +1,8 @@
-import {TripType, DefaultButtonsText, SHAKE_ANIMATION_TIMEOUT} from '../const.js';
-import AbstractSmartComponent from './abstract-smart-component.js';
 import moment from 'moment';
 import flatpickr from 'flatpickr';
+import debounce from 'lodash/debounce';
+import {TripType, DefaultButtonsText, SHAKE_ANIMATION_TIMEOUT, DEBOUNCE_TIMEOUT} from '../const.js';
+import AbstractSmartComponent from './abstract-smart-component.js';
 import {ViewMode, doFirstLetterUppercase, formatTripType, convertPoint} from '../utils/common.js';
 import PointModel from '../models/point-model.js';
 
@@ -269,8 +270,10 @@ export default class PointEdit extends AbstractSmartComponent {
   }
 
   setOnFavoriteButtonClick(handler) {
+    const debounceHandler = handler ? debounce(handler, DEBOUNCE_TIMEOUT) : handler;
+
     this.getElement().querySelector(`.event__favorite-btn`)
-      .addEventListener(`click`, handler);
+      .addEventListener(`click`, debounceHandler);
 
     this._favoriteHandler = handler;
   }

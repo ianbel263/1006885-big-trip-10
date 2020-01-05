@@ -9,17 +9,15 @@ const drawChart = (ctx, statisticsData, title) => {
   let values = [];
   switch (title) {
     case `money`:
-      statisticsData = statisticsData.filter((el) => el.totalPrice !== 0);
       types = statisticsData.sort((a, b) => (b.totalPrice - a.totalPrice)).map((el) => el.type.toUpperCase());
       values = statisticsData.sort((a, b) => (b.totalPrice - a.totalPrice)).map((el) => el.totalPrice);
       break;
     case `transport`:
-      statisticsData = statisticsData.filter((el) => el.count !== 0);
+      statisticsData = statisticsData.filter((el) => el.isTransport);
       types = statisticsData.sort((a, b) => (b.count - a.count)).map((el) => el.type.toUpperCase());
       values = statisticsData.sort((a, b) => (b.count - a.count)).map((el) => el.count);
       break;
     case `time spent`:
-      statisticsData = statisticsData.filter((el) => el.totalTime !== 0);
       types = statisticsData.sort((a, b) => (b.totalTime - a.totalTime)).map((el) => el.type.toUpperCase());
       values = statisticsData.sort((a, b) => (b.totalTime - a.totalTime)).map((el) => el.totalTime);
       break;
@@ -33,11 +31,22 @@ const drawChart = (ctx, statisticsData, title) => {
       datasets: [
         {
           data: values,
-          backgroundColor: `#ffffff`
+          backgroundColor: `#ffffff`,
+          barPercentage: 0.9,
+          minBarLength: 5
         }
       ],
     },
     options: {
+      hover: false,
+      layout: {
+        padding: {
+          left: 20,
+          right: 50,
+          top: 20,
+          bottom: 20
+        }
+      },
       tooltips: {
         enabled: false
       },
@@ -46,18 +55,21 @@ const drawChart = (ctx, statisticsData, title) => {
           anchor: `end`,
           align: `left`,
           font: {
-            size: 14
+            size: 12
           },
-          color: `#000`,
+          color: `#000000`,
           formatter: (value) => {
             let formattedValue = ``;
             switch (title) {
               case `money`:
-                return `€ ${value}`;
+                formattedValue = value ? `€ ${value}` : ``;
+                break;
               case `transport`:
-                return `${value}x`;
+                formattedValue = value ? `${value}x` : ``;
+                break;
               case `time spent`:
-                return `${value}H`;
+                formattedValue = value ? `${value}H` : ``;
+                break;
             }
             return formattedValue;
           }
@@ -94,7 +106,6 @@ const drawChart = (ctx, statisticsData, title) => {
     }
   });
 };
-
 
 export default class Statistics extends AbstractSmartComponent {
   constructor(data) {
