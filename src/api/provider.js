@@ -20,6 +20,8 @@ export default class Provider {
 
     }
     const appStoreData = Object.values(this._store.getAll());
+    this._isSynchronized = false;
+
     return Promise.resolve(appStoreData);
   }
 
@@ -34,6 +36,7 @@ export default class Provider {
 
     const storePoints = Object.values(this._store.getAll());
     this._isSynchronized = false;
+
     return Promise.resolve(Point.parsePoints(storePoints));
   }
 
