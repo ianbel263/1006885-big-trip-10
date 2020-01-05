@@ -1,4 +1,4 @@
-import {RequestMethod} from '../const.js';
+import {RequestMethod, SERVER_TIMEOUT} from '../const.js';
 import PointModel from '../models/point-model.js';
 
 
@@ -67,11 +67,14 @@ export default class API {
   _load({url, method = RequestMethod.GET, body = null, headers = new Headers()}) {
     headers.append(`Authorization`, this._authorization);
 
-    return fetch(`${this._endPoint}/${url}`, {method, body, headers})
-      .then(checkStatus)
-      .catch((err) => {
-        throw err;
-      });
+    return Promise.race([
+      fetch(`${this._endPoint}/${url}`, {method, body, headers}),
+      new Promise((resolve) => setTimeout(resolve, SERVER_TIMEOUT))
+    ])
+   .then(checkStatus)
+   .catch((err) => {
+     throw err;
+   });
   }
 
 }
