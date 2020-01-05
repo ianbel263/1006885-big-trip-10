@@ -10,9 +10,9 @@ export default class AppFilter extends AbstractComponent {
     return (
       `<form class="trip-filters" action="#" method="get">
       <div class="trip-filters__filter">
-      ${this._filters.map(({name, isChecked}) => {
+      ${this._filters.map(({name, isChecked, isDisabled}) => {
         return (
-          `<input id="filter-${name}" data-filter="${name}" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="${name}" ${isChecked ? `checked` : ``}>
+          `<input id="filter-${name}" data-filter="${name}" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="${name}" ${isChecked ? `checked` : ``} ${isDisabled ? `disabled` : ``}>
           <label class="trip-filters__filter-label" for="filter-${name}">${name}</label>`
         );
       }).join(`\n`)}
