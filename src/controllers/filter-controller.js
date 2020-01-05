@@ -1,6 +1,7 @@
 import AppFilterComponent from '../components/app-filter.js';
 import {renderElement, replaceComponents} from '../utils/render.js';
 import {FilterType} from '../const.js';
+import {getPointsByFilter} from '../utils/filter.js';
 
 export default class FilterController {
   constructor(container, pointsModel) {
@@ -20,7 +21,8 @@ export default class FilterController {
     const appFilters = Object.values(FilterType).map((filterType) => {
       return {
         name: filterType,
-        isChecked: filterType === this._activeFilterType
+        isChecked: filterType === this._activeFilterType,
+        isDisabled: getPointsByFilter(this._pointsModel.getPointsAll(), filterType).length === 0 ? true : false
       };
     });
 
