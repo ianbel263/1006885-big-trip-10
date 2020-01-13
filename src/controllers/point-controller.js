@@ -111,23 +111,6 @@ export default class PointController {
     }
   }
 
-  _onEscPress(evt) {
-    if (evt.keyCode === ESC_KEYCODE) {
-      this._replaceEditToItem();
-    }
-  }
-
-  _onFormSubmit(evt, mode) {
-    evt.preventDefault();
-    this._pointEditComponent.setButtonsText(`save`, ConnectingButtonsText.SAVE);
-    const newData = this._pointEditComponent.getData();
-    if (mode === ViewMode.ADD) {
-      this._onDataChange(this, EmptyCard, newData);
-    } else {
-      this._onDataChange(this, this._point, newData);
-    }
-  }
-
   _replaceItemToEdit() {
     this._onViewChange();
 
@@ -145,5 +128,22 @@ export default class PointController {
       replaceComponents(this._pointItemComponent, this._pointEditComponent);
     }
     this._mode = ViewMode.DEFAULT;
+  }
+
+  _onFormSubmit(evt, mode) {
+    evt.preventDefault();
+    this._pointEditComponent.setButtonsText(`save`, ConnectingButtonsText.SAVE);
+    const newData = this._pointEditComponent.getData();
+    if (mode === ViewMode.ADD) {
+      this._onDataChange(this, EmptyCard, newData);
+    } else {
+      this._onDataChange(this, this._point, newData);
+    }
+  }
+
+  _onEscPress(evt) {
+    if (evt.keyCode === ESC_KEYCODE) {
+      this._replaceEditToItem();
+    }
   }
 }

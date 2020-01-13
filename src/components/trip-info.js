@@ -29,11 +29,11 @@ export default class TripInfo extends AbstractSmartComponent {
       </div>`;
   }
 
-  recoveryListeners() {}
-
   setPoints(points) {
     this._points = points.slice().sort((a, b) => a.startDate - b.startDate);
 
     super.rerender();
   }
+
+  recoveryListeners() {}
 }

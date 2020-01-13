@@ -17,6 +17,12 @@ export default class AppMenu extends AbstractComponent {
     );
   }
 
+  setDefault() {
+    const menuItems = this.getElement().querySelectorAll(`a`);
+    menuItems[0].classList.add(`trip-tabs__btn--active`);
+    menuItems[1].classList.remove(`trip-tabs__btn--active`);
+  }
+
   setOnMenuChange(handler) {
     const appMenu = this.getElement();
     appMenu.addEventListener(`click`, ((evt) => {
@@ -30,11 +36,5 @@ export default class AppMenu extends AbstractComponent {
 
       handler(evt.target.dataset.menuItem);
     }));
-  }
-
-  setDefault() {
-    const menuItems = this.getElement().querySelectorAll(`a`);
-    menuItems[0].classList.add(`trip-tabs__btn--active`);
-    menuItems[1].classList.remove(`trip-tabs__btn--active`);
   }
 }
