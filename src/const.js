@@ -1,4 +1,4 @@
-export const AUTHORIZATION = `Basic kdnwdfskgffCKjkj-j`;
+export const AUTHORIZATION = `Basic kdnwdfhgfhdskgffCKjkj-j`;
 export const END_POINT = `https://htmlacademy-es-10.appspot.com/big-trip`;
 
 export const RequestMethod = {
@@ -25,7 +25,7 @@ export const StoreKey = {
 
 export const HIDDEN_CLASS = `visually-hidden`;
 
-export const SERVER_TIMEOUT = 10000;
+export const SERVER_TIMEOUT = 15000;
 export const SHAKE_ANIMATION_TIMEOUT = 600;
 export const DEBOUNCE_TIMEOUT = 500;
 

@@ -203,6 +203,24 @@ export default class PointEdit extends AbstractSmartComponent {
     });
   }
 
+  setButtonsText(action, text) {
+    if (action === `save`) {
+      this._buttonSaveText = text;
+    }
+    if (action === `delete`) {
+      this._buttonDeleteText = text;
+    }
+
+    this.rerender();
+  }
+
+  setDefaultButtonsText() {
+    this._buttonSaveText = DefaultButtonsText.SAVE;
+    this._buttonDeleteText = DefaultButtonsText.DELETE;
+
+    this.rerender();
+  }
+
   recoveryListeners() {
     this.setOnFormSubmit(this._submitHandler);
     this.setOnDeleteButtonClick(this._deleteHandler);
@@ -229,53 +247,6 @@ export default class PointEdit extends AbstractSmartComponent {
   reset() {
     this._currentPoint = convertPoint(this._point, this._offersAll);
     this.rerender();
-  }
-
-  setButtonsText(action, text) {
-    if (action === `save`) {
-      this._buttonSaveText = text;
-    }
-    if (action === `delete`) {
-      this._buttonDeleteText = text;
-    }
-
-    this.rerender();
-  }
-
-  setDefaultButtonsText() {
-    this._buttonSaveText = DefaultButtonsText.SAVE;
-    this._buttonDeleteText = DefaultButtonsText.DELETE;
-
-    this.rerender();
-  }
-
-  setOnFormSubmit(handler) {
-    this.getElement().addEventListener(`submit`, handler);
-
-    this._submitHandler = handler;
-  }
-
-  setOnDeleteButtonClick(handler) {
-    this.getElement().querySelector(`.event__reset-btn`)
-      .addEventListener(`click`, handler);
-
-    this._deleteHandler = handler;
-  }
-
-  setOnCancelButtonClick(handler) {
-    this.getElement().querySelector(`.event__rollup-btn`)
-      .addEventListener(`click`, handler);
-
-    this._cancelHandler = handler;
-  }
-
-  setOnFavoriteButtonClick(handler) {
-    const debounceHandler = handler ? debounce(handler, DEBOUNCE_TIMEOUT) : handler;
-
-    this.getElement().querySelector(`.event__favorite-btn`)
-      .addEventListener(`click`, debounceHandler);
-
-    this._favoriteHandler = handler;
   }
 
   blockElement(onError = false) {
@@ -401,5 +372,34 @@ export default class PointEdit extends AbstractSmartComponent {
       defaultDate: defaultTime,
       allowInput: true,
     });
+  }
+
+  setOnFormSubmit(handler) {
+    this.getElement().addEventListener(`submit`, handler);
+
+    this._submitHandler = handler;
+  }
+
+  setOnDeleteButtonClick(handler) {
+    this.getElement().querySelector(`.event__reset-btn`)
+      .addEventListener(`click`, handler);
+
+    this._deleteHandler = handler;
+  }
+
+  setOnCancelButtonClick(handler) {
+    this.getElement().querySelector(`.event__rollup-btn`)
+      .addEventListener(`click`, handler);
+
+    this._cancelHandler = handler;
+  }
+
+  setOnFavoriteButtonClick(handler) {
+    const debounceHandler = handler ? debounce(handler, DEBOUNCE_TIMEOUT) : handler;
+
+    this.getElement().querySelector(`.event__favorite-btn`)
+      .addEventListener(`click`, debounceHandler);
+
+    this._favoriteHandler = handler;
   }
 }

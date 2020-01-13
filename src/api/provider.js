@@ -49,8 +49,6 @@ export default class Provider {
         });
     }
 
-    // Нюанс в том, что при создании мы не указываем id задачи, нам его в ответе присылает сервер.
-    // Но на случай временного хранения мы должны позаботиться и о временном id
     const fakeNewPointId = nanoid();
     const fakeNewPoint = Point.parsePoint(Object.assign({}, point.toRAW(), {id: fakeNewPointId}));
     this._store.setPoint(fakeNewPoint.id, Object.assign({}, fakeNewPoint.toRAW(), {offline: true}));
@@ -99,24 +97,17 @@ export default class Provider {
 
       return this._api.sync(storePoints)
         .then((response) => {
-          // Удаляем из хранилища задачи, что были созданы
-          // или изменены в оффлайне. Они нам больше не нужны
           storePoints.filter((point) => point.offline).forEach((point) => {
             this._store.removeItem(point.id);
           });
 
-          // Забираем из ответа синхронизированные задачи
           const createdPoints = getSyncedPoints(response.created);
           const updatedPoints = getSyncedPoints(response.updated);
 
-          // Добавляем синхронизированные задачи в хранилище.
-          // Хранилище должно быть актуальным в любой момент,
-          // вдруг сеть пропадёт
           [...createdPoints, ...updatedPoints].forEach((point) => {
             this._store.setPoint(point.id, point);
           });
 
-          // Помечаем, что всё синхронизировано
           this._isSynchronized = true;
 
           return Promise.resolve();

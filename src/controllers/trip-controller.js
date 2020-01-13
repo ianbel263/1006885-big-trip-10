@@ -121,6 +121,12 @@ export default class TripController {
     this.render();
   }
 
+  _removePoints() {
+    this._container.innerHTML = ``;
+    this._pointControllers.forEach((_pointcontroller) => _pointcontroller.destroy());
+    this._pointcontrollers = [];
+  }
+
   _onDataChange(pointController, oldData, newData) {
     if (oldData === EmptyCard) {
       this._creatingPoint = null;
@@ -185,11 +191,5 @@ export default class TripController {
 
     this._container.innerHTML = ``;
     this._pointControllers = renderpoints(sortedPoints, this._container, this._onDataChange, this.onViewChange, this._store, this._isSortedByDefault);
-  }
-
-  _removePoints() {
-    this._container.innerHTML = ``;
-    this._pointControllers.forEach((_pointcontroller) => _pointcontroller.destroy());
-    this._pointcontrollers = [];
   }
 }
