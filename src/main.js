@@ -13,10 +13,8 @@ import LoadErrorComponent from './components/load-error.js';
 window.addEventListener(`load`, () => {
   navigator.serviceWorker.register(`/sw.js`)
     .then(() => {
-      console.log(`Registration succeeded`);
       // Действие, в случае успешной регистрации ServiceWorker
     }).catch(() => {
-      console.log(`Registration failed`);
       // Действие, в случае ошибки при регистрации ServiceWorker
     });
 });
