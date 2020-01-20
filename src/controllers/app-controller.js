@@ -10,7 +10,7 @@ import TripInfoComponent from '../components/trip-info.js';
 import TripDaysContainerComponent from '../components/trip-days-container.js';
 import TripController from '../controllers/trip-controller.js';
 
-export default class APP {
+export default class AppController {
   constructor(container, pointsModel, api, store) {
     this._container = container;
     this._pointsModel = pointsModel;

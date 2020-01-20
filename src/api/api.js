@@ -1,4 +1,4 @@
-import {RequestMethod, SERVER_TIMEOUT} from '../const.js';
+import {RequestMethod, Timeout} from '../const.js';
 import PointModel from '../models/point-model.js';
 
 
@@ -69,7 +69,7 @@ export default class API {
 
     return Promise.race([
       fetch(`${this._endPoint}/${url}`, {method, body, headers}),
-      new Promise((resolve) => setTimeout(resolve, SERVER_TIMEOUT))
+      new Promise((resolve) => setTimeout(resolve, Timeout.SERVER))
     ])
    .then(checkStatus)
    .catch((err) => {

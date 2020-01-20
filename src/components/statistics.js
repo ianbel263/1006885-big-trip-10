@@ -1,5 +1,5 @@
 import AbstractSmartComponent from './abstract-smart-component.js';
-import {HIDDEN_CLASS} from '../const.js';
+import {HIDDEN_CLASS, StatisticsChart} from '../const.js';
 
 import Chart from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
@@ -158,8 +158,8 @@ export default class Statistics extends AbstractSmartComponent {
     const transportCtx = this.getElement().querySelector(`.statistics__chart--transport`);
     const timeCtx = this.getElement().querySelector(`.statistics__chart--time`);
 
-    drawChart(moneyCtx, this._data, `money`);
-    drawChart(transportCtx, this._data, `transport`);
-    drawChart(timeCtx, this._data, `time spent`);
+    drawChart(moneyCtx, this._data, StatisticsChart.MONEY);
+    drawChart(transportCtx, this._data, StatisticsChart.TRANSPORT);
+    drawChart(timeCtx, this._data, StatisticsChart.TIME_SPENT);
   }
 }

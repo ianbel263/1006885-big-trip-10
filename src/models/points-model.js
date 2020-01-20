@@ -69,15 +69,15 @@ export default class Points {
     return true;
   }
 
+  _callHandlers(handlers) {
+    handlers.forEach((handler) => handler());
+  }
+
   setOnDataChange(handler) {
     this._dataChangeHandlers.push(handler);
   }
 
   setOnFilterChange(handler) {
     this._filterChangeHandlers.push(handler);
-  }
-
-  _callHandlers(handlers) {
-    handlers.forEach((handler) => handler());
   }
 }
