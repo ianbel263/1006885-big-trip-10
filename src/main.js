@@ -5,7 +5,7 @@ import API from './api/api.js';
 import BackupStore from './api/backup-store.js';
 import Provider from './api/provider.js';
 import AppStore from './app-store.js';
-import APP from './controllers/app-controller';
+import AppController from './controllers/app-controller';
 import PointsModel from './models/points-model.js';
 import LoadingPointsComponent from './components/loading-points.js';
 import LoadErrorComponent from './components/load-error.js';
@@ -13,8 +13,10 @@ import LoadErrorComponent from './components/load-error.js';
 window.addEventListener(`load`, () => {
   navigator.serviceWorker.register(`/sw.js`)
     .then(() => {
+      console.log(`Registration succeeded`);
       // Действие, в случае успешной регистрации ServiceWorker
     }).catch(() => {
+      console.log(`Registration failed`);
       // Действие, в случае ошибки при регистрации ServiceWorker
     });
 });
@@ -44,7 +46,7 @@ const apiWithProvider = new Provider(api, backupStore);
 
 const pointsModel = new PointsModel();
 const appStore = new AppStore();
-const appController = new APP(tripInfoElement, pointsModel, apiWithProvider, appStore);
+const appController = new AppController(tripInfoElement, pointsModel, apiWithProvider, appStore);
 
 const loadingPointComponent = new LoadingPointsComponent();
 const newPointButton = document.querySelector(`.trip-main__event-add-btn`);

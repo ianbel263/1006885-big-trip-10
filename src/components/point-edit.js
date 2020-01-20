@@ -1,7 +1,7 @@
 import moment from 'moment';
 import flatpickr from 'flatpickr';
 import debounce from 'lodash/debounce';
-import {TripType, DefaultButtonsText, SHAKE_ANIMATION_TIMEOUT, DEBOUNCE_TIMEOUT} from '../const.js';
+import {TripType, DefaultButtonsText, Timeout} from '../const.js';
 import AbstractSmartComponent from './abstract-smart-component.js';
 import {ViewMode, doFirstLetterUppercase, formatTripType, convertPoint} from '../utils/common.js';
 import PointModel from '../models/point-model.js';
@@ -78,7 +78,7 @@ export default class PointEdit extends AbstractSmartComponent {
             </label>
             <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${name}" list="destination-list-1">
             <datalist id="destination-list-1">
-              
+
       ${this._destinationList.map((it) => {
         return `<option value="${it}"></option>`;
       }).join(`\n`)}
@@ -108,7 +108,7 @@ export default class PointEdit extends AbstractSmartComponent {
 
           <button class="event__save-btn  btn  btn--blue" type="submit">${this._buttonSaveText}</button>
           <button class="event__reset-btn" type="reset">${this._mode === ViewMode.ADD ? `Cancel` : `${this._buttonDeleteText}`}</button>
-          
+
 
       ${this._mode === ViewMode.ADD
         ? ``
@@ -119,7 +119,7 @@ export default class PointEdit extends AbstractSmartComponent {
               <path d="M14 21l-8.22899 4.3262 1.57159-9.1631L.685209 9.67376 9.8855 8.33688 14 0l4.1145 8.33688 9.2003 1.33688-6.6574 6.48934 1.5716 9.1631L14 21z"/>
             </svg>
           </label>
-  
+
           <button class="event__rollup-btn" type="button">
             <span class="visually-hidden">Open event</span>
           </button>`
@@ -136,7 +136,7 @@ export default class PointEdit extends AbstractSmartComponent {
         <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
         <div class="event__available-offers">
-            
+
       ${this._currentPoint.offers.map(({price: offerPrice, title, isChecked}) => {
         return (
           `<div class="event__offer-selector">
@@ -148,7 +148,7 @@ export default class PointEdit extends AbstractSmartComponent {
             </label>
           </div>`
         );
-      }).join(`\n`)}    
+      }).join(`\n`)}
 
           </div>
         </section>`
@@ -163,7 +163,7 @@ export default class PointEdit extends AbstractSmartComponent {
       ${pictures.map(({src, description: alt}) => {
         return `<img class="event__photo" src="${src}" alt="${alt}">`;
       }).join(`\n`)}
-      
+
               </div>
             </div>
           </section>
@@ -252,7 +252,7 @@ export default class PointEdit extends AbstractSmartComponent {
   blockElement(onError = false) {
     const form = this.getElement();
     if (onError) {
-      form.style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
+      form.style.animation = `shake ${Timeout.SHAKE_ANIMATION / 1000}s`;
       form.style.outline = `2px solid red`;
     }
     form.classList.add(`event--disabled`);
@@ -395,7 +395,7 @@ export default class PointEdit extends AbstractSmartComponent {
   }
 
   setOnFavoriteButtonClick(handler) {
-    const debounceHandler = handler ? debounce(handler, DEBOUNCE_TIMEOUT) : handler;
+    const debounceHandler = handler ? debounce(handler, Timeout.DEBOUNCE) : handler;
 
     this.getElement().querySelector(`.event__favorite-btn`)
       .addEventListener(`click`, debounceHandler);

@@ -1,4 +1,4 @@
-import {ESC_KEYCODE, ConnectingButtonsText, SHAKE_ANIMATION_TIMEOUT} from '../const.js';
+import {ESC_KEYCODE, ConnectingButtonsText, Timeout} from '../const.js';
 import PointModel from '../models/point-model';
 import PointItemComponent from '../components/point-item.js';
 import PointEditComponent from '../components/point-edit.js';
@@ -99,7 +99,7 @@ export default class PointController {
 
     setTimeout(() => {
       this._pointEditComponent.setDefaultButtonsText();
-    }, SHAKE_ANIMATION_TIMEOUT);
+    }, Timeout.SHAKE_ANIMATION);
   }
 
   _onDeleteButtonClick(mode) {

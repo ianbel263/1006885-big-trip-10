@@ -1,6 +1,6 @@
 import AbstractComponent from './abstract-component.js';
 import {ViewMode} from '../utils/common.js';
-import {formatTime, formatDateForDatetimeAttr, calculateTimeInterval, formatTripType} from '../utils/common.js';
+import {formatTime, formatDateForDatetimeAttr, calculateTimeInterval, formatTripType, EmptyCard} from '../utils/common.js';
 
 export default class PointItem extends AbstractComponent {
   constructor(point, mode) {
@@ -11,7 +11,7 @@ export default class PointItem extends AbstractComponent {
 
   getTemplate() {
     const {destination, startDate, endDate, price, offers} = this._point;
-    const type = this._mode !== ViewMode.ADD ? this._point.type : `flight`;
+    const type = this._mode !== ViewMode.ADD ? this._point.type : EmptyCard.type;
 
     return (
       `<li class="trip-events__item">

@@ -25,9 +25,11 @@ export const StoreKey = {
 
 export const HIDDEN_CLASS = `visually-hidden`;
 
-export const SERVER_TIMEOUT = 15000;
-export const SHAKE_ANIMATION_TIMEOUT = 600;
-export const DEBOUNCE_TIMEOUT = 500;
+export const Timeout = {
+  SERVER: 15000,
+  DEBOUNCE: 500,
+  SHAKE_ANIMATION: 600
+};
 
 export const DefaultButtonsText = {
   SAVE: `Save`,
@@ -61,4 +63,10 @@ export const SortType = {
   EVENT: `event`,
   TIME: `time`,
   PRICE: `price`
+};
+
+export const StatisticsChart = {
+  MONEY: `money`,
+  TRANSPORT: `transport`,
+  TIME_SPENT: `time spent`
 };
